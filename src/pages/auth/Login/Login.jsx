@@ -12,6 +12,7 @@ const LoginPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    navigate("/member-portal/dashboard");
     console.log("Login attempted with:", { email, password });
   };
 

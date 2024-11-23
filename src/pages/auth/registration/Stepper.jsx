@@ -1,10 +1,14 @@
 import { Card } from "@nextui-org/react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Images } from "../../../assets";
+import { Images } from "../../../assets/Index";
+import { useGetCurrencyQuery } from "../../../store/apis/endpoints/currency";
 
 function Stepper() {
   const location = useLocation();
   const currentPath = location.pathname;
+
+  const { data: currencyData, isLoading: currencyLoading } =
+    useGetCurrencyQuery();
 
   const steps = [
     { number: 1, title: "Personal Info", path: "/register/membership-form" },

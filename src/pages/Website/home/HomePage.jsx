@@ -12,7 +12,7 @@ import {
   Zap,
   Award,
 } from "lucide-react";
-import Layout from "../../layout/WebsiteLayouts/Layout";
+import Layout from "../../../layout/WebsiteLayouts/Layout";
 
 export default function HomePage() {
   const [codeCount, setCodeCount] = useState("");
@@ -73,9 +73,10 @@ export default function HomePage() {
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-300 mb-12">
-              Empower your business with globally recognized barcodes and digital solutions
+              Empower your business with globally recognized barcodes and
+              digital solutions
             </p>
-            
+
             {/* Hero CTA */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button className="px-8 py-4 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
@@ -101,7 +102,9 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 className="text-center"
               >
-                <h3 className="text-4xl font-bold text-primary mb-2">{stat.number}</h3>
+                <h3 className="text-4xl font-bold text-primary mb-2">
+                  {stat.number}
+                </h3>
                 <p className="text-gray-600">{stat.label}</p>
               </motion.div>
             ))}
@@ -134,7 +137,9 @@ export default function HomePage() {
                 transition={{ delay: index * 0.1 }}
                 className={`${feature.color} rounded-xl p-6 hover:shadow-lg transition-shadow`}
               >
-                <feature.icon className={`w-12 h-12 ${feature.iconColor} mb-4`} />
+                <feature.icon
+                  className={`w-12 h-12 ${feature.iconColor} mb-4`}
+                />
                 <h3 className="font-semibold text-xl mb-2">{feature.title}</h3>
                 <p className="text-gray-600">{feature.desc}</p>
               </motion.div>
@@ -180,11 +185,10 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="text-center"
           >
-            <h2 className="text-4xl font-bold mb-6">
-              Ready to Get Started?
-            </h2>
+            <h2 className="text-4xl font-bold mb-6">Ready to Get Started?</h2>
             <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-              Join thousands of businesses using GST for their digital identity needs
+              Join thousands of businesses using GST for their digital identity
+              needs
             </p>
             <motion.button
               whileHover={{ scale: 1.05 }}

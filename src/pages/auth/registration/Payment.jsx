@@ -23,13 +23,12 @@ function Payment() {
     { isLoading: isCheckoutLoading, isSuccess, isError, error },
   ] = useCheckoutMutation();
 
-  // Get cart data from localStorage
+  // Get cart and VAT data from localStorage
   const cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
   const cartSubtotal = parseFloat(localStorage.getItem("cartSubtotal") || "0");
   const cartVAT = parseFloat(localStorage.getItem("cartVAT") || "0");
   const cartTotal = parseFloat(localStorage.getItem("cartTotal") || "0");
-
-  const VAT_RATE = 10; // 10% VAT
+  const vatDetails = JSON.parse(localStorage.getItem("cartVatDetails") || "{}");
 
   const handlePaymentComplete = async () => {
     try {
@@ -44,7 +43,9 @@ function Payment() {
       const response = await checkout({
         userId: userData?.id,
         paymentType: paymentTypeMap[paymentMethod],
-        vat: VAT_RATE,
+        // vatId: vatDetails.id,
+        vat: parseFloat(cartVAT),
+        // vatType: vatDetails.type
       });
 
       if (response.data) {
@@ -52,6 +53,7 @@ function Payment() {
         localStorage.removeItem("cartTotal");
         localStorage.removeItem("cartSubtotal");
         localStorage.removeItem("cartVAT");
+        localStorage.removeItem("cartVatDetails");
         localStorage.removeItem("userData");
         setShowSuccessModal(true);
       }
@@ -244,7 +246,13 @@ function Payment() {
                 <span>AED {cartSubtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">VAT (10%):</span>
+                <span className="text-gray-600">
+                  VAT (
+                  {vatDetails.type === "PERCENTAGE"
+                    ? `${vatDetails.value}%`
+                    : "Fixed"}
+                  ):
+                </span>
                 <span>AED {cartVAT.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-lg font-bold mt-2">

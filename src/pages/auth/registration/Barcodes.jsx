@@ -4,20 +4,26 @@ import { Card, Button, Image, Skeleton } from "@nextui-org/react";
 import { FaPlus, FaMinus } from "react-icons/fa";
 import { MdClose } from "react-icons/md";
 
+import { useSelector } from "react-redux";
+import { selectCurrencySymbol } from "../../../store/slices/currencySymbolSlice";
+
 // api
 import { useGetProductsQuery } from "../../../store/apis/endpoints/products";
 import { useAddToCartMutation } from "../../../store/apis/endpoints/cart";
-
-const VAT_RATE = 0.1; // 10% VAT
+import { useGetTaxQuery } from "../../../store/apis/endpoints/tax";
 
 function Barcodes() {
   const navigate = useNavigate();
+  const currencySymbol = useSelector(selectCurrencySymbol);
+
   const [cart, setCart] = useState(() => {
     const savedCart = localStorage.getItem("cartItems");
     return savedCart ? JSON.parse(savedCart) : [];
   });
   const { data: productsData, isLoading: isProductsLoading } =
     useGetProductsQuery();
+
+  const { data: taxData, isLoading: isTaxLoading } = useGetTaxQuery();
 
   const [addItemToCart, { isLoading: isAddingToCart }] = useAddToCartMutation();
 
@@ -63,17 +69,29 @@ function Barcodes() {
     return item.price * item.quantity;
   };
 
+  const vatDetails = taxData?.data?.vats?.[0] || {
+    value: 0,
+    type: "PERCENTAGE",
+  };
+
   const getCartTotals = () => {
     const subtotal = cart.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     );
-    const vatAmount = subtotal * VAT_RATE;
+
+    const vatAmount =
+      vatDetails.type === "PERCENTAGE"
+        ? subtotal * (vatDetails.value / 100)
+        : vatDetails.value;
 
     return {
       subtotal,
       vatAmount,
       total: subtotal + vatAmount,
+      vatId: vatDetails.id,
+      vatValue: vatDetails.value,
+      vatType: vatDetails.type,
     };
   };
 
@@ -83,7 +101,7 @@ function Barcodes() {
 
   const handleCheckout = async () => {
     try {
-      const { subtotal, vatAmount, total } = getCartTotals();
+      const { subtotal, vatAmount, total, vatId } = getCartTotals();
 
       const cartData = {
         userId: userData?.id,
@@ -91,6 +109,7 @@ function Barcodes() {
           productId: item.id,
           quantity: item.quantity,
         })),
+        // vatId: vatId,
       };
 
       const response = await addItemToCart(cartData);
@@ -100,6 +119,15 @@ function Barcodes() {
         localStorage.setItem("cartSubtotal", subtotal);
         localStorage.setItem("cartVAT", vatAmount);
         localStorage.setItem("cartTotal", total);
+        localStorage.setItem(
+          "cartVatDetails",
+          JSON.stringify({
+            id: vatId,
+            calculatedVat: vatAmount,
+            value: vatDetails.value,
+            type: vatDetails.type,
+          })
+        );
         navigate("/register/payment");
       }
     } catch (error) {
@@ -108,7 +136,7 @@ function Barcodes() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-">
+    <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Navigation buttons at top */}
       <div className="mb-4 flex justify-start items-center">
         <button
@@ -120,11 +148,11 @@ function Barcodes() {
       </div>
 
       {/* Main content */}
-      <div className="flex gap-6">
+      <div className="flex flex-col lg:flex-row gap-6">
         {/* Products Grid */}
-        <div className="flex-grow">
+        <div className="flex-1">
           {isProductsLoading ? (
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {[...Array(6)].map((_, index) => (
                 <Card key={index} className="p-4 shadow-md">
                   <div className="flex flex-col items-center text-center">
@@ -138,7 +166,7 @@ function Barcodes() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {productsData?.data?.products.map((product) => (
                 <Card
                   key={product.id}
@@ -155,7 +183,7 @@ function Barcodes() {
                       {product.description}
                     </p>
                     <p className="text-sm font-bold text-navy-600 mb-3">
-                      AED {product.price.toFixed(2)}
+                      {currencySymbol} {product.price.toFixed(2)}
                     </p>
                     <Button
                       className="w-full bg-navy-600 hover:bg-navy-700 text-white"
@@ -172,21 +200,21 @@ function Barcodes() {
           )}
         </div>
 
-        {/* Cart */}
-        <div className="w-96">
-          <Card className="p-4">
+        {/* Cart - Fixed width sidebar */}
+        <div className="w-full lg:w-[280px] lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)]">
+          <Card className="p-4 h-full overflow-auto">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl">Your Cart</h3>
+              <h3 className="text-xl font-semibold">Your Cart</h3>
               <span className="text-sm bg-gray-100 px-2 py-0.5 rounded-full">
                 {cart.length} items
               </span>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-[calc(100vh-300px)] overflow-y-auto">
               {cart.map((item) => (
                 <div
                   key={item.id}
-                  className="relative border-b border-gray-200 p-1 shadow-md"
+                  className="relative border border-gray-200 rounded-lg p-3 shadow-sm"
                 >
                   <div className="flex gap-3 ">
                     <div className="w-24 ">
@@ -230,10 +258,11 @@ function Barcodes() {
 
                       <div className="flex justify-end flex-col items-end">
                         <span className="text-sm">
-                          AED {item.price.toFixed(2)} × {item.quantity}
+                          {currencySymbol} {item.price.toFixed(2)} ×{" "}
+                          {item.quantity}
                         </span>
                         <span className="text-sm font-bold">
-                          AED {getItemTotal(item).toFixed(2)}
+                          {currencySymbol} {getItemTotal(item).toFixed(2)}
                         </span>
                       </div>
                     </div>
@@ -243,19 +272,31 @@ function Barcodes() {
             </div>
 
             {cart.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="mt-4 pt-4 border-t border-gray-200 sticky bottom-0 bg-white">
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-sm">Subtotal:</span>
-                    <span>AED {getCartTotals().subtotal.toFixed(2)}</span>
+                    <span>
+                      {currencySymbol} {getCartTotals().subtotal.toFixed(2)}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm">VAT (10%):</span>
-                    <span>AED {getCartTotals().vatAmount.toFixed(2)}</span>
+                    <span className="text-sm">
+                      VAT (
+                      {vatDetails.type === "PERCENTAGE"
+                        ? `${vatDetails.value}%`
+                        : "Fixed"}
+                      ):
+                    </span>
+                    <span>
+                      {currencySymbol} {getCartTotals().vatAmount.toFixed(2)}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center font-bold">
                     <span>Total:</span>
-                    <span>AED {getCartTotals().total.toFixed(2)}</span>
+                    <span>
+                      {currencySymbol} {getCartTotals().total.toFixed(2)}
+                    </span>
                   </div>
                 </div>
 

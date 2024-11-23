@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { apiSlice } from "./apis/apiSlice";
-
+import currencySymbolReducer from "./slices/currencySymbolSlice";
 // Load state from local storage
 const loadState = () => {
   try {
@@ -10,7 +10,9 @@ const loadState = () => {
       return undefined;
     }
     const persistedState = JSON.parse(serializedState);
-    return {};
+    return {
+      currencySymbol: persistedState.currencySymbol,
+    };
   } catch (err) {
     return undefined;
   }
@@ -19,7 +21,9 @@ const loadState = () => {
 // Save state to local storage
 const saveState = (state) => {
   try {
-    const stateToPersist = {};
+    const stateToPersist = {
+      currencySymbol: state.currencySymbol,
+    };
     const serializedState = JSON.stringify(stateToPersist);
     localStorage.setItem("reduxState", serializedState);
   } catch (err) {
@@ -30,6 +34,7 @@ const saveState = (state) => {
 export const store = configureStore({
   reducer: {
     [apiSlice.reducerPath]: apiSlice.reducer,
+    currencySymbol: currencySymbolReducer,
   },
   // Adding the api middleware enables caching, invalidation, polling,
   // and other useful features of `rtk-query`.

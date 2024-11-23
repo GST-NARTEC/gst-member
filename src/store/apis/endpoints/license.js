@@ -9,6 +9,7 @@ const licenseApi = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+
   }),
 });
 

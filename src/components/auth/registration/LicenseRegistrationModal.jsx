@@ -16,9 +16,12 @@ import toast from "react-hot-toast";
 const LicenseRegistrationModal = ({ isOpen, onClose }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [licenseNumber, setLicenseNumber] = useState("");
+  const [error, setError] = useState("");
 
-  const [registerLicense, { isLoading, isSuccess, isError, error }] =
-    useRegisterLicenseMutation();
+  const [
+    registerLicense,
+    { isLoading, isSuccess, isError, error: registerLicenseError },
+  ] = useRegisterLicenseMutation();
 
   const handleFileChange = (e) => {
     if (e.target.files[0]) {
@@ -26,11 +29,23 @@ const LicenseRegistrationModal = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleLicenseChange = (e) => {
+    const value = e.target.value.replace(/\D/g, ""); // Only allow digits
+    if (value.length <= 10) {
+      setLicenseNumber(value);
+      setError(
+        value.length === 10 || value.length === 0
+          ? ""
+          : "License number must be exactly 10 digits"
+      );
+    }
+  };
+
   const handleSubmit = async () => {
-    console.log("License registration submitted", {
-      licenseNumber,
-      selectedFile,
-    });
+    if (licenseNumber.length !== 10) {
+      setError("License number must be exactly 10 digits");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("license", licenseNumber);
@@ -48,9 +63,11 @@ const LicenseRegistrationModal = ({ isOpen, onClose }) => {
       toast.success("License registered successfully");
       onClose();
     } else if (isError) {
-      toast.error(error?.data?.message || "Something went wrong");
+      toast.error(
+        registerLicenseError?.data?.message || "Something went wrong"
+      );
     }
-  }, [isSuccess, isError, error, onClose]);
+  }, [isSuccess, isError, registerLicenseError]);
 
   const isSubmitDisabled = !selectedFile || !licenseNumber.trim();
 
@@ -58,18 +75,30 @@ const LicenseRegistrationModal = ({ isOpen, onClose }) => {
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">
-          <h3 className="text-xl font-semibold">Upload your company License Document</h3>
-          <p className="text-sm text-gray-500">Please provide your license details below</p>
+          <h3 className="text-xl font-semibold">
+            Upload your company License Document
+          </h3>
+          <p className="text-sm text-gray-500">
+            Please provide your license details below
+          </p>
         </ModalHeader>
         <ModalBody>
           <div className="space-y-6">
-            <Input
-              label="License Number"
-              placeholder="Enter new license number"
-              value={licenseNumber}
-              onChange={(e) => setLicenseNumber(e.target.value)}
-              required
-            />
+            <div>
+              <Input
+                label="License Number"
+                placeholder="Enter 10-digit license number"
+                value={licenseNumber}
+                onChange={handleLicenseChange}
+                maxLength={10}
+                color={error ? "danger" : "default"}
+                errorMessage={error}
+                required
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Must be exactly 10 digits
+              </p>
+            </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">
@@ -134,10 +163,8 @@ const LicenseRegistrationModal = ({ isOpen, onClose }) => {
           </Button>
           <Button
             color="primary"
-            type="button"
-            isLoading={isLoading}
             onPress={handleSubmit}
-            isDisabled={isSubmitDisabled}
+            isDisabled={licenseNumber.length !== 10 || !selectedFile}
           >
             Register License
           </Button>

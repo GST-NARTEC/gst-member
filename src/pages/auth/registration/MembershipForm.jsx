@@ -127,7 +127,7 @@ const MembershipForm = () => {
   const handleLicenseVerify = async () => {
     const licenseNo = watch("companyLicenseNo");
     try {
-      const result = await verifyLicense({
+      await verifyLicense({
         licenseKey: licenseNo,
       }).unwrap();
 
@@ -138,6 +138,7 @@ const MembershipForm = () => {
       setIsLicenseVerified(false);
       setIsLicenseInvalid(true);
       setHasAttemptedLicenseVerification(true);
+      setValue("companyLicenseNo", "");
       console.log(error);
     }
   };
@@ -308,9 +309,9 @@ const MembershipForm = () => {
                     disabled={!isVerified}
                     {...register("companyLicenseNo", {
                       required: "License number is required",
-                      minLength: {
-                        value: 10,
-                        message: "License number must be 10 characters",
+                      pattern: {
+                        value: /^\d{10}$/,
+                        message: "License number must be exactly 10 digits",
                       },
                     })}
                     className={`w-full px-4 py-2.5 border ${
