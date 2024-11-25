@@ -13,7 +13,7 @@ import { MdOutlineFilePresent, MdClose } from "react-icons/md";
 import { useRegisterLicenseMutation } from "../../../store/apis/endpoints/license";
 import toast from "react-hot-toast";
 
-const LicenseRegistrationModal = ({ isOpen, onClose }) => {
+const LicenseRegistrationModal = ({ isOpen, onClose, onLicenseSuccess }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [licenseNumber, setLicenseNumber] = useState("");
   const [error, setError] = useState("");
@@ -30,15 +30,13 @@ const LicenseRegistrationModal = ({ isOpen, onClose }) => {
   };
 
   const handleLicenseChange = (e) => {
-    const value = e.target.value.replace(/\D/g, ""); // Only allow digits
-    if (value.length <= 10) {
-      setLicenseNumber(value);
-      setError(
-        value.length === 10 || value.length === 0
-          ? ""
-          : "License number must be exactly 10 digits"
-      );
-    }
+    const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+    setLicenseNumber(value);
+    setError(
+      value.length === 10 || value.length === 0
+        ? ""
+        : "License number must be exactly 10 digits"
+    );
   };
 
   const handleSubmit = async () => {
@@ -51,7 +49,22 @@ const LicenseRegistrationModal = ({ isOpen, onClose }) => {
     formData.append("license", licenseNumber);
     formData.append("document", selectedFile);
 
-    await registerLicense(formData);
+    try {
+      const response = await registerLicense(formData).unwrap();
+      const registeredLicense = licenseNumber;
+
+      setLicenseNumber("");
+      setSelectedFile(null);
+      setError("");
+
+      onLicenseSuccess({
+        licenseNumber: registeredLicense,
+        isVerified: true,
+      });
+      onClose();
+    } catch (error) {
+      toast.error(error?.data?.message || "Something went wrong");
+    }
   };
 
   const removeFile = () => {
@@ -59,17 +72,15 @@ const LicenseRegistrationModal = ({ isOpen, onClose }) => {
   };
 
   useEffect(() => {
-    if (isSuccess) {
-      toast.success("License registered successfully");
-      onClose();
-    } else if (isError) {
+    if (isError) {
       toast.error(
         registerLicenseError?.data?.message || "Something went wrong"
       );
+    } else if (isSuccess) {
+      toast.success("License registered successfully");
     }
-  }, [isSuccess, isError, registerLicenseError]);
+  }, [isError, registerLicenseError, isSuccess, registerLicenseError]);
 
-  const isSubmitDisabled = !selectedFile || !licenseNumber.trim();
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
@@ -164,6 +175,7 @@ const LicenseRegistrationModal = ({ isOpen, onClose }) => {
           <Button
             color="primary"
             onPress={handleSubmit}
+            isLoading={isLoading}
             isDisabled={licenseNumber.length !== 10 || !selectedFile}
           >
             Register License

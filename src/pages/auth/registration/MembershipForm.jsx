@@ -145,17 +145,13 @@ const MembershipForm = () => {
 
   useEffect(() => {
     const licenseNo = watch("companyLicenseNo") || "";
-    if (licenseNo.length === 10) {
+    if (licenseNo.length === 10 && !isLicenseVerified) {
       setShowLicenseVerifyButton(true);
       setIsLicenseInvalid(false);
     } else {
       setShowLicenseVerifyButton(false);
     }
-    if (isLicenseVerified || isLicenseInvalid) {
-      setIsLicenseVerified(false);
-      setIsLicenseInvalid(false);
-    }
-  }, [watch("companyLicenseNo")]);
+  }, [watch("companyLicenseNo"), isLicenseVerified]);
 
   useEffect(() => {
     if (isLicenseError) {
@@ -205,6 +201,21 @@ const MembershipForm = () => {
     setValue("latitude", location.latitude);
     setValue("longitude", location.longitude);
     setValue("streetAddress", location.address);
+  };
+
+  const handleLicenseInputChange = (e) => {
+    const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+    setValue('companyLicenseNo', value);
+  };
+
+  const handleLicenseRegistrationSuccess = ({ licenseNumber, isVerified }) => {
+    setValue('companyLicenseNo', licenseNumber);
+    setIsLicenseVerified(true);
+    setIsLicenseInvalid(false);
+    setHasAttemptedLicenseVerification(true);
+    setShowLicenseVerifyButton(false);
+    toast.success("License registered and verified successfully");
+    setShowLicenseRegModal(false);
   };
 
   return (
@@ -305,32 +316,25 @@ const MembershipForm = () => {
                 </label>
                 <div className="relative">
                   <input
-                    type="text"
                     disabled={!isVerified}
-                    {...register("companyLicenseNo", {
-                      required: "License number is required",
-                      pattern: {
-                        value: /^\d{10}$/,
-                        message: "License number must be exactly 10 digits",
-                      },
-                    })}
+                    type="text"
+                    value={watch('companyLicenseNo')}
+                    onChange={handleLicenseInputChange}
                     className={`w-full px-4 py-2.5 border ${
                       isLicenseInvalid ? "border-red-500" : "border-gray-400"
                     } rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent outline-none bg-gray-50 focus:bg-white disabled:opacity-50 disabled:cursor-not-allowed`}
                     placeholder="Enter license number"
                   />
                   <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-2">
-                    {showLicenseVerifyButton &&
-                      !isLicenseVerified &&
-                      !isLicenseInvalid && (
-                        <button
-                          onClick={handleLicenseVerify}
-                          disabled={isVerifyingLicense}
-                          className="px-3 py-1 bg-navy-600 text-white rounded-md text-sm hover:bg-navy-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {isVerifyingLicense ? "Verifying..." : "Verify"}
-                        </button>
-                      )}
+                    {showLicenseVerifyButton && !isLicenseVerified && !isLicenseInvalid && (
+                      <button
+                        onClick={handleLicenseVerify}
+                        disabled={isVerifyingLicense}
+                        className="px-3 py-1 bg-navy-600 text-white rounded-md text-sm hover:bg-navy-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isVerifyingLicense ? "Verifying..." : "Verify"}
+                      </button>
+                    )}
                     {isLicenseInvalid && (
                       <button
                         onClick={() => setShowLicenseRegModal(true)}
@@ -552,6 +556,7 @@ const MembershipForm = () => {
       <LicenseRegistrationModal
         isOpen={showLicenseRegModal}
         onClose={() => setShowLicenseRegModal(false)}
+        onLicenseSuccess={handleLicenseRegistrationSuccess}
       />
     </>
   );
