@@ -20,6 +20,14 @@ const products = apiSlice.injectEndpoints({
       providesTags: ["Products"],
     }),
 
+    getActiveProducts: builder.query({
+      query: (params) => ({
+        url: "/products/v1/active",
+        method: "GET",
+        params, // Will include page, limit, search
+      }),
+      providesTags: ["Products"],
+    }),
     getProductById: builder.query({
       query: (id) => ({
         url: `/products/v1/${id}`,
@@ -53,4 +61,5 @@ export const {
   useGetProductByIdQuery,
   useUpdateProductMutation,
   useDeleteProductMutation,
+  useGetActiveProductsQuery,
 } = products;

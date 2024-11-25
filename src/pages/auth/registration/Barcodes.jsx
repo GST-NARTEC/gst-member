@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, Button, Image, Skeleton } from "@nextui-org/react";
+import { Card, Button, Image, Skeleton, Input, Pagination } from "@nextui-org/react";
 import { FaPlus, FaMinus } from "react-icons/fa";
-import { MdClose } from "react-icons/md";
+import { MdClose, MdSearch } from "react-icons/md";
 
 import { useSelector } from "react-redux";
 import { selectCurrencySymbol } from "../../../store/slices/currencySymbolSlice";
+import { useDebounce } from "../../../hooks/useDebounce";
 
 // api
-import { useGetProductsQuery } from "../../../store/apis/endpoints/products";
+import { useGetActiveProductsQuery } from "../../../store/apis/endpoints/products";
 import { useAddToCartMutation } from "../../../store/apis/endpoints/cart";
 import { useGetTaxQuery } from "../../../store/apis/endpoints/tax";
 
@@ -20,8 +21,17 @@ function Barcodes() {
     const savedCart = localStorage.getItem("cartItems");
     return savedCart ? JSON.parse(savedCart) : [];
   });
-  const { data: productsData, isLoading: isProductsLoading } =
-    useGetProductsQuery();
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const limit = 9; // Items per page
+
+  const debouncedSearch = useDebounce(search, 500);
+
+  const { data: productsData, isLoading: isProductsLoading } = useGetActiveProductsQuery({
+    page,
+    limit,
+    search: debouncedSearch
+  });
 
   const { data: taxData, isLoading: isTaxLoading } = useGetTaxQuery();
 
@@ -135,16 +145,35 @@ function Barcodes() {
     }
   };
 
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+    setPage(1); // Reset to first page on new search
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Navigation buttons at top */}
-      <div className="mb-4 flex justify-start items-center">
+      {/* Navigation and search */}
+      <div className="mb-4 flex justify-between items-center">
         <button
           onClick={() => navigate("/register/membership-form")}
           className="px-6 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg transition-colors"
         >
           Back
         </button>
+        
+        {/* Add search input */}
+        <div className="w-72">
+          <Input
+            type="text"
+            placeholder="Search products..."
+            value={search}
+            onChange={handleSearch}
+            startContent={<MdSearch className="text-gray-400" />}
+            className="w-full"
+            isClearable
+            onClear={() => setSearch("")}
+          />
+        </div>
       </div>
 
       {/* Main content */}
@@ -166,37 +195,56 @@ function Barcodes() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {productsData?.data?.products.map((product) => (
-                <Card
-                  key={product.id}
-                  className="p-4 shadow-md hover:shadow-md transition-shadow"
-                >
-                  <div className="flex flex-col items-center text-center">
-                    <Image
-                      src={product.image || defaultImage}
-                      alt={product.title}
-                      className="w-32 h-24 object-contain mb-3"
-                    />
-                    <h3 className="text-sm mb-1">{product.title}</h3>
-                    <p className="text-gray-500 text-xs mb-2 h-8 line-clamp-2">
-                      {product.description}
-                    </p>
-                    <p className="text-sm font-bold text-navy-600 mb-3">
-                      {currencySymbol} {product.price.toFixed(2)}
-                    </p>
-                    <Button
-                      className="w-full bg-navy-600 hover:bg-navy-700 text-white"
-                      size="sm"
-                      onClick={() => addToCart(product)}
-                      isLoading={isProductsLoading}
-                    >
-                      Add to Cart
-                    </Button>
-                  </div>
-                </Card>
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {productsData?.data?.products.map((product) => (
+                  <Card
+                    key={product.id}
+                    className="p-4 shadow-md hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex flex-col items-center text-center">
+                      <Image
+                        src={product.image || defaultImage}
+                        alt={product.title}
+                        className="w-32 h-24 object-contain mb-3"
+                      />
+                      <h3 className="text-sm mb-1">{product.title}</h3>
+                      <p className="text-gray-500 text-xs mb-2 h-8 line-clamp-2">
+                        {product.description}
+                      </p>
+                      <p className="text-sm font-bold text-navy-600 mb-3">
+                        {currencySymbol} {product.price.toFixed(2)}
+                      </p>
+                      <Button
+                        className="w-full bg-navy-600 hover:bg-navy-700 text-white"
+                        size="sm"
+                        onClick={() => addToCart(product)}
+                        isLoading={isProductsLoading}
+                      >
+                        Add to Cart
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+              
+              {/* Updated pagination using API response structure */}
+              {productsData?.data?.pagination && (
+                <div className="mt-6 flex justify-center">
+                  <Pagination
+                    total={productsData?.data?.pagination?.totalPages}
+                    page={page}
+                    onChange={setPage}
+                    showControls
+                    classNames={{
+                      wrapper: "gap-2",
+                      item: "w-8 h-8",
+                      cursor: "bg-navy-600 text-white font-medium",
+                    }}
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
 
