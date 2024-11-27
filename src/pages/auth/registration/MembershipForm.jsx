@@ -165,7 +165,6 @@ const MembershipForm = () => {
     if (isUserError) {
       toast.error(userError?.data?.message || "Failed to create user");
     } else if (isUserCreated) {
-      toast.success("User created successfully");
       localStorage.setItem("userData", JSON.stringify(userData?.data?.user));
       navigate("/register/barcodes");
     }

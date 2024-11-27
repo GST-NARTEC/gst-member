@@ -9,6 +9,8 @@ import PaymentSuccessModal from "../../../components/auth/registration/PaymentSu
 
 import { useCheckoutMutation } from "../../../store/apis/endpoints/checkout";
 import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
+import { selectCurrencySymbol } from "../../../store/slices/currencySymbolSlice";
 
 function Payment() {
   const navigate = useNavigate();
@@ -17,6 +19,8 @@ function Payment() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const userData = JSON.parse(localStorage.getItem("userData"));
+
+  const currencySymbol = useSelector(selectCurrencySymbol);
 
   const [
     checkout,
@@ -229,10 +233,10 @@ function Payment() {
                   </div>
                   <div className="text-right">
                     <div className="text-sm">
-                      AED {item.price.toFixed(2)} × {item.quantity}
+                      {currencySymbol} {item.price.toFixed(2)} × {item.quantity}
                     </div>
                     <div className="text-sm font-medium text-navy-600">
-                      AED {(item.price * item.quantity).toFixed(2)}
+                      {currencySymbol} {(item.price * item.quantity).toFixed(2)}
                     </div>
                   </div>
                 </div>
@@ -243,7 +247,7 @@ function Payment() {
             <div className="space-y-3 py-4 border-t border-dashed">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Subtotal:</span>
-                <span>AED {cartSubtotal.toFixed(2)}</span>
+                <span>{currencySymbol} {cartSubtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">
@@ -253,11 +257,11 @@ function Payment() {
                     : "Fixed"}
                   ):
                 </span>
-                <span>AED {cartVAT.toFixed(2)}</span>
+                <span>{currencySymbol} {cartVAT.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-lg font-bold mt-2">
                 <span>Total Amount:</span>
-                <span>AED {cartTotal.toFixed(2)}</span>
+                <span>{currencySymbol} {cartTotal.toFixed(2)}</span>
               </div>
             </div>
 

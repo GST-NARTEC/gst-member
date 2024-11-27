@@ -46,7 +46,7 @@ export default function PaymentSuccessModal({ isOpen, onClose }) {
               <Button
                 className="w-full bg-navy-700 text-white"
                 size="lg"
-                onClick={() => navigate("/login")}
+                onClick={() => navigate("/member-portal/login")}
               >
                 Go to Login
               </Button>
