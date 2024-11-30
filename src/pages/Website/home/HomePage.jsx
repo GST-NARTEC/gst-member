@@ -80,7 +80,7 @@ export default function HomePage() {
             {/* Hero CTA */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button className="px-8 py-4 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                Get Started
+                Buy Barcodes
               </button>
               <button className="px-8 py-4 border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 transition-colors">
                 Learn More
@@ -185,7 +185,7 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="text-center"
           >
-            <h2 className="text-4xl font-bold mb-6">Ready to Get Started?</h2>
+            <h2 className="text-4xl font-bold mb-6">Ready to Buy Barcodes?</h2>
             <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
               Join thousands of businesses using GST for their digital identity
               needs
@@ -195,7 +195,7 @@ export default function HomePage() {
               whileTap={{ scale: 0.95 }}
               className="bg-white text-gray-900 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center gap-2"
             >
-              Get Started Now
+              Buy Barcodes Now
               <ArrowRight className="w-5 h-5" />
             </motion.button>
           </motion.div>
