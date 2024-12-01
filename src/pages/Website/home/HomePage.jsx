@@ -13,9 +13,12 @@ import {
   Award,
 } from "lucide-react";
 import Layout from "../../../layout/WebsiteLayouts/Layout";
+import Services from "../../../components/Website/HomePage/Services";
+import { useNavigate } from "react-router-dom";
 
 export default function HomePage() {
   const [codeCount, setCodeCount] = useState("");
+  const navigate = useNavigate();
 
   const features = [
     {
@@ -79,7 +82,10 @@ export default function HomePage() {
 
             {/* Hero CTA */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-8 py-4 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              <button
+                onClick={() => navigate("/register/membership-form")}
+                className="px-8 py-4 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+              >
                 Buy Barcodes
               </button>
               <button className="px-8 py-4 border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 transition-colors">
@@ -89,9 +95,9 @@ export default function HomePage() {
           </motion.div>
         </div>
       </section>
-
+      <Services />
       {/* Stats Section */}
-      <section className="bg-white py-20">
+      {/* <section className="bg-white py-20">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat) => (
@@ -110,10 +116,10 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Features Grid */}
-      <section className="py-20 bg-gray-50">
+      {/* <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -146,7 +152,7 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Calculator Section with Glass Effect */}
       <section className="py-20 bg-gradient-to-br from-primary/10 to-blue-50">
