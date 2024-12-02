@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useDisclosure, Chip } from "@nextui-org/react";
-import { MdEmail, MdPhone, MdLocationOn, MdBusiness } from "react-icons/md";
+import { useDisclosure, Chip, Button } from "@nextui-org/react";
+import { MdEmail, MdPhone, MdLocationOn, MdBusiness, MdArrowBack } from "react-icons/md";
 import { useForm, Controller } from "react-hook-form";
 import OtpVerificationModal from "../../../components/auth/registration/OtpVerificationModal";
 import { BsCheckCircleFill, BsXCircleFill } from "react-icons/bs";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import LocationPicker from "../../../components/auth/registration/LocationPicker";
 import LocationSelects from "../../../components/auth/registration/LocationSelects";
 import PhoneInput from "react-phone-input-2";
@@ -166,7 +166,7 @@ const MembershipForm = () => {
       toast.error(userError?.data?.message || "Failed to create user");
     } else if (isUserCreated) {
       localStorage.setItem("userData", JSON.stringify(userData?.data?.user));
-      navigate("/register/barcodes");
+      navigate("/register/payment");
     }
   }, [isUserError, userError, isUserCreated, navigate]);
 
@@ -187,6 +187,7 @@ const MembershipForm = () => {
       streetAddress: watch("streetAddress"),
       latitude: parseFloat(watch("latitude")),
       longitude: parseFloat(watch("longitude")),
+      cartId: localStorage.getItem("cartId"),
     };
 
     try {
@@ -203,12 +204,12 @@ const MembershipForm = () => {
   };
 
   const handleLicenseInputChange = (e) => {
-    const value = e.target.value.replace(/\D/g, '').slice(0, 10);
-    setValue('companyLicenseNo', value);
+    const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+    setValue("companyLicenseNo", value);
   };
 
   const handleLicenseRegistrationSuccess = ({ licenseNumber, isVerified }) => {
-    setValue('companyLicenseNo', licenseNumber);
+    setValue("companyLicenseNo", licenseNumber);
     setIsLicenseVerified(true);
     setIsLicenseInvalid(false);
     setHasAttemptedLicenseVerification(true);
@@ -219,7 +220,7 @@ const MembershipForm = () => {
 
   return (
     <>
-      <div className=" mx-10">
+      <div className="mx-10">
         <div className=" mx-auto bg-whit  overflow-hidden">
           <div className="border-b border-gray-100 bg-white px-8 ">
             <h2 className="text-2xl font-semibold text-gray-800">
@@ -317,7 +318,7 @@ const MembershipForm = () => {
                   <input
                     disabled={!isVerified}
                     type="text"
-                    value={watch('companyLicenseNo')}
+                    value={watch("companyLicenseNo")}
                     onChange={handleLicenseInputChange}
                     className={`w-full px-4 py-2.5 border ${
                       isLicenseInvalid ? "border-red-500" : "border-gray-400"
@@ -325,15 +326,17 @@ const MembershipForm = () => {
                     placeholder="Enter license number"
                   />
                   <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-2">
-                    {showLicenseVerifyButton && !isLicenseVerified && !isLicenseInvalid && (
-                      <button
-                        onClick={handleLicenseVerify}
-                        disabled={isVerifyingLicense}
-                        className="px-3 py-1 bg-navy-600 text-white rounded-md text-sm hover:bg-navy-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {isVerifyingLicense ? "Verifying..." : "Verify"}
-                      </button>
-                    )}
+                    {showLicenseVerifyButton &&
+                      !isLicenseVerified &&
+                      !isLicenseInvalid && (
+                        <button
+                          onClick={handleLicenseVerify}
+                          disabled={isVerifyingLicense}
+                          className="px-3 py-1 bg-navy-600 text-white rounded-md text-sm hover:bg-navy-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isVerifyingLicense ? "Verifying..." : "Verify"}
+                        </button>
+                      )}
                     {isLicenseInvalid && (
                       <button
                         onClick={() => setShowLicenseRegModal(true)}
@@ -525,11 +528,20 @@ const MembershipForm = () => {
             </div>
 
             {/* Submit Button - Navy Blue */}
-            <div className="mt-8">
+            <div className="mt-8 flex items-center justify-between">
+              <Button
+                onClick={() => navigate("/register/barcodes")}
+                className="inline-flex items-center gap-2 px-6 py-3 text-navy-600 hover:text-navy-700"
+                startContent={<MdArrowBack size={20} />}
+                color="default"
+              >
+                <span>Back to Barcodes</span>
+              </Button>
+
               <button
                 type="button"
                 onClick={handleSubmit}
-                className="w-full bg-navy-600 text-white py-3 rounded-lg hover:bg-navy-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 bg-navy-600 text-white rounded-lg hover:bg-navy-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={
                   !isVerified ||
                   !isLicenseVerified ||

@@ -4,7 +4,7 @@ const cart = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     addToCart: builder.mutation({
       query: (cartData) => ({
-        url: "/cart/v1/add",
+        url: "/cart/v2/add",
         method: "POST",
         body: cartData,
       }),

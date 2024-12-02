@@ -6,6 +6,7 @@ import { FaCcVisa, FaCcMastercard } from "react-icons/fa";
 import { SiStencyl } from "react-icons/si";
 import { GiTakeMyMoney } from "react-icons/gi";
 import PaymentSuccessModal from "../../../components/auth/registration/PaymentSuccessModal";
+import ReactConfetti from 'react-confetti';
 
 import { useCheckoutMutation } from "../../../store/apis/endpoints/checkout";
 import toast from "react-hot-toast";
@@ -17,6 +18,11 @@ function Payment() {
   const [paymentMethod, setPaymentMethod] = useState("bank");
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
 
   const userData = JSON.parse(localStorage.getItem("userData"));
 
@@ -68,15 +74,42 @@ function Payment() {
 
   useEffect(() => {
     if (isSuccess) {
+      setShowConfetti(true);
       setShowSuccessModal(true);
       localStorage.removeItem("userData");
+      
+      // Hide confetti after 3 seconds
+      setTimeout(() => {
+        setShowConfetti(false);
+      }, 5000);
     } else if (isError) {
       toast.error(error?.data?.message || "Payment failed");
     }
   }, [isSuccess, isError, error]);
 
+  // Add this useEffect for window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <>
+      {showConfetti && (
+        <ReactConfetti
+          width={windowSize.width}
+          height={windowSize.height}
+          recycle={false}
+          numberOfPieces={200}
+          style={{ position: 'fixed', top: 0, left: 0, zIndex: 9999 }}
+        />
+      )}
       <div className="max-w-6xl mx-auto p-6">
         <div className="grid grid-cols-3 gap-8">
           {/* Payment Methods Section */}
@@ -264,27 +297,17 @@ function Payment() {
                 <span>{currencySymbol} {cartTotal.toFixed(2)}</span>
               </div>
             </div>
-
-            {/* Edit Cart Link */}
-            <div className="mt-4 text-center">
-              <button
-                onClick={() => navigate("/register/barcodes")}
-                className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
-              >
-                Edit Cart
-              </button>
-            </div>
           </div>
         </div>
 
         {/* Navigation Buttons */}
-        <div className="flex justify-between mt-8">
-          <button
-            onClick={() => navigate("/register/barcodes")}
+        <div className="flex justify-end mt-8">
+          {/* <button
+            onClick={() => navigate("/register/membership-form")}
             className="px-6 py-2 border border-navy-600 text-navy-600 rounded-lg hover:bg-navy-50"
           >
             Previous
-          </button>
+          </button> */}
           <Button
             onClick={handlePaymentComplete}
             className="px-6 py-2 bg-navy-600 text-white rounded-lg hover:bg-navy-700 cursor-pointer"

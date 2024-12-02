@@ -10,8 +10,8 @@ export default function WebsiteRoutes() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/register" element={<Stepper />}>
-        <Route path="membership-form" element={<MembershipForm />} />
         <Route path="barcodes" element={<Barcodes />} />
+        <Route path="membership-form" element={<MembershipForm />} />
         <Route path="payment" element={<Payment />} />
       </Route>
     </Routes>

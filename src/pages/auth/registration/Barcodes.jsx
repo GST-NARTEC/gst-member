@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, Button, Image, Skeleton, Input, Pagination } from "@nextui-org/react";
-import { FaPlus, FaMinus } from "react-icons/fa";
+import {
+  Card,
+  Button,
+  Image,
+  Skeleton,
+  Input,
+  Pagination,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@nextui-org/react";
 import { MdClose, MdSearch } from "react-icons/md";
 
 import { useSelector } from "react-redux";
@@ -27,17 +36,17 @@ function Barcodes() {
 
   const debouncedSearch = useDebounce(search, 500);
 
-  const { data: productsData, isLoading: isProductsLoading } = useGetActiveProductsQuery({
-    page,
-    limit,
-    search: debouncedSearch
-  });
+  const { data: productsData, isLoading: isProductsLoading } =
+    useGetActiveProductsQuery({
+      page,
+      limit,
+      search: debouncedSearch,
+    });
 
   const { data: taxData, isLoading: isTaxLoading } = useGetTaxQuery();
 
   const [addItemToCart, { isLoading: isAddingToCart }] = useAddToCartMutation();
 
-  const userData = JSON.parse(localStorage.getItem("userData"));
 
   const defaultImage =
     "https://www.sagedata.com/images/2007/Code_128_Barcode_Graphic.jpg";
@@ -114,7 +123,6 @@ function Barcodes() {
       const { subtotal, vatAmount, total, vatId } = getCartTotals();
 
       const cartData = {
-        userId: userData?.id,
         items: cart.map((item) => ({
           productId: item.id,
           quantity: item.quantity,
@@ -123,12 +131,12 @@ function Barcodes() {
       };
 
       const response = await addItemToCart(cartData);
-
       if (response.data) {
         localStorage.setItem("cartItems", JSON.stringify(cart));
         localStorage.setItem("cartSubtotal", subtotal);
         localStorage.setItem("cartVAT", vatAmount);
         localStorage.setItem("cartTotal", total);
+        localStorage.setItem("cartId", response?.data?.data?.cart?.id);
         localStorage.setItem(
           "cartVatDetails",
           JSON.stringify({
@@ -138,7 +146,7 @@ function Barcodes() {
             type: vatDetails.type,
           })
         );
-        navigate("/register/payment");
+        navigate("/register/membership-form");
       }
     } catch (error) {
       console.error("Checkout failed:", error);
@@ -154,13 +162,6 @@ function Barcodes() {
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Navigation and search */}
       <div className="mb-4 flex justify-between items-center">
-        <button
-          onClick={() => navigate("/register/membership-form")}
-          className="px-6 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg transition-colors"
-        >
-          Back
-        </button>
-        
         {/* Add search input */}
         <div className="w-72">
           <Input
@@ -203,11 +204,22 @@ function Barcodes() {
                     className="p-4 shadow-md hover:shadow-md transition-shadow"
                   >
                     <div className="flex flex-col items-center text-center">
-                      <Image
-                        src={product.image || defaultImage}
-                        alt={product.title}
-                        className="w-32 h-24 object-contain mb-3"
-                      />
+                      <Popover showArrow placement="bottom">
+                        <PopoverTrigger>
+                          <Image
+                            src={product.image || defaultImage}
+                            alt={product.title}
+                            className="w-32 h-24 object-contain mb-3 cursor-pointer hover:opacity-80"
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent className="p-2">
+                          <Image
+                            src={product.image || defaultImage}
+                            alt={product.title}
+                            className="w-80 h-60 object-contain"
+                          />
+                        </PopoverContent>
+                      </Popover>
                       <h3 className="text-sm mb-1">{product.title}</h3>
                       <p className="text-gray-500 text-xs mb-2 h-8 line-clamp-2">
                         {product.description}
@@ -227,7 +239,7 @@ function Barcodes() {
                   </Card>
                 ))}
               </div>
-              
+
               {/* Updated pagination using API response structure */}
               {productsData?.data?.pagination && (
                 <div className="mt-6 flex justify-center">
@@ -249,7 +261,7 @@ function Barcodes() {
         </div>
 
         {/* Cart - Fixed width sidebar */}
-        <div className="w-full lg:w-[280px] lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)]">
+        <div className="w-full lg:w-[370px] lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)]">
           <Card className="p-4 h-full overflow-auto">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold">Your Cart</h3>

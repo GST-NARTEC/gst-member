@@ -11,8 +11,8 @@ function Stepper() {
     useGetCurrencyQuery();
 
   const steps = [
-    { number: 1, title: "Personal Info", path: "/register/membership-form" },
-    { number: 2, title: "Barcodes", path: "/register/barcodes" },
+    { number: 1, title: "Select Barcodes", path: "/register/barcodes" },
+    { number: 2, title: "Personal Info", path: "/register/membership-form" },
     { number: 3, title: "Payment", path: "/register/payment" },
   ];
 
@@ -22,7 +22,7 @@ function Stepper() {
 
   return (
     <div className="bg-navy-600 min-h-screen">
-      <Card className="px-4 pt-8 container mx-auto rounded-md shadow-lg bg-white max-w-5xl">
+      <Card className="px-4 pt-8 mx-10 rounded-md shadow-lg bg-white ">
         <div className="relative">
           <div className="absolute right-0 -top-3">
             <div className="">
@@ -32,7 +32,7 @@ function Stepper() {
 
           <div className="flex items-start max-w-screen-lg mx-28">
             {steps.map((step, index) => (
-              <div
+              <di
                 key={step.number}
                 className={index !== steps.length - 1 ? "w-full" : ""}
               >
@@ -81,7 +81,7 @@ function Stepper() {
                       : "Pending"}
                   </p>
                 </div>
-              </div>
+              </di>
             ))}
           </div>
         </div>

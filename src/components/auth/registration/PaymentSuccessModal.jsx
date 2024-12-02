@@ -13,6 +13,7 @@ export default function PaymentSuccessModal({ isOpen, onClose }) {
       hideCloseButton
       size="lg"
       className="bg-white"
+      style={{ zIndex: 9998 }}
     >
       <ModalContent>
         <ModalBody className="py-12 px-8">
