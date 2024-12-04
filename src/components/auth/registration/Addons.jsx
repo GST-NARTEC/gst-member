@@ -23,8 +23,8 @@ function Addons({
   const [localAddons, setLocalAddons] = React.useState({});
 
   React.useEffect(() => {
-    if (selectedItem?.selectedAddons) {
-      const initialState = selectedItem.selectedAddons.reduce(
+    if (selectedItem) {
+      const initialState = (selectedItem.selectedAddons || []).reduce(
         (acc, addon) => ({
           ...acc,
           [addon.id]: { quantity: addon.quantity || 1 },
@@ -32,8 +32,10 @@ function Addons({
         {}
       );
       setLocalAddons(initialState);
+    } else {
+      setLocalAddons({});
     }
-  }, [selectedItem]);
+  }, [selectedItem?.id]);
 
   const handleAddonChange = (addon, isChecked) => {
     setLocalAddons((prev) => ({
