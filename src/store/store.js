@@ -2,6 +2,8 @@ import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { apiSlice } from "./apis/apiSlice";
 import currencySymbolReducer from "./slices/currencySymbolSlice";
+import cartReducer from "./slices/cartSlice";
+
 // Load state from local storage
 const loadState = () => {
   try {
@@ -12,6 +14,7 @@ const loadState = () => {
     const persistedState = JSON.parse(serializedState);
     return {
       currencySymbol: persistedState.currencySymbol,
+      cart: persistedState.cart,
     };
   } catch (err) {
     return undefined;
@@ -23,6 +26,7 @@ const saveState = (state) => {
   try {
     const stateToPersist = {
       currencySymbol: state.currencySymbol,
+      cart: state.cart,
     };
     const serializedState = JSON.stringify(stateToPersist);
     localStorage.setItem("reduxState", serializedState);
@@ -35,18 +39,15 @@ export const store = configureStore({
   reducer: {
     [apiSlice.reducerPath]: apiSlice.reducer,
     currencySymbol: currencySymbolReducer,
+    cart: cartReducer,
   },
-  // Adding the api middleware enables caching, invalidation, polling,
-  // and other useful features of `rtk-query`.
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(apiSlice.middleware),
   preloadedState: loadState(),
 });
-// Save state to local storage whenever the state changes
+
 store.subscribe(() => {
   saveState(store.getState());
 });
 
-// optional, but required for refetchOnFocus/refetchOnReconnect behaviors
-// see `setupListeners` docs - takes an optional callback as the 2nd arg for customization
 setupListeners(store.dispatch);

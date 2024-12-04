@@ -22,7 +22,7 @@ function Stepper() {
 
   return (
     <div className="bg-navy-600 min-h-screen">
-      <Card className="px-4 pt-8 mx-10 rounded-md shadow-lg bg-white ">
+      <Card className="px-4 pt-8 mx-24 rounded-md shadow-lg bg-white ">
         <div className="relative">
           <div className="absolute right-0 -top-3">
             <div className="">

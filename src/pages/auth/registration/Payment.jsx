@@ -6,15 +6,22 @@ import { FaCcVisa, FaCcMastercard } from "react-icons/fa";
 import { SiStencyl } from "react-icons/si";
 import { GiTakeMyMoney } from "react-icons/gi";
 import PaymentSuccessModal from "../../../components/auth/registration/PaymentSuccessModal";
-import ReactConfetti from 'react-confetti';
+import ReactConfetti from "react-confetti";
 
 import { useCheckoutMutation } from "../../../store/apis/endpoints/checkout";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { selectCurrencySymbol } from "../../../store/slices/currencySymbolSlice";
+import {
+  selectCartItems,
+  selectCartTotals,
+  selectVatDetails,
+  clearCart,
+} from "../../../store/slices/cartSlice";
 
 function Payment() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [paymentMethod, setPaymentMethod] = useState("bank");
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -25,20 +32,19 @@ function Payment() {
   });
 
   const userData = JSON.parse(localStorage.getItem("userData"));
-
   const currencySymbol = useSelector(selectCurrencySymbol);
+  const cartItems = useSelector(selectCartItems);
+  const {
+    subtotal: cartSubtotal,
+    vat: cartVAT,
+    total: cartTotal,
+  } = useSelector(selectCartTotals);
+  const vatDetails = useSelector(selectVatDetails);
 
   const [
     checkout,
     { isLoading: isCheckoutLoading, isSuccess, isError, error },
   ] = useCheckoutMutation();
-
-  // Get cart and VAT data from localStorage
-  const cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
-  const cartSubtotal = parseFloat(localStorage.getItem("cartSubtotal") || "0");
-  const cartVAT = parseFloat(localStorage.getItem("cartVAT") || "0");
-  const cartTotal = parseFloat(localStorage.getItem("cartTotal") || "0");
-  const vatDetails = JSON.parse(localStorage.getItem("cartVatDetails") || "{}");
 
   const handlePaymentComplete = async () => {
     try {
@@ -53,17 +59,11 @@ function Payment() {
       const response = await checkout({
         userId: userData?.id,
         paymentType: paymentTypeMap[paymentMethod],
-        // vatId: vatDetails.id,
         vat: parseFloat(cartVAT),
-        // vatType: vatDetails.type
       });
 
       if (response.data) {
-        localStorage.removeItem("cartItems");
-        localStorage.removeItem("cartTotal");
-        localStorage.removeItem("cartSubtotal");
-        localStorage.removeItem("cartVAT");
-        localStorage.removeItem("cartVatDetails");
+        dispatch(clearCart());
         localStorage.removeItem("userData");
         setShowSuccessModal(true);
       }
@@ -77,8 +77,7 @@ function Payment() {
       setShowConfetti(true);
       setShowSuccessModal(true);
       localStorage.removeItem("userData");
-      
-      // Hide confetti after 3 seconds
+
       setTimeout(() => {
         setShowConfetti(false);
       }, 5000);
@@ -95,8 +94,8 @@ function Payment() {
         height: window.innerHeight,
       });
     };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
@@ -107,7 +106,7 @@ function Payment() {
           height={windowSize.height}
           recycle={false}
           numberOfPieces={200}
-          style={{ position: 'fixed', top: 0, left: 0, zIndex: 9999 }}
+          style={{ position: "fixed", top: 0, left: 0, zIndex: 9999 }}
         />
       )}
       <div className="max-w-6xl mx-auto p-6">
@@ -263,13 +262,38 @@ function Payment() {
                     <div className="text-xs text-gray-500 mt-1">
                       Quantity: {item.quantity}
                     </div>
+                    {item.selectedAddons && item.selectedAddons.length > 0 && (
+                      <div className="mt-2 pl-3 border-l-2 border-gray-200">
+                        {item.selectedAddons.map((addon, idx) => (
+                          <div
+                            key={idx}
+                            className="text-xs text-gray-500 flex justify-between"
+                          >
+                            <span>
+                              {addon.name} × {addon.quantity}
+                            </span>
+                            <span>
+                              {currencySymbol}{" "}
+                              {(addon.price * addon.quantity).toFixed(2)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <div className="text-right">
                     <div className="text-sm">
                       {currencySymbol} {item.price.toFixed(2)} × {item.quantity}
                     </div>
                     <div className="text-sm font-medium text-navy-600">
-                      {currencySymbol} {(item.price * item.quantity).toFixed(2)}
+                      {currencySymbol}{" "}
+                      {(
+                        item.price * item.quantity +
+                        (item.selectedAddons?.reduce(
+                          (sum, addon) => sum + addon.price * addon.quantity,
+                          0
+                        ) || 0)
+                      ).toFixed(2)}
                     </div>
                   </div>
                 </div>
@@ -280,7 +304,9 @@ function Payment() {
             <div className="space-y-3 py-4 border-t border-dashed">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Subtotal:</span>
-                <span>{currencySymbol} {cartSubtotal.toFixed(2)}</span>
+                <span>
+                  {currencySymbol} {cartSubtotal.toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">
@@ -290,11 +316,15 @@ function Payment() {
                     : "Fixed"}
                   ):
                 </span>
-                <span>{currencySymbol} {cartVAT.toFixed(2)}</span>
+                <span>
+                  {currencySymbol} {cartVAT.toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between text-lg font-bold mt-2">
                 <span>Total Amount:</span>
-                <span>{currencySymbol} {cartTotal.toFixed(2)}</span>
+                <span>
+                  {currencySymbol} {cartTotal.toFixed(2)}
+                </span>
               </div>
             </div>
           </div>

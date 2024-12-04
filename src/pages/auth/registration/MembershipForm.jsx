@@ -19,6 +19,9 @@ import {
 import toast from "react-hot-toast";
 import { LoadScript } from "@react-google-maps/api";
 import LicenseRegistrationModal from "../../../components/auth/registration/LicenseRegistrationModal";
+import { selectCartId } from "../../../store/slices/cartSlice";
+import { useSelector } from "react-redux";
+
 
 const MembershipForm = () => {
   const navigate = useNavigate();
@@ -26,6 +29,8 @@ const MembershipForm = () => {
   const [showVerifyButton, setShowVerifyButton] = useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
+  const cartId = useSelector(selectCartId);
 
   // api call
   const [
@@ -187,7 +192,7 @@ const MembershipForm = () => {
       streetAddress: watch("streetAddress"),
       latitude: parseFloat(watch("latitude")),
       longitude: parseFloat(watch("longitude")),
-      cartId: localStorage.getItem("cartId"),
+      cartId: cartId,
     };
 
     try {
