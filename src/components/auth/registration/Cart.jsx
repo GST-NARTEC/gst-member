@@ -10,18 +10,14 @@ import {
   selectCartTotals,
   setCartTotals,
   setVatDetails,
-  setCartId,
 } from "../../../store/slices/cartSlice";
-import { useAddToCartMutation } from "../../../store/apis/endpoints/cart";
 import { useNavigate } from "react-router-dom";
 import Addons from "./Addons";
 
-function Cart({ currencySymbol, vatDetails, isAddingToCart, defaultImage }) {
+function Cart({ currencySymbol, vatDetails, defaultImage }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cart = useSelector(selectCartItems);
-
-  const [addToCartMutation] = useAddToCartMutation();
   const [isAddonsOpen, setIsAddonsOpen] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState(null);
   const [selectedItemIndex, setSelectedItemIndex] = React.useState(null);
@@ -53,38 +49,17 @@ function Cart({ currencySymbol, vatDetails, isAddingToCart, defaultImage }) {
     return { subtotal, vatAmount, total, vatId: vatDetails.id };
   };
 
-  const handleCheckout = async () => {
-    try {
-      const { subtotal, vatAmount, total, vatId } = getCartTotals();
-
-      const cartData = {
-        items: cart.map((item) => ({
-          productId: item.id,
-          quantity: item.quantity,
-          addons:
-            item.selectedAddons?.map((addon) => ({
-              id: addon.id,
-              quantity: addon.quantity,
-            })) || [],
-        })),
-      };
-
-      const response = await addToCartMutation(cartData);
-      if (response.data) {
-        dispatch(setCartId(response?.data?.data?.cart?.id));
-        dispatch(
-          setVatDetails({
-            id: vatId,
-            calculatedVat: vatAmount,
-            value: vatDetails.value,
-            type: vatDetails.type,
-          })
-        );
-        navigate("/register/membership-form");
-      }
-    } catch (error) {
-      console.error("Checkout failed:", error);
-    }
+  const handleCheckout = () => {
+    const { vatAmount, vatId } = getCartTotals();
+    dispatch(
+      setVatDetails({
+        id: vatId,
+        calculatedVat: vatAmount,
+        value: vatDetails.value,
+        type: vatDetails.type,
+      })
+    );
+    navigate("/register/membership-form");
   };
 
   const getItemTotal = (item) => {
@@ -236,10 +211,8 @@ function Cart({ currencySymbol, vatDetails, isAddingToCart, defaultImage }) {
           <Button
             onClick={handleCheckout}
             className="w-full mt-4 bg-navy-600 hover:bg-navy-700 text-white"
-            isLoading={isAddingToCart}
-            isDisabled={isAddingToCart}
           >
-            {isAddingToCart ? "Processing..." : "Save & Next"}
+            Save & Next
           </Button>
         </div>
       )}

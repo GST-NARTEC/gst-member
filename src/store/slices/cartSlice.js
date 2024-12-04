@@ -6,7 +6,6 @@ const initialState = {
   vat: 0,
   total: 0,
   vatDetails: {},
-  cartId: null,
 };
 
 const cartSlice = createSlice({
@@ -56,9 +55,6 @@ const cartSlice = createSlice({
     setVatDetails: (state, action) => {
       state.vatDetails = action.payload;
     },
-    setCartId: (state, action) => {
-      state.cartId = action.payload;
-    },
     clearCart: (state) => {
       return initialState;
     },
@@ -72,7 +68,6 @@ export const {
   removeFromCart,
   setCartTotals,
   setVatDetails,
-  setCartId,
   clearCart,
   updateCartItemAddons,
 } = cartSlice.actions;
@@ -85,6 +80,5 @@ export const selectCartTotals = (state) => ({
   total: state.cart.total,
 });
 export const selectVatDetails = (state) => state.cart.vatDetails;
-export const selectCartId = (state) => state.cart.cartId;
 
 export default cartSlice.reducer;
