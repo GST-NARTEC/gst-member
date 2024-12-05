@@ -18,6 +18,9 @@ export const Header = () => {
         { name: "Amazon UPC Codes", href: "#" },
         { name: "EAN Codes", href: "#" },
         { name: "ISBN for Books", href: "#" },
+        { name: "Barcodes for Pallets", href: "#" },
+        { name: "Barcodes for Boxes/Carton", href: "#" },
+        { name: "QRCode for Retail Items", href: "#" },
       ],
     },
     {
