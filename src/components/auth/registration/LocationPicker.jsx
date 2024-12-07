@@ -118,8 +118,8 @@ const LocationPicker = ({
   };
 
   return (
-    <div className="flex gap-6">
-      <div className="flex-1 h-[400px] rounded-xl overflow-hidden shadow-lg border border-gray-200">
+    <div className="flex gap-6 flex-col md:flex-row">
+      <div className="md:flex-1 h-[300px] md:h-[400px] rounded-xl overflow-hidden shadow-lg border border-gray-200">
         <GoogleMap
           mapContainerStyle={{ height: "100%", width: "100%" }}
           center={
@@ -140,7 +140,7 @@ const LocationPicker = ({
             <input
               type="text"
               placeholder="Search for a location"
-              className="absolute left-1/2 -translate-x-1/2 top-16 w-[320px] h-[40px] px-4 py-2 rounded-lg shadow-lg border border-gray-200 outline-none focus:ring-2 focus:ring-navy-600 focus:border-transparent transition-all bg-white/95 backdrop-blur-sm"
+              className="absolute left-1/2 -translate-x-1/2 top-16 md:w-[320px] h-[40px] px-4 py-2 rounded-lg shadow-lg border border-gray-200 outline-none focus:ring-2 focus:ring-navy-600 focus:border-transparent transition-all bg-white/95 backdrop-blur-sm"
             />
           </StandaloneSearchBox>
 
@@ -161,7 +161,7 @@ const LocationPicker = ({
         </GoogleMap>
       </div>
 
-      <div className="w-[400px] bg-white rounded-xl px- space-y-4">
+      <div className="w-full md:w-[400px] bg-white rounded-xl px-2 md:px-4 space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Latitude

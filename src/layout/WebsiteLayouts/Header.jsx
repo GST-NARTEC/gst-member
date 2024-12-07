@@ -69,6 +69,7 @@ export const Header = () => {
           >
             <img src={Images.Logo} alt="GST Logo" className="h-16" />
             <span className="font-bold text-xl text-gray-900">GST</span>
+            <img src={Images.Upcs} alt="Upcs Logo" className="h-10 ml-4" />
           </motion.div>
 
           <nav className="hidden lg:flex items-center gap-8">

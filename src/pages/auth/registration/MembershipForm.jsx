@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useDisclosure, Chip, Button } from "@nextui-org/react";
-import { MdEmail, MdPhone, MdLocationOn, MdBusiness, MdArrowBack } from "react-icons/md";
+import {
+  MdEmail,
+  MdPhone,
+  MdLocationOn,
+  MdBusiness,
+  MdArrowBack,
+} from "react-icons/md";
 import { useForm, Controller } from "react-hook-form";
 import OtpVerificationModal from "../../../components/auth/registration/OtpVerificationModal";
 import { BsCheckCircleFill, BsXCircleFill } from "react-icons/bs";
@@ -21,7 +27,6 @@ import { LoadScript } from "@react-google-maps/api";
 import LicenseRegistrationModal from "../../../components/auth/registration/LicenseRegistrationModal";
 import { selectCartItems } from "../../../store/slices/cartSlice";
 import { useSelector } from "react-redux";
-
 
 const MembershipForm = () => {
   const navigate = useNavigate();
@@ -192,14 +197,15 @@ const MembershipForm = () => {
       streetAddress: watch("streetAddress"),
       latitude: parseFloat(watch("latitude")),
       longitude: parseFloat(watch("longitude")),
-      cartItems: cartItems.map(item => ({
+      cartItems: cartItems.map((item) => ({
         productId: item.id,
         quantity: item.quantity,
-        addons: item.selectedAddons?.map(addon => ({
-          id: addon.id,
-          quantity: addon.quantity
-        })) || []
-      }))
+        addons:
+          item.selectedAddons?.map((addon) => ({
+            id: addon.id,
+            quantity: addon.quantity,
+          })) || [],
+      })),
     };
 
     try {
@@ -232,19 +238,19 @@ const MembershipForm = () => {
 
   return (
     <>
-      <div className="mx-10">
-        <div className=" mx-auto bg-whit  overflow-hidden">
-          <div className="border-b border-gray-100 bg-white px-8 ">
-            <h2 className="text-2xl font-semibold text-gray-800">
+      <div className="mx-auto max-w-screen-xl px-2 md:px-4 lg:px-8">
+        <div className="mx-auto  overflow-hidden  rounded-lg">
+          <div className="border-b border-gray-100 bg-white px-2 md:px-4 lg:px-8">
+            <h2 className="text-lg py-4 sm:py-6 md:text-2xl font-semibold text-gray-800">
               International Barcode Number Registration Form
             </h2>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-gray-500 mt-1 pb-4">
               Please fill in your International Barcode Number information
             </p>
           </div>
 
-          <div className="p-8">
-            <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+          <div className="p-2 md:p-4 lg:p-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4 sm:gap-x-6 lg:gap-x-8">
               {/* Email and License Number Row */}
               <div className="relative">
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
@@ -434,9 +440,9 @@ const MembershipForm = () => {
                       value={value}
                       onChange={onChange}
                       disabled={!isVerified || !isLicenseVerified}
-                      inputClass="!w-full !h-[45px] !text-base  !border-gray-400 !rounded-lg  focus:!ring-navy-600  !bg-gray-50 focus:!bg-white disabled:!opacity-50 disabled:!cursor-not-allowed"
+                      inputClass="!w-full !h-[45px] !text-base !border-gray-400 !rounded-lg focus:!ring-navy-600 !bg-gray-50 focus:!bg-white disabled:!opacity-50 disabled:!cursor-not-allowed"
                       containerClass="!w-full"
-                      buttonClass={`!border-gray-400  !border !rounded-l-lg !h-[45px] !bg-gray-50 `}
+                      buttonClass={`!border-gray-400 !border !rounded-l-lg !h-[45px] !bg-gray-50`}
                       dropdownClass="!bg-white !z-10"
                     />
                   )}
@@ -464,7 +470,7 @@ const MembershipForm = () => {
                       value={value}
                       onChange={onChange}
                       disabled={!isVerified || !isLicenseVerified}
-                      inputClass="!w-full !h-[45px] !text-base !border-gray-400 !rounded-lg focus:!ring-navy-600  !bg-gray-50 focus:!bg-white disabled:!opacity-50 disabled:!cursor-not-allowed"
+                      inputClass="!w-full !h-[45px] !text-base !border-gray-400 !rounded-lg focus:!ring-navy-600 !bg-gray-50 focus:!bg-white disabled:!opacity-50 disabled:!cursor-not-allowed"
                       containerClass="!w-full"
                       buttonClass={`!border-gray-400 !border !rounded-l-lg !h-[45px] !bg-gray-50`}
                       dropdownClass="!bg-white !z-10"
@@ -508,7 +514,7 @@ const MembershipForm = () => {
               </div>
 
               {/* Street Address - Full Width */}
-              <div className="col-span-2">
+              <div className="sm:col-span-2">
                 <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
                   <MdLocationOn className="w-4 h-4 mr-2 text-navy-700" />
                   Location & Address
@@ -540,10 +546,10 @@ const MembershipForm = () => {
             </div>
 
             {/* Submit Button - Navy Blue */}
-            <div className="mt-8 flex items-center justify-between">
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-between">
               <Button
                 onClick={() => navigate("/register/barcodes")}
-                className="inline-flex items-center gap-2 px-6 py-3 text-navy-600 hover:text-navy-700"
+                className="w-full sm:w-auto mb-4 sm:mb-0 inline-flex items-center justify-center gap-2 px-6 py-3 text-navy-600 hover:text-navy-700"
                 startContent={<MdArrowBack size={20} />}
                 color="default"
               >
@@ -553,7 +559,7 @@ const MembershipForm = () => {
               <button
                 type="button"
                 onClick={handleSubmit}
-                className="px-6 py-3 bg-navy-600 text-white rounded-lg hover:bg-navy-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full sm:w-auto px-6 py-3 bg-navy-600 text-white rounded-lg hover:bg-navy-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={
                   !isVerified ||
                   !isLicenseVerified ||

@@ -109,25 +109,21 @@ function Payment() {
           style={{ position: "fixed", top: 0, left: 0, zIndex: 9999 }}
         />
       )}
-      <div className="max-w-6xl mx-auto p-6">
-        <div className="grid grid-cols-3 gap-8">
-          {/* Payment Methods Section */}
-          <div className="col-span-2 bg-white rounded-xl shadow-md p-6">
-            <h2 className="text-xl mb-6">Payment Type</h2>
+      <div className="max-w-6xl mx-auto p-3 sm:p-4 md:p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+          {/* Payment Methods Section - Make it full width on mobile */}
+          <div className="col-span-1 lg:col-span-2  rounded-xl  p-4 md:p-6">
+            <h2 className="text-lg md:text-xl mb-4 md:mb-6">Payment Type</h2>
 
             <RadioGroup
               value={paymentMethod}
               onValueChange={setPaymentMethod}
-              className="gap-4"
+              className="gap-3 md:gap-4"
             >
-              <div className="space-y-4">
-                <div
-                  className={`p-4 border rounded-lg transition-all ${
-                    paymentMethod === "bank"
-                      ? "border-blue-500 bg-blue-50"
-                      : "border-gray-200"
-                  }`}
-                >
+              <div className="space-y-3 md:space-y-4">
+                <div className={`p-3 md:p-4 border rounded-lg transition-all ${
+                  paymentMethod === "bank" ? "border-blue-500 bg-blue-50" : "border-gray-200"
+                }`}>
                   <Radio value="bank" className="flex items-center gap-2">
                     <div className="flex items-center gap-2">
                       <BsBank2 className="text-xl" />
@@ -137,73 +133,94 @@ function Payment() {
                 </div>
 
                 <div
-                  className={`p-4 border rounded-lg transition-all ${
+                  className={`p-3 md:p-4 border rounded-lg transition-all  ${
                     paymentMethod === "card"
                       ? "border-blue-500 bg-blue-50"
                       : "border-gray-200"
                   }`}
                 >
-                  <Radio value="card" className="flex items-center gap-2">
-                    <div className="flex items-center gap-2">
+                  <Radio
+                    isDisabled={true}
+                    value="card"
+                    className="flex items-center gap-2"
+                  >
+                    <div className="flex items-center gap-2 w-full">
                       <div className="flex gap-1">
                         <FaCcVisa className="text-2xl text-blue-700" />
                         <FaCcMastercard className="text-2xl text-red-500" />
                       </div>
                       <span>Visa / Master Card</span>
+                      <span className="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Coming Soon</span>
                     </div>
                   </Radio>
+
                 </div>
 
                 <div
-                  className={`p-4 border rounded-lg transition-all ${
+                  className={`p-3 md:p-4 border rounded-lg transition-all ${
                     paymentMethod === "debit"
                       ? "border-blue-500 bg-blue-50"
                       : "border-gray-200"
                   }`}
                 >
-                  <Radio value="debit" className="flex items-center gap-2">
-                    <div className="flex items-center gap-2">
+                  <Radio
+                    isDisabled={true}
+                    value="debit"
+                    className="flex items-center gap-2"
+                  >
+                    <div className="flex items-center gap-2 w-full">
                       <BsCreditCard2Front className="text-xl" />
                       <span>Credit/Debit card</span>
+                      <span className="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Coming Soon</span>
                     </div>
                   </Radio>
                 </div>
 
                 <div
-                  className={`p-4 border rounded-lg transition-all ${
+                  className={`p-3 md:p-4 border rounded-lg transition-all ${
                     paymentMethod === "stc"
                       ? "border-blue-500 bg-blue-50"
                       : "border-gray-200"
                   }`}
                 >
-                  <Radio value="stc" className="flex items-center gap-2">
-                    <div className="flex items-center gap-2">
+                  <Radio
+                    isDisabled={true}
+                    value="stc"
+                    className="flex items-center gap-2"
+                  >
+                    <div className="flex items-center gap-2 w-full">
                       <SiStencyl className="text-xl" />
                       <span>STC Pay</span>
+                      <span className="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Coming Soon</span>
                     </div>
                   </Radio>
                 </div>
 
                 <div
-                  className={`p-4 border rounded-lg transition-all ${
+                  className={`p-3 md:p-4 border rounded-lg transition-all ${
                     paymentMethod === "tabby"
                       ? "border-blue-500 bg-blue-50"
                       : "border-gray-200"
                   }`}
                 >
-                  <Radio value="tabby" className="flex items-center gap-2">
-                    <div className="flex items-center gap-2">
+                  <Radio
+                    isDisabled={true}
+                    value="tabby"
+                    className="flex items-center gap-2"
+                  >
+                    <div className="flex items-center gap-2 w-full">
                       <GiTakeMyMoney className="text-xl" />
                       <span>Tabby</span>
+                      <span className="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Coming Soon</span>
                     </div>
                   </Radio>
                 </div>
               </div>
             </RadioGroup>
 
-            {/* Card Details Section - Show only when card is selected */}
+            {/* Card Details Section - adjust padding */}
             {(paymentMethod === "card" || paymentMethod === "debit") && (
-              <div className="mt-6 p-6 bg-gray-50 rounded-lg">
+              <div className="mt-4 md:mt-6 p-4 md:p-6 bg-gray-50 rounded-lg">
                 <h3 className="text-lg mb-4">Credit card / debit card</h3>
                 <div className="space-y-4">
                   <div>
@@ -238,7 +255,12 @@ function Payment() {
                 size="sm"
               >
                 Accept the Terms & Conditions (
-                <a href="#" className="text-blue-500 hover:underline">
+                <a 
+                  href="https://api.gstsa1.org/assets/docs/terms-and-conditions.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer" 
+                  className="text-blue-500 hover:underline"
+                >
                   Download Terms & Conditions
                 </a>
                 )
@@ -246,9 +268,9 @@ function Payment() {
             </div>
           </div>
 
-          {/* Enhanced Payment Summary Section */}
-          <div className="bg-white rounded-xl shadow-md p-6 h-fit">
-            <h2 className="text-xl mb-6">Order Summary</h2>
+          {/* Order Summary Section - Make it full width on mobile */}
+          <div className="col-span-1 bg-white rounded-xl shadow-md p-4 md:p-6 h-fit">
+            <h2 className="text-lg md:text-xl mb-4 md:mb-6">Order Summary</h2>
 
             {/* Cart Items List */}
             <div className="space-y-4 mb-6">
@@ -330,17 +352,11 @@ function Payment() {
           </div>
         </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-end mt-8">
-          {/* <button
-            onClick={() => navigate("/register/membership-form")}
-            className="px-6 py-2 border border-navy-600 text-navy-600 rounded-lg hover:bg-navy-50"
-          >
-            Previous
-          </button> */}
+        {/* Navigation Buttons - Stack on mobile */}
+        <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6 md:mt-8">
           <Button
             onClick={handlePaymentComplete}
-            className="px-6 py-2 bg-navy-600 text-white rounded-lg hover:bg-navy-700 cursor-pointer"
+            className="w-full sm:w-auto px-4 md:px-6 py-2 md:py-3 bg-navy-600 text-white rounded-lg hover:bg-navy-700"
             isDisabled={!acceptTerms || isCheckoutLoading}
             isLoading={isCheckoutLoading}
           >
