@@ -2,8 +2,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { updateAccessToken, logout } from "../slices/memberSlice";
 
 const baseQuery = fetchBaseQuery({
-  // baseUrl: "https://api.gstsa1.org/api",
-  baseUrl: "http://localhost:3000/api",
+  baseUrl: "https://api.gstsa1.org/api",
+  // baseUrl: "http://localhost:3000/api",
   prepareHeaders: (headers, { getState }) => {
     const token = getState().member.accessToken;
     if (token) {
