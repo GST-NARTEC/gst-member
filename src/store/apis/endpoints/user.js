@@ -41,6 +41,24 @@ const user = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+
+    getUserById: builder.query({
+      query: (args) => ({
+        url: `/user/v1/${args.id}`,
+        method: "GET",
+        params: args.params,
+      }),
+      providesTags: ["userDetails"],
+    }),
+
+    updateUser: builder.mutation({
+      query: (data) => ({
+        url: `/user/v1/${data.id}`,
+        method: "PUT",
+        body: data.data,
+      }),
+      invalidatesTags: ["userDetails", "users"],
+    }),
   }),
 });
 
@@ -50,4 +68,6 @@ export const {
   useCreateUserMutation,
   useVerifyLicenseMutation,
   useGetUserQuery,
+  useGetUserByIdQuery,
+  useUpdateUserMutation,
 } = user;

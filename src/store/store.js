@@ -3,6 +3,7 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 import { apiSlice } from "./apis/apiSlice";
 import currencySymbolReducer from "./slices/currencySymbolSlice";
 import cartReducer from "./slices/cartSlice";
+import memberReducer from "./slices/memberSlice";
 
 // Load state from local storage
 const loadState = () => {
@@ -15,6 +16,7 @@ const loadState = () => {
     return {
       currencySymbol: persistedState.currencySymbol,
       cart: persistedState.cart,
+      member: persistedState.member,
     };
   } catch (err) {
     return undefined;
@@ -27,6 +29,7 @@ const saveState = (state) => {
     const stateToPersist = {
       currencySymbol: state.currencySymbol,
       cart: state.cart,
+      member: state.member,
     };
     const serializedState = JSON.stringify(stateToPersist);
     localStorage.setItem("reduxState", serializedState);
@@ -40,6 +43,7 @@ export const store = configureStore({
     [apiSlice.reducerPath]: apiSlice.reducer,
     currencySymbol: currencySymbolReducer,
     cart: cartReducer,
+    member: memberReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(apiSlice.middleware),

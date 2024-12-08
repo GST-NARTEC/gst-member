@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Images } from "../../../assets/Index";
 import { IoMail } from "react-icons/io5";
 import { FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useLoginMutation } from "../../../store/apis/endpoints/member";
+import { Button } from "@nextui-org/react";
+import toast from "react-hot-toast";
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -10,11 +13,22 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const [login, { isLoading, isSuccess, isError, error }] = useLoginMutation();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/member-portal/dashboard");
-    console.log("Login attempted with:", { email, password });
+    await login({ email, password });
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Login successful");
+      navigate("/member-portal/dashboard");
+    }
+    if (isError) {
+      toast.error(error?.data?.message);
+    }
+  }, [isSuccess, isError, error]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-navy-600 to-navy-700">
@@ -115,15 +129,16 @@ const LoginPage = () => {
               </div>
 
               {/* Submit Button */}
-              <button
+              <Button
                 type="submit"
-                className="w-full py-3.5 px-4 mt-4 border border-transparent rounded-lg
-                         text-sm font-medium text-white bg-blue-600 hover:bg-blue-700
-                         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
-                         transition duration-200 shadow-sm"
+                isLoading={isLoading}
+                className="w-full py-4 px-4 mt-4 border border-transparent rounded-lg
+                             text-sm font-medium text-white bg-blue-600 hover:bg-blue-700
+                             focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+                             transition duration-200 shadow-sm"
               >
                 Sign in
-              </button>
+              </Button>
             </form>
 
             {/* Sign Up Link */}

@@ -14,39 +14,89 @@ import {
   FaFileAlt,
   FaHandshake,
   FaSignOutAlt,
+  FaBoxes,
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { Images } from "../../assets/Index";
 import { MdEmail } from "react-icons/md";
-
+import { useDispatch } from "react-redux";
+import { logout } from "../../store/slices/memberSlice";
 function Sidebar({ isOpen, toggleSidebar, isLargeScreenCollapsed }) {
   const location = useLocation();
   const [openDropdowns, setOpenDropdowns] = useState({});
 
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
   const menuItems = [
-    { path: "/dashboard", icon: <FaChartLine />, label: "Dashboard" },
-    { path: "/profile", icon: <FaUser />, label: "My Profile" },
-    { path: "/barcodes", icon: <FaBarcode />, label: "My Barcodes" },
-    { path: "/gln", icon: <FaMapMarkerAlt />, label: "GLN (Location)" },
-    { path: "/brands", icon: <FaTrademark />, label: "My Brands" },
-    { path: "/billing", icon: <FaFileInvoiceDollar />, label: "My Billing" },
-    { path: "/subscription", icon: <FaReceipt />, label: "My Subscription" },
-    { path: "/help-desk", icon: <FaQuestionCircle />, label: "Help Desk" },
     {
-      path: "/terms",
+      path: "/member-portal/dashboard",
+      icon: <FaChartLine />,
+      label: "Dashboard",
+    },
+    {
+      path: "/member-portal/my-profile",
+      icon: <FaUser />,
+      label: "My Profile",
+    },
+    {
+      path: "/member-portal/my-barcodes",
+      icon: <FaBarcode />,
+      label: "My Barcodes",
+    },
+    {
+      path: "/member-portal/my-products",
+      icon: <FaBoxes />,
+      label: "My Products",
+    },
+    {
+      // path: "/member-portal/gln",
+      icon: <FaMapMarkerAlt />,
+      label: "GLN (Location)",
+    },
+    {
+      path: "/member-portal/my-brands",
+      icon: <FaTrademark />,
+      label: "My Brands",
+    },
+    {
+      path: "/member-portal/billing",
+      icon: <FaFileInvoiceDollar />,
+      label: "My Billing",
+    },
+    {
+      // path: "/member-portal/subscription",
+      icon: <FaReceipt />,
+      label: "My Subscription",
+    },
+    {
+      // path: "/help-desk",
+      icon: <FaQuestionCircle />,
+      label: "Help Desk",
+    },
+    {
+      path: "/member-portal/gst-terms",
       icon: <FaFileContract />,
       label: "GST Terms & Conditions",
     },
     {
-      path: "/data-policy",
+      // path: "/member-portal/data-policy",
       icon: <FaFileAlt />,
       label: "Data Declaration Policy",
     },
-    { path: "/contract", icon: <FaHandshake />, label: "My GST Contract" },
     {
-      path: "/logout",
+      // path: "/member-portal/contract",
+      icon: <FaHandshake />,
+      label: "My GST Contract",
+    },
+    {
+      // path: "/logout",
       icon: <FaSignOutAlt />,
       label: "Log-out",
+      onClick: handleLogout,
       className: "mt-auto text-red-400 hover:text-red-300",
     },
   ];
@@ -122,6 +172,7 @@ function Sidebar({ isOpen, toggleSidebar, isLargeScreenCollapsed }) {
               <Link
                 key={item.path}
                 to={item.path}
+                onClick={item.onClick}
                 className={`flex items-center p-3 rounded-lg mb-2 transition-colors relative group
                   ${
                     location.pathname === item.path

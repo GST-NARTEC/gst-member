@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  symbol: "$",
+  symbol: "SAR",
 };
 
 const currencySymbolSlice = createSlice({
@@ -12,7 +12,7 @@ const currencySymbolSlice = createSlice({
       state.symbol = action.payload;
     },
     resetCurrencySymbol: (state) => {
-      state.symbol = "$";
+      state.symbol = "SAR";
     },
   },
 });
