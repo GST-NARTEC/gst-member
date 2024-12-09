@@ -20,7 +20,7 @@ import RetailersSection from "../../../components/Website/HomePage/RetailersSect
 
 export default function HomePage() {
   const [codeCount, setCodeCount] = useState("");
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   return (
     <Layout>
@@ -64,10 +64,9 @@ export default function HomePage() {
           </motion.div>
         </div>
       </section>
-      <Services />
       <OrderFeatures />
       <RetailersSection />
-  
+      <Services />
 
       {/* Calculator Section with Glass Effect */}
       <section className="py-20 bg-gradient-to-br from-primary/10 to-blue-50">
