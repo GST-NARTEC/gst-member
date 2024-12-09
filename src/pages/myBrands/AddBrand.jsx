@@ -71,7 +71,7 @@ function AddBrand({ isOpen, onClose }) {
               <Input
                 type="file"
                 label="Document"
-                accept=".pdf,.doc,.docx"
+                accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
                 onChange={handleFileChange}
               />
             </div>

@@ -25,7 +25,7 @@ export default function HomePage() {
   return (
     <Layout>
       {/* Hero Section with Gradient Background */}
-      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary max-h-[80vh] flex items-center ">
+      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary max-h-[90vh]   2xl:max-h-[55vh] flex items-center ">
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20"></div>
         <div className="container mx-auto px-4 py-20 relative z-10">
           <motion.div

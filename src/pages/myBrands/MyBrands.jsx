@@ -100,7 +100,7 @@ function MyBrands() {
               </Button>
             </DropdownTrigger>
             <DropdownMenu>
-              <DropdownItem startContent={<FaEye />}>View</DropdownItem>
+              {/* <DropdownItem startContent={<FaEye />}>View</DropdownItem> */}
               <DropdownItem
                 startContent={<FaEdit />}
                 onPress={() => handleEdit(item)}
