@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDisclosure, Chip, Button } from "@nextui-org/react";
 import {
   MdEmail,
@@ -10,7 +10,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import OtpVerificationModal from "../../../components/auth/registration/OtpVerificationModal";
 import { BsCheckCircleFill, BsXCircleFill } from "react-icons/bs";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import LocationPicker from "../../../components/auth/registration/LocationPicker";
 import LocationSelects from "../../../components/auth/registration/LocationSelects";
 import PhoneInput from "react-phone-input-2";
@@ -19,14 +19,16 @@ import "react-phone-input-2/lib/style.css";
 // api
 import {
   useSendOtpMutation,
-  useCreateUserMutation,
   useVerifyLicenseMutation,
 } from "../../../store/apis/endpoints/user";
 import toast from "react-hot-toast";
 import { LoadScript } from "@react-google-maps/api";
 import LicenseRegistrationModal from "../../../components/auth/registration/LicenseRegistrationModal";
-import { selectCartItems } from "../../../store/slices/cartSlice";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setPersonalInfo,
+  selectPersonalInfo,
+} from "../../../store/slices/personalInfoSlice";
 
 const MembershipForm = () => {
   const navigate = useNavigate();
@@ -35,7 +37,9 @@ const MembershipForm = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
-  const cartItems = useSelector(selectCartItems);
+  const personalInfo = useSelector(selectPersonalInfo);
+
+  const dispatch = useDispatch();
 
   // api call
   const [
@@ -48,16 +52,7 @@ const MembershipForm = () => {
       data: emailData,
     },
   ] = useSendOtpMutation();
-  const [
-    createUser,
-    {
-      isLoading: isCreatingUser,
-      isSuccess: isUserCreated,
-      isError: isUserError,
-      error: userError,
-      data: userData,
-    },
-  ] = useCreateUserMutation();
+
   const [
     verifyLicense,
     {
@@ -77,22 +72,48 @@ const MembershipForm = () => {
   } = useForm({
     mode: "onChange",
     defaultValues: {
-      email: "",
-      companyLicenseNo: "",
-      companyNameAr: "",
-      companyNameEn: "",
-      mobileNumber: "",
-      landline: "",
-      country: "",
-      region: "",
-      city: "",
-      zipCode: "",
-      streetAddress: "",
-      latitude: null,
-      longitude: null,
+      email: personalInfo.email || "",
+      companyLicenseNo: personalInfo.companyLicenseNo || "",
+      companyNameAr: personalInfo.companyNameAr || "",
+      companyNameEn: personalInfo.companyNameEn || "",
+      mobileNumber: personalInfo.mobile || "",
+      landline: personalInfo.landline || "",
+      country: personalInfo.country || "",
+      region: personalInfo.region || "",
+      city: personalInfo.city || "",
+      zipCode: personalInfo.zipCode || "",
+      streetAddress: personalInfo.streetAddress || "",
+      latitude: personalInfo.latitude || null,
+      longitude: personalInfo.longitude || null,
     },
     reValidateMode: "onChange",
   });
+
+  useEffect(() => {
+    // Check if personalInfo exists in Redux store
+    if (Object.keys(personalInfo).length > 0) {
+      // Pre-fill all form fields
+      setValue("email", personalInfo.email);
+      setValue("companyLicenseNo", personalInfo.companyLicenseNo);
+      setValue("companyNameEn", personalInfo.companyNameEn);
+      setValue("companyNameAr", personalInfo.companyNameAr);
+      setValue("landline", personalInfo.landline);
+      setValue("mobileNumber", personalInfo.mobile);
+      setValue("country", personalInfo.country);
+      setValue("region", personalInfo.region);
+      setValue("city", personalInfo.city);
+      setValue("zipCode", personalInfo.zipCode);
+      setValue("streetAddress", personalInfo.streetAddress);
+      setValue("latitude", personalInfo.latitude);
+      setValue("longitude", personalInfo.longitude);
+
+      // Set verification states if data exists
+      setIsVerified(true);
+      setHasAttemptedEmailVerification(true);
+      setIsLicenseVerified(true);
+      setHasAttemptedLicenseVerification(true);
+    }
+  }, []); // Run once on mount
 
   const email = watch("email");
 
@@ -171,15 +192,6 @@ const MembershipForm = () => {
     }
   }, [isLicenseError, licenseError, isLicenseSuccess]);
 
-  useEffect(() => {
-    if (isUserError) {
-      toast.error(userError?.data?.message || "Failed to create user");
-    } else if (isUserCreated) {
-      localStorage.setItem("userData", JSON.stringify(userData?.data?.user));
-      navigate("/register/payment");
-    }
-  }, [isUserError, userError, isUserCreated, navigate]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -197,22 +209,10 @@ const MembershipForm = () => {
       streetAddress: watch("streetAddress"),
       latitude: parseFloat(watch("latitude")),
       longitude: parseFloat(watch("longitude")),
-      cartItems: cartItems.map((item) => ({
-        productId: item.id,
-        quantity: item.quantity,
-        addons:
-          item.selectedAddons?.map((addon) => ({
-            id: addon.id,
-            quantity: addon.quantity,
-          })) || [],
-      })),
     };
 
-    try {
-      await createUser(formData).unwrap();
-    } catch (error) {
-      console.error("Failed to create user:", error);
-    }
+    dispatch(setPersonalInfo(formData));
+    navigate("/register/payment");
   };
 
   const handleLocationChange = (location) => {
@@ -228,10 +228,10 @@ const MembershipForm = () => {
 
   const handleLicenseRegistrationSuccess = ({ licenseNumber, isVerified }) => {
     setValue("companyLicenseNo", licenseNumber);
-    setIsLicenseVerified(true);
+    // setIsLicenseVerified(true);
     setIsLicenseInvalid(false);
     setHasAttemptedLicenseVerification(true);
-    setShowLicenseVerifyButton(false);
+    // setShowLicenseVerifyButton(false);
     toast.success("License registered and verified successfully");
     setShowLicenseRegModal(false);
   };
@@ -334,7 +334,7 @@ const MembershipForm = () => {
                 </label>
                 <div className="relative">
                   <input
-                    disabled={!isVerified}
+                    // disabled={!isVerified}
                     type="text"
                     value={watch("companyLicenseNo")}
                     onChange={handleLicenseInputChange}
@@ -560,14 +560,9 @@ const MembershipForm = () => {
                 type="button"
                 onClick={handleSubmit}
                 className="w-full sm:w-auto px-6 py-3 bg-navy-600 text-white rounded-lg hover:bg-navy-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={
-                  !isVerified ||
-                  !isLicenseVerified ||
-                  !isValid ||
-                  isCreatingUser
-                }
+                disabled={!isVerified || !isLicenseVerified || !isValid}
               >
-                {isCreatingUser ? "Saving..." : "Save & Next"}
+                Save & Next
               </button>
             </div>
           </div>

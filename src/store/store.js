@@ -4,6 +4,7 @@ import { apiSlice } from "./apis/apiSlice";
 import currencySymbolReducer from "./slices/currencySymbolSlice";
 import cartReducer from "./slices/cartSlice";
 import memberReducer from "./slices/memberSlice";
+import personalInfoReducer from "./slices/personalInfoSlice";
 
 // Load state from local storage
 const loadState = () => {
@@ -17,6 +18,7 @@ const loadState = () => {
       currencySymbol: persistedState.currencySymbol,
       cart: persistedState.cart,
       member: persistedState.member,
+      personalInfo: persistedState.personalInfo,
     };
   } catch (err) {
     return undefined;
@@ -30,6 +32,7 @@ const saveState = (state) => {
       currencySymbol: state.currencySymbol,
       cart: state.cart,
       member: state.member,
+      personalInfo: state.personalInfo,
     };
     const serializedState = JSON.stringify(stateToPersist);
     localStorage.setItem("reduxState", serializedState);
@@ -44,6 +47,7 @@ export const store = configureStore({
     currencySymbol: currencySymbolReducer,
     cart: cartReducer,
     member: memberReducer,
+    personalInfo: personalInfoReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(apiSlice.middleware),

@@ -4,7 +4,7 @@ const checkout = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     checkout: builder.mutation({
       query: (checkoutData) => ({
-        url: "/checkout/v1/process",
+        url: "/user/v2/create-with-checkout",
         method: "POST",
         body: checkoutData,
       }),

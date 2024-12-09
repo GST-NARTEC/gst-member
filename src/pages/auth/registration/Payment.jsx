@@ -18,10 +18,15 @@ import {
   selectVatDetails,
   clearCart,
 } from "../../../store/slices/cartSlice";
+import {
+  selectPersonalInfo,
+  resetForm,
+} from "../../../store/slices/personalInfoSlice";
 
 function Payment() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const [paymentMethod, setPaymentMethod] = useState("bank");
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -31,8 +36,8 @@ function Payment() {
     height: window.innerHeight,
   });
 
-  const userData = JSON.parse(localStorage.getItem("userData"));
   const currencySymbol = useSelector(selectCurrencySymbol);
+  const personalInfo = useSelector(selectPersonalInfo);
   const cartItems = useSelector(selectCartItems);
   const {
     subtotal: cartSubtotal,
@@ -46,29 +51,43 @@ function Payment() {
     { isLoading: isCheckoutLoading, isSuccess, isError, error },
   ] = useCheckoutMutation();
 
+  const handleResetStore = () => {
+    dispatch(resetForm());
+    dispatch(clearCart());
+  };
+
   const handlePaymentComplete = async () => {
     try {
-      const paymentTypeMap = {
-        bank: "Bank Transfer",
-        card: "Credit Card",
-        debit: "Debit Card",
-        stc: "STC Pay",
-        tabby: "Tabby",
+      const formattedCartItems = cartItems.map((item) => ({
+        productId: item.id,
+        quantity: item.quantity,
+        addons:
+          item.selectedAddons?.map((addon) => ({
+            id: addon.id,
+            quantity: addon.quantity,
+          })) || [],
+      }));
+
+      const checkoutPayload = {
+        email: personalInfo.email,
+        companyNameEn: personalInfo.companyNameEn,
+        companyNameAr: personalInfo.companyNameAr,
+        mobile: personalInfo.mobile,
+        country: personalInfo.country,
+        region: personalInfo.region,
+        city: personalInfo.city,
+        companyLicenseNo: personalInfo.companyLicenseNo,
+        streetAddress: personalInfo.streetAddress,
+        zipCode: personalInfo.zipCode,
+        cartItems: formattedCartItems,
+        paymentType: "Bank Transfer",
+        vat: vatDetails.value,
       };
 
-      const response = await checkout({
-        userId: userData?.id,
-        paymentType: paymentTypeMap[paymentMethod],
-        vat: parseFloat(cartVAT),
-      });
-
-      if (response.data) {
-        dispatch(clearCart());
-        localStorage.removeItem("userData");
-        setShowSuccessModal(true);
-      }
+      const response = await checkout(checkoutPayload);
     } catch (error) {
       console.error("Payment failed:", error);
+      toast.error(error?.data?.message || "Payment failed");
     }
   };
 
@@ -76,8 +95,7 @@ function Payment() {
     if (isSuccess) {
       setShowConfetti(true);
       setShowSuccessModal(true);
-      localStorage.removeItem("userData");
-
+      handleResetStore();
       setTimeout(() => {
         setShowConfetti(false);
       }, 5000);
@@ -110,6 +128,7 @@ function Payment() {
         />
       )}
       <div className="max-w-6xl mx-auto p-3 sm:p-4 md:p-6">
+        {/* <button onClick={handleResetStore}>clear state</button> */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
           {/* Payment Methods Section - Make it full width on mobile */}
           <div className="col-span-1 lg:col-span-2  rounded-xl  p-4 md:p-6">
@@ -121,9 +140,13 @@ function Payment() {
               className="gap-3 md:gap-4"
             >
               <div className="space-y-3 md:space-y-4">
-                <div className={`p-3 md:p-4 border rounded-lg transition-all ${
-                  paymentMethod === "bank" ? "border-blue-500 bg-blue-50" : "border-gray-200"
-                }`}>
+                <div
+                  className={`p-3 md:p-4 border rounded-lg transition-all ${
+                    paymentMethod === "bank"
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-gray-200"
+                  }`}
+                >
                   <Radio value="bank" className="flex items-center gap-2">
                     <div className="flex items-center gap-2">
                       <BsBank2 className="text-xl" />
@@ -150,10 +173,11 @@ function Payment() {
                         <FaCcMastercard className="text-2xl text-red-500" />
                       </div>
                       <span>Visa / Master Card</span>
-                      <span className="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Coming Soon</span>
+                      <span className="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                        Coming Soon
+                      </span>
                     </div>
                   </Radio>
-
                 </div>
 
                 <div
@@ -171,7 +195,9 @@ function Payment() {
                     <div className="flex items-center gap-2 w-full">
                       <BsCreditCard2Front className="text-xl" />
                       <span>Credit/Debit card</span>
-                      <span className="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Coming Soon</span>
+                      <span className="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                        Coming Soon
+                      </span>
                     </div>
                   </Radio>
                 </div>
@@ -191,7 +217,9 @@ function Payment() {
                     <div className="flex items-center gap-2 w-full">
                       <SiStencyl className="text-xl" />
                       <span>STC Pay</span>
-                      <span className="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Coming Soon</span>
+                      <span className="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                        Coming Soon
+                      </span>
                     </div>
                   </Radio>
                 </div>
@@ -211,7 +239,9 @@ function Payment() {
                     <div className="flex items-center gap-2 w-full">
                       <GiTakeMyMoney className="text-xl" />
                       <span>Tabby</span>
-                      <span className="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">Coming Soon</span>
+                      <span className="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                        Coming Soon
+                      </span>
                     </div>
                   </Radio>
                 </div>
@@ -255,10 +285,10 @@ function Payment() {
                 size="sm"
               >
                 Accept the Terms & Conditions (
-                <a 
+                <a
                   href="https://api.gstsa1.org/assets/docs/terms-and-conditions.pdf"
                   target="_blank"
-                  rel="noopener noreferrer" 
+                  rel="noopener noreferrer"
                   className="text-blue-500 hover:underline"
                 >
                   Download Terms & Conditions
@@ -353,14 +383,20 @@ function Payment() {
         </div>
 
         {/* Navigation Buttons - Stack on mobile */}
-        <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6 md:mt-8">
+        <div className="flex flex-col sm:flex-row justify-between gap-3 mt-6 md:mt-8">
+          <Button
+            onClick={() => navigate(-1)}
+            className="w-full sm:w-auto px-4 md:px-6 py-2 md:py-3 bg-gray-200 text-gray-600 rounded-lg hover:bg-gray-300"
+          >
+            Back
+          </Button>
           <Button
             onClick={handlePaymentComplete}
             className="w-full sm:w-auto px-4 md:px-6 py-2 md:py-3 bg-navy-600 text-white rounded-lg hover:bg-navy-700"
             isDisabled={!acceptTerms || isCheckoutLoading}
             isLoading={isCheckoutLoading}
           >
-            {isCheckoutLoading ? "Processing..." : "Complete Payment"}
+            {isCheckoutLoading ? "Processing..." : "Submit"}
           </Button>
         </div>
       </div>

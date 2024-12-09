@@ -20,14 +20,12 @@ import RetailersSection from "../../../components/Website/HomePage/RetailersSect
 
 export default function HomePage() {
   const [codeCount, setCodeCount] = useState("");
-  const navigate = useNavigate();
-
- 
+  const navigate = useNavigate(); 
 
   return (
     <Layout>
       {/* Hero Section with Gradient Background */}
-      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary min-h-[90vh] flex items-center">
+      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary max-h-[80vh] flex items-center ">
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20"></div>
         <div className="container mx-auto px-4 py-20 relative z-10">
           <motion.div
@@ -41,7 +39,7 @@ export default function HomePage() {
                 Digital Identity
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 mb-12">
+            <p className="text-xl md:text-2xl text-gray-300 mb-10">
               Empower your business with globally recognized barcodes and
               digital solutions
             </p>

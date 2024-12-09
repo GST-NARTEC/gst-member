@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import { MdLocationOn } from "react-icons/md";
 import { FaGlobe } from "react-icons/fa";
@@ -9,9 +9,11 @@ import {
 } from "../../../store/apis/endpoints/location";
 
 const LocationSelects = ({ control, isDisabled, errors }) => {
+  
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
+
 
   const { data: countriesResponse, isLoading: isLoadingCountries } =
     useGetCountriesQuery();
@@ -28,6 +30,37 @@ const LocationSelects = ({ control, isDisabled, errors }) => {
   const countries = countriesResponse?.data?.countries || [];
   const regions = regionsResponse?.data?.regions || [];
   const cities = citiesResponse?.data?.cities || [];
+
+   // Initialize selections based on form values
+   useEffect(() => {
+    const countryValue = control._formValues.country;
+    const regionValue = control._formValues.region;
+    const cityValue = control._formValues.city;
+
+    if (countryValue) {
+      // Find country ID by name
+      const country = countries.find(c => c.nameEn === countryValue);
+      if (country) {
+        setSelectedCountry(country.id);
+      }
+    }
+
+    if (regionValue) {
+      // Find region ID by name
+      const region = regions.find(r => r.nameEn === regionValue);
+      if (region) {
+        setSelectedRegion(region.id);
+      }
+    }
+
+    if (cityValue) {
+      // Find city ID by name
+      const city = cities.find(c => c.nameEn === cityValue);
+      if (city) {
+        setSelectedCity(city.id);
+      }
+    }
+  }, [countries, regions, cities, control._formValues]);
 
   return (
     <>
