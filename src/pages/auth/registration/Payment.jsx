@@ -73,18 +73,21 @@ function Payment() {
         companyNameEn: personalInfo.companyNameEn,
         companyNameAr: personalInfo.companyNameAr,
         mobile: personalInfo.mobile,
+        landline: personalInfo.landline,
         country: personalInfo.country,
         region: personalInfo.region,
         city: personalInfo.city,
         companyLicenseNo: personalInfo.companyLicenseNo,
         streetAddress: personalInfo.streetAddress,
         zipCode: personalInfo.zipCode,
+        latitude: personalInfo.latitude,
+        longitude: personalInfo.longitude,
         cartItems: formattedCartItems,
         paymentType: "Bank Transfer",
         vat: vatDetails.value,
       };
 
-      const response = await checkout(checkoutPayload);
+      await checkout(checkoutPayload);
     } catch (error) {
       console.error("Payment failed:", error);
       toast.error(error?.data?.message || "Payment failed");

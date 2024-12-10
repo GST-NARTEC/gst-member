@@ -72,7 +72,7 @@ export const Header = () => {
             <img src={Images.Upcs} alt="Upcs Logo" className="h-10 ml-4" />
           </motion.div>
 
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-8 z-50">
             {navItems.map((item) => (
               <div key={item.name} className="relative group">
                 <a
