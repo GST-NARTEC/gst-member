@@ -95,11 +95,23 @@ function MyProducts() {
       case "actions":
         return (
           <div className="flex gap-2">
-            <Button size="sm" color="primary" onClick={() => handleEdit(product.id)}>
-              Edit
+            <Button
+              isIconOnly
+              size="sm"
+              variant="light"
+              color="primary"
+              onClick={() => handleEdit(product.id)}
+            >
+              <FaEdit className="text-lg" />
             </Button>
-            <Button size="sm" color="danger" onClick={() => handleDelete(product)}>
-              Delete
+            <Button
+              isIconOnly
+              size="sm"
+              variant="light"
+              color="danger"
+              onClick={() => handleDelete(product)}
+            >
+              <FaTrash className="text-lg" />
             </Button>
           </div>
         );

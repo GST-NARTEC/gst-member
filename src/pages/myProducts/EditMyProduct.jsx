@@ -19,6 +19,7 @@ import MyBrands from "../../components/myProducts/MyBrands";
 import {
   useGetUserProductByIdQuery,
   useUpdateUserProductMutation,
+  useDeleteUserProductImageMutation,
 } from "../../store/apis/endpoints/userProducts";
 
 function EditMyProduct() {
@@ -27,6 +28,8 @@ function EditMyProduct() {
   const { data: productData, isLoading } = useGetUserProductByIdQuery({ id });
   const [updateProduct, { isLoading: isUpdating }] =
     useUpdateUserProductMutation();
+  const [deleteImage, { isLoading: isDeletingImage }] =
+    useDeleteUserProductImageMutation();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -81,10 +84,36 @@ function EditMyProduct() {
     }
   };
 
-  const removeImage = (index) => {
-    const newImages = [...formData.images];
-    newImages[index] = null;
-    setFormData((prev) => ({ ...prev, images: newImages }));
+  const [deletingImageIds, setDeletingImageIds] = useState([]);
+
+  const removeImage = async (index) => {
+    const image = formData.images[index];
+    
+    // If it's a local image (newly selected), just remove it from state
+    if (image && !image.url) {
+      const newImages = [...formData.images];
+      newImages[index] = null;
+      setFormData(prev => ({ ...prev, images: newImages }));
+      return;
+    }
+
+    // If it's an existing image from API, delete it
+    if (image?.id) {
+      try {
+        setDeletingImageIds(prev => [...prev, image.id]);
+        await deleteImage({ 
+          productId: productData.data.product.id, 
+          imageId: image.id 
+        }).unwrap();
+        const newImages = [...formData.images];
+        newImages[index] = null;
+        setFormData(prev => ({ ...prev, images: newImages }));
+      } catch (error) {
+        console.error('Failed to delete image:', error);
+      } finally {
+        setDeletingImageIds(prev => prev.filter(id => id !== image.id));
+      }
+    }
   };
 
   const handleSubmit = async () => {
@@ -162,11 +191,11 @@ function EditMyProduct() {
                 <div className="flex items-center space-x-4">
                   <span className="text-sm">Status:</span>
                   <Switch
-                    defaultSelected={formData.status === "ACTIVE"}
-                    onChange={(e) =>
+                    isSelected={formData.status === "ACTIVE"}
+                    onValueChange={(isSelected) =>
                       setFormData((prev) => ({
                         ...prev,
-                        status: e ? "ACTIVE" : "INACTIVE",
+                        status: isSelected ? "ACTIVE" : "INACTIVE",
                       }))
                     }
                   />
@@ -299,6 +328,7 @@ function EditMyProduct() {
                             isIconOnly
                             className="absolute top-2 right-2 z-10"
                             onClick={() => removeImage(index)}
+                            isLoading={image.id && deletingImageIds.includes(image.id)}
                           >
                             <FaTrash />
                           </Button>
