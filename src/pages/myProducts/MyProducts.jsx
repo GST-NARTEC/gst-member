@@ -1,5 +1,4 @@
-import React, { useMemo } from "react";
-import MainLayout from "../../layout/PortalLayouts/MainLayout";
+import React, { useState, useMemo } from "react";
 import {
   Table,
   TableHeader,
@@ -9,133 +8,190 @@ import {
   TableCell,
   Input,
   Button,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
+  Pagination,
+  Chip,
+  Image,
+  Spinner,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
-import { FaSearch, FaEye, FaEdit, FaEllipsisV } from "react-icons/fa";
+import { useGetUserProductsQuery, useDeleteUserProductMutation } from "../../store/apis/endpoints/userProducts";
+import { useDebounce } from "../../hooks/useDebounce";
+import MainLayout from "../../layout/PortalLayouts/MainLayout";
+import { FaTrash, FaEdit } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import DeleteMyProduct from "./DeleteMyProduct";
+
+const INITIAL_VISIBLE_COLUMNS = [
+  "title",
+  "sku",
+  "gtin",
+  "brandName",
+  "status",
+  "images",
+  "actions",
+];
 
 function MyProducts() {
-  // Dummy data
-  const products = [
-    {
-      id: 1,
-      product: "Shrink drinking water bottles",
-      sku: "SKU001",
-      category: "Beverages",
-      stock: 100,
-      basePrice: 24.99,
-      discountedPrice: 19.99,
-      status: "Active",
-      added: "2024-03-20",
-    },
-    {
-      id: 2,
-      product: "Drinking water bottles",
-      sku: "SKU002",
-      category: "Beverages",
-      stock: 150,
-      basePrice: 29.99,
-      discountedPrice: 25.99,
-      status: "Active",
-      added: "2024-03-19",
-    },
-  ];
+  const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearch = useDebounce(searchQuery, 500);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
+
+  const { data, isLoading, isFetching } = useGetUserProductsQuery({
+    page,
+    limit: rowsPerPage,
+    search: debouncedSearch,
+  });
+
+  const [deleteProduct] = useDeleteUserProductMutation();
+
+  const handleEdit = (productId) => {
+    navigate(`/member-portal/my-products/edit/${productId}`);
+  };
+
+  const handleDelete = (product) => {
+    setProductToDelete(product);
+    setDeleteModalOpen(true);
+  };
 
   const columns = [
-    { name: "PRODUCT", uid: "product" },
+    { name: "TITLE", uid: "title" },
     { name: "SKU", uid: "sku" },
-    { name: "CATEGORY", uid: "category" },
-    { name: "STOCK", uid: "stock" },
-    { name: "BASE PRICE", uid: "basePrice" },
-    { name: "DISCOUNTED PRICE", uid: "discountedPrice" },
+    { name: "GTIN", uid: "gtin" },
+    { name: "BRAND", uid: "brandName" },
     { name: "STATUS", uid: "status" },
-    { name: "ADDED", uid: "added" },
+    { name: "IMAGES", uid: "images" },
     { name: "ACTIONS", uid: "actions" },
   ];
 
-  const renderCell = (item, columnKey) => {
+  const renderCell = (product, columnKey) => {
     switch (columnKey) {
+      case "title":
+        return <div className="font-medium">{product.title}</div>;
       case "status":
         return (
-          <span className="bg-green-100 text-green-800 px-2 py-1 rounded">
-            {item.status}
-          </span>
+          <Chip
+            color={product.status === "ACTIVE" ? "success" : "warning"}
+            size="sm"
+            classNames={{
+              base: "text-sm text-white",
+            }}
+          >
+            {product.status}
+          </Chip>
         );
-      case "basePrice":
-      case "discountedPrice":
-        return <span>${item[columnKey]}</span>;
+      case "images":
+        return product.images?.length > 0 ? (
+          <Image
+            src={product.images[0].url}
+            alt={product.title}
+            className="w-12 h-12 object-cover rounded"
+          />
+        ) : null;
       case "actions":
         return (
-          <Dropdown>
-            <DropdownTrigger>
-              <Button isIconOnly variant="light">
-                <FaEllipsisV className="text-default-400" />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu>
-              <DropdownItem startContent={<FaEye />}>View</DropdownItem>
-              <DropdownItem startContent={<FaEdit />}>Edit</DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+          <div className="flex gap-2">
+            <Button size="sm" color="primary" onClick={() => handleEdit(product.id)}>
+              Edit
+            </Button>
+            <Button size="sm" color="danger" onClick={() => handleDelete(product)}>
+              Delete
+            </Button>
+          </div>
         );
       default:
-        return <p>{item[columnKey]}</p>;
+        return product[columnKey];
     }
   };
 
   const topContent = useMemo(
     () => (
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Product List</h1>
-          <Button color="primary">Add Product</Button>
-        </div>
-        <div className="flex justify-between items-center">
-          <Input
-            isClearable
-            className="w-full sm:max-w-[44%]"
-            placeholder="Search products..."
-            startContent={<FaSearch className="text-default-300" />}
-          />
-        </div>
+      <div className="flex justify-between gap-4 items-center">
+        <Input
+          isClearable
+          placeholder="Search products..."
+          value={searchQuery}
+          onClear={() => setSearchQuery("")}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full sm:max-w-[44%]"
+        />
+        <Button 
+          size="sm"
+          onClick={() => navigate("/member-portal/my-products/add")}
+          color="primary"
+        >
+          Add New Product
+        </Button>
       </div>
     ),
-    []
+    [searchQuery]
   );
+
+  const bottomContent = useMemo(
+    () => (
+      <div className="flex justify-between items-center">
+        <div className="hidden sm:flex gap-2">
+          Total Products: {data?.pagination?.total}
+          {/* select selectItems to change limits  */}
+         
+        </div>
+
+        <Pagination
+          showControls
+          color="primary"
+          page={page}
+          total={data?.pagination?.totalPages || 1}
+          onChange={setPage}
+        />
+      </div>
+    ),
+    [page, data?.pagination?.totalPages]
+  );
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setProductToDelete(null);
+  };
 
   return (
     <MainLayout>
-      <div className=" mx-auto p-8">  
+      <div className="p-8">
         <Table
           aria-label="Products table"
-        topContent={topContent}
-        classNames={{
-          wrapper: "shadow-md rounded-lg  mx-auto",
-        }}
-      >
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn
-              key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}
-              className="bg-gray-50 text-gray-600 "
-            >
-              {column.name}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody items={products}>
-          {(item) => (
-            <TableRow key={item.id}>
-              {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
-              )}
-            </TableRow>
-          )}
-        </TableBody>
+          isHeaderSticky
+          bottomContent={bottomContent}
+          // bottomContentPlacement="outside"
+          topContent={topContent}
+          // topContentPlacement="outside"
+        >
+          <TableHeader columns={columns}>
+            {(column) => (
+              <TableColumn key={column.uid}>{column.name}</TableColumn>
+            )}
+          </TableHeader>
+          <TableBody
+            items={data?.products || []}
+            loadingContent={<Spinner />}
+            isLoading={isLoading || isFetching}
+          >
+            {(product) => (
+              <TableRow key={product.id}>
+                {(columnKey) => (
+                  <TableCell>{renderCell(product, columnKey)}</TableCell>
+                )}
+              </TableRow>
+            )}
+          </TableBody>
         </Table>
+        <DeleteMyProduct 
+          isOpen={deleteModalOpen}
+          onClose={handleCloseDeleteModal}
+          product={productToDelete}
+        />
       </div>
     </MainLayout>
   );

@@ -19,7 +19,14 @@ import {
   Chip,
   Spinner,
 } from "@nextui-org/react";
-import { FaSearch, FaEye, FaEdit, FaEllipsisV, FaQrcode, FaFileAlt } from "react-icons/fa";
+import {
+  FaSearch,
+  FaEye,
+  FaEdit,
+  FaEllipsisV,
+  FaQrcode,
+  FaFileAlt,
+} from "react-icons/fa";
 import { useMemberGtinsQuery } from "../../store/apis/endpoints/member";
 import { useSelector } from "react-redux";
 import { format } from "date-fns";
@@ -37,6 +44,7 @@ function MyBarcodes() {
     { name: "Activated At", uid: "assignedAt" },
     { name: "QR CODE", uid: "qrCode" },
     { name: "CERTIFICATE", uid: "certificate" },
+    { name: "STATUS", uid: "status" },
     { name: "ACTIONS", uid: "actions" },
   ];
 
@@ -67,10 +75,20 @@ function MyBarcodes() {
           <Button
             isIconOnly
             variant="light"
-            onClick={() => window.open(item.barcodeCertificate, '_blank')}
+            onClick={() => window.open(item.barcodeCertificate, "_blank")}
           >
             <FaFileAlt className="text-default-400 text-lg" />
           </Button>
+        );
+      case "status":
+        return (
+          <Chip
+          
+            color={item.status === "Sold" ? "success" : "primary"}
+            variant="flat"
+          >
+            {item.status === "Sold" ? "Unused" : "Used"}
+          </Chip>
         );
       case "actions":
         return (
