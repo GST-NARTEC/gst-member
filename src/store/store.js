@@ -5,6 +5,7 @@ import currencySymbolReducer from "./slices/currencySymbolSlice";
 import cartReducer from "./slices/cartSlice";
 import memberReducer from "./slices/memberSlice";
 import personalInfoReducer from "./slices/personalInfoSlice";
+import externalDataReducer from "./apis/externalApis/externalDataSlice";
 
 // Load state from local storage
 const loadState = () => {
@@ -48,6 +49,7 @@ export const store = configureStore({
     cart: cartReducer,
     member: memberReducer,
     personalInfo: personalInfoReducer,
+    externalData: externalDataReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(apiSlice.middleware),

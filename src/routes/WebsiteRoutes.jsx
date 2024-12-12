@@ -4,6 +4,7 @@ import Stepper from "../pages/auth/registration/Stepper";
 import MembershipForm from "../pages/auth/registration/MembershipForm";
 import Barcodes from "../pages/auth/registration/Barcodes";
 import Payment from "../pages/auth/registration/Payment";
+import BarcodeResult from "../pages/Website/searchBarcode/BarcodeResult";
 
 export default function WebsiteRoutes() {
   return (
@@ -14,6 +15,7 @@ export default function WebsiteRoutes() {
         <Route path="membership-form" element={<MembershipForm />} />
         <Route path="payment" element={<Payment />} />
       </Route>
+      <Route path="/search/:barcode?" element={<BarcodeResult />} />
     </Routes>
   );
 }

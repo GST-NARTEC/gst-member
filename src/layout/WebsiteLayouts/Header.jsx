@@ -67,8 +67,10 @@ export const Header = () => {
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-2"
           >
-            <img src={Images.Logo} alt="GST Logo" className="h-16" />
-            <span className="font-bold text-xl text-gray-900">GST</span>
+            <img src={Images.Logo} alt="GST Logo" className="h-16 cursor-pointer" 
+            onClick={() => navigate("/")}
+            />
+            <span onClick={() => navigate("/")} className="font-bold text-xl text-gray-900 cursor-pointer">GST</span>
             <img src={Images.Upcs} alt="Upcs Logo" className="h-10 ml-4" />
           </motion.div>
 

@@ -14,11 +14,18 @@ import {
   Spinner,
   Select,
   SelectItem,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
 } from "@nextui-org/react";
-import { useGetUserProductsQuery, useDeleteUserProductMutation } from "../../store/apis/endpoints/userProducts";
+import {
+  useGetUserProductsQuery,
+  useDeleteUserProductMutation,
+} from "../../store/apis/endpoints/userProducts";
 import { useDebounce } from "../../hooks/useDebounce";
 import MainLayout from "../../layout/PortalLayouts/MainLayout";
-import { FaTrash, FaEdit } from "react-icons/fa";
+import { FaTrash, FaEdit, FaEllipsisV, FaLink } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import DeleteMyProduct from "./DeleteMyProduct";
 
@@ -71,7 +78,11 @@ function MyProducts() {
   const renderCell = (product, columnKey) => {
     switch (columnKey) {
       case "title":
-        return <div className="font-medium">{product.title}</div>;
+        return (
+          <div className="font-medium line-clamp-2 max-w-[200px]">
+            {product.title}
+          </div>
+        );
       case "status":
         return (
           <Chip
@@ -94,26 +105,49 @@ function MyProducts() {
         ) : null;
       case "actions":
         return (
-          <div className="flex gap-2">
-            <Button
-              isIconOnly
-              size="sm"
-              variant="light"
-              color="primary"
-              onClick={() => handleEdit(product.id)}
-            >
-              <FaEdit className="text-lg" />
-            </Button>
-            <Button
-              isIconOnly
-              size="sm"
-              variant="light"
-              color="danger"
-              onClick={() => handleDelete(product)}
-            >
-              <FaTrash className="text-lg" />
-            </Button>
-          </div>
+          <Dropdown>
+            <DropdownTrigger>
+              <Button isIconOnly size="sm" variant="light">
+                <FaEllipsisV className="text-lg" />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Product Actions">
+              <DropdownItem
+                key="edit"
+                startContent={<FaEdit className="text-primary" />}
+                onClick={() => handleEdit(product.id)}
+              >
+                Edit Product
+              </DropdownItem>
+              <DropdownItem
+                key="digital-link"
+                startContent={<FaLink className="text-blue-500" />}
+                onClick={() =>
+                  navigate(
+                    `/member-portal/my-products/digital-link/${product.id}`,
+                    {
+                      state: {
+                        gtin: product.gtin,
+                        productName: product.title,
+                        brandName: product.brandName,
+                      },
+                    }
+                  )
+                }
+              >
+                Digital Link
+              </DropdownItem>
+              <DropdownItem
+                key="delete"
+                className="text-danger"
+                color="danger"
+                startContent={<FaTrash className="text-danger" />}
+                onClick={() => handleDelete(product)}
+              >
+                Delete Product
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         );
       default:
         return product[columnKey];
@@ -131,7 +165,7 @@ function MyProducts() {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full sm:max-w-[44%]"
         />
-        <Button 
+        <Button
           size="sm"
           onClick={() => navigate("/member-portal/my-products/add")}
           color="primary"
@@ -149,7 +183,6 @@ function MyProducts() {
         <div className="hidden sm:flex gap-2">
           Total Products: {data?.pagination?.total}
           {/* select selectItems to change limits  */}
-         
         </div>
 
         <Pagination
@@ -172,6 +205,11 @@ function MyProducts() {
   return (
     <MainLayout>
       <div className="p-8">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-primary my-4 mx-4">
+            My Products
+          </h1>
+        </div>
         <Table
           aria-label="Products table"
           isHeaderSticky
@@ -199,7 +237,7 @@ function MyProducts() {
             )}
           </TableBody>
         </Table>
-        <DeleteMyProduct 
+        <DeleteMyProduct
           isOpen={deleteModalOpen}
           onClose={handleCloseDeleteModal}
           product={productToDelete}

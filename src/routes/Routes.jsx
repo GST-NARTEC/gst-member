@@ -10,6 +10,7 @@ import GSTTermsAndCondition from "../pages/gstTermsAndCondition/GSTTermsAndCondi
 import Billing from "../pages/myBilling/Billing";
 import AddMyProduct from "../pages/myProducts/AddMyProduct";
 import EditMyProduct from "../pages/myProducts/EditMyProduct";
+import DigitalLink from "../pages/myProducts/digitalLink/DigitalLink";
 
 export default function AppRoutes() {
   return (
@@ -35,6 +36,7 @@ export default function AppRoutes() {
           element={<GSTTermsAndCondition />}
         />
         <Route path="/member-portal/billing" element={<Billing />} />
+        <Route path="/member-portal/my-products/digital-link/:id" element={<DigitalLink />} />
         {/* Add more protected routes here */}
         {/* <Route path="/member-portal/profile" element={<Profile />} /> */}
         {/* <Route path="/member-portal/settings" element={<Settings />} /> */}

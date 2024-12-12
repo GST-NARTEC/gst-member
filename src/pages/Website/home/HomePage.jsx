@@ -17,15 +17,16 @@ import Services from "../../../components/Website/HomePage/Services";
 import { useNavigate } from "react-router-dom";
 import OrderFeatures from "../../../components/Website/HomePage/OrderFeatures";
 import RetailersSection from "../../../components/Website/HomePage/RetailersSection";
+import { Images } from "../../../assets";
+import SearchGtin from "../../../components/Website/HomePage/SearchGtin";
 
 export default function HomePage() {
   const [codeCount, setCodeCount] = useState("");
-  const navigate = useNavigate();
 
   return (
     <Layout>
       {/* Hero Section with Gradient Background */}
-      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary max-h-[90vh]   2xl:max-h-[55vh] flex items-center ">
+      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary max-h-[90vh]   2xl:max-h-[60vh] flex items-center ">
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20"></div>
         <div className="container mx-auto px-4 py-20 relative z-10">
           <motion.div
@@ -46,21 +47,14 @@ export default function HomePage() {
 
             {/* Hero CTA */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <div className="relative flex-1 max-w-xl">
-                <input
-                  type="text"
-                  placeholder="Search a barcode by name or code"
-                  className="w-full px-6 py-3 text-gray-900 bg-white/90 backdrop-blur-sm rounded-lg border-2 border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-400/30 shadow-lg"
-                />
-                <button
-                  onClick={() => navigate("/search")}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-md flex items-center gap-2 transition-all"
-                >
-                  <Barcode className="w-4 h-4" />
-                  Search
-                </button>
-              </div>
+              <SearchGtin />
             </div>
+
+            <img
+              src={Images.BarcodeSearch}
+              alt="Barcode Search"
+              className="w-full max-w-xl mx-auto h-auto mt-8 object-contain"
+            />
           </motion.div>
         </div>
       </section>
