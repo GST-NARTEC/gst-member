@@ -12,6 +12,11 @@ const memberSlice = createSlice({
   initialState,
   reducers: {
     setCredentials: (state, action) => {
+      state.user = null;
+      state.accessToken = null;
+      state.refreshToken = null;
+      state.isAuthenticated = false;
+      
       const { user, accessToken, refreshToken } = action.payload;
       state.user = user;
       state.accessToken = accessToken;
