@@ -54,7 +54,12 @@ export const Header = () => {
             >
               Member Portal
             </Link>
-            <a href="/support" className="text-gray-600 hover:text-gray-800">
+            <a
+              href="https://gstsa1.org/template3/contact-us"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-600 hover:text-gray-800"
+            >
               Support
             </a>
           </div>
@@ -67,10 +72,18 @@ export const Header = () => {
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-2"
           >
-            <img src={Images.Logo} alt="GST Logo" className="h-16 cursor-pointer" 
-            onClick={() => navigate("/")}
+            <img
+              src={Images.Logo}
+              alt="GST Logo"
+              className="h-16 cursor-pointer"
+              onClick={() => navigate("/")}
             />
-            <span onClick={() => navigate("/")} className="font-bold text-xl text-gray-900 cursor-pointer">GST</span>
+            <span
+              onClick={() => navigate("/")}
+              className="font-bold text-xl text-gray-900 cursor-pointer"
+            >
+              GST
+            </span>
             <img src={Images.Upcs} alt="Upcs Logo" className="h-10 ml-4" />
           </motion.div>
 

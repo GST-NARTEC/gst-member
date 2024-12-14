@@ -9,39 +9,40 @@ export const fetchBarcodeData = createAsyncThunk(
         `https://gs1ksa.org:3093/api/foreignGtin/getGtinProductDetails?barcode=${barcode}`
       );
       const gs1Data = await gs1Response.json();
-      
-      if (gs1Data.error) {
-        throw new Error("Barcode not found in our database");
-      }
-      
-      if (gs1Data.ProductDataAvailable) {
-        return { source: 'gs1', data: gs1Data.data };
+
+      if (
+        gs1Data.error ||
+        gs1Data.Error ||
+        gs1Data.message === "No company info found"
+      ) {
+        console.log("GS1 API failed, trying barcode report API...");
+      } else if (gs1Data.ProductDataAvailable) {
+        return { source: "gs1", data: gs1Data.data };
+      } else if (!gs1Data.ProductDataAvailable && gs1Data.companyInfo) {
+        // Handle company-only information case
+        return { source: "gs1Company", data: gs1Data.companyInfo };
       }
 
-      // Second API call if first fails
+      // Second API call
       const barcodeReportResponse = await fetch(
         `https://barcodereport.com/api/search_barcode?barcode=${barcode}&api_key=f7248cdb44cfa041eba85a5c01623980`
       );
       const barcodeReportData = await barcodeReportResponse.json();
-      
-      if (barcodeReportData.barcode) {
-        return { source: 'barcodeReport', data: barcodeReportData };
+
+      if (barcodeReportData.error === "Barcode not found") {
+        throw new Error("Barcode not found in any of our databases");
       }
 
-      /* Third API call (commented out for now)
-      const barcodeLookupResponse = await fetch(
-        `https://api.barcodelookup.com/v3/products?barcode=${barcode}&formatted=y&key=YOUR_API_KEY`
-      );
-      const barcodeLookupData = await barcodeLookupResponse.json();
-      return { source: 'barcodeLookup', data: barcodeLookupData };
-      */
+      if (barcodeReportData.barcode) {
+        return { source: "barcodeReport", data: barcodeReportData };
+      }
 
-      throw new Error('No data found');
+      throw new Error("Barcode not found in any of our databases");
     } catch (error) {
       if (error.message === "Failed to fetch") {
-        throw new Error("Network error. Please check your connection and try again.");
+        throw new Error("Barcode not found in any of our databases");
       }
-      throw error;
+      throw new Error(error.message || "An unexpected error occurred");
     }
   }
 );
@@ -59,7 +60,7 @@ const externalDataSlice = createSlice({
       state.data = null;
       state.source = null;
       state.error = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder

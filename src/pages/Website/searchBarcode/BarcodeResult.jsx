@@ -5,6 +5,8 @@ import { Package2, Building2, Globe, Tag, Info, Box, MapPin } from "lucide-react
 import WebsiteLayout from "../../../layout/WebsiteLayouts/Layout";
 import SearchGtin from "../../../components/Website/HomePage/SearchGtin";
 import { fetchBarcodeData, resetExternalData } from "../../../store/apis/externalApis/externalDataSlice";
+import { formatImageUrl } from "../../../utils/formatImageUrl";
+
 
 function BarcodeResult() {
   const { barcode } = useParams();
@@ -34,7 +36,7 @@ function BarcodeResult() {
         <div className="relative group">
           <div className="overflow-hidden rounded-lg shadow-lg">
             <img
-              src={data.productImageUrl?.value}
+              src={formatImageUrl(data.productImageUrl?.value)}
               alt={data.productName}
               className="w-full h-[400px] object-contain transform transition-transform group-hover:scale-105"
             />
@@ -109,6 +111,65 @@ function BarcodeResult() {
     </div>
   );
 
+  const renderGS1CompanyData = (data) => (
+    <div className="space-y-8">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary to-secondary p-8 text-white">
+        <div className="absolute right-0 top-0 -mt-10 -mr-10 h-32 w-32 rounded-full bg-white/10"></div>
+        <div className="relative z-10">
+          <h1 className="text-3xl font-bold mb-2">{data.companyName}</h1>
+          <p className="text-white/80">GTIN: {data.gtin}</p>
+        </div>
+      </div>
+
+      {/* Company Information Card */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+          <div className="flex items-center gap-3 mb-4">
+            <Building2 className="w-6 h-6 text-primary" />
+            <h2 className="text-xl font-semibold text-primary">Company Details</h2>
+          </div>
+          <div className="space-y-3">
+            <p><span className="font-semibold">Company:</span> {data.companyName}</p>
+            <p><span className="font-semibold">License Key:</span> {data.licenceKey}</p>
+            <p><span className="font-semibold">License Type:</span> {data.licenceType}</p>
+            <p><span className="font-semibold">License Status:</span> 
+              <span className={`ml-2 px-2 py-1 rounded ${
+                data.licenceStatus === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+              }`}>
+                {data.licenceStatus}
+              </span>
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+          <div className="flex items-center gap-3 mb-4">
+            <Globe className="w-6 h-6 text-primary" />
+            <h2 className="text-xl font-semibold text-primary">GS1 Information</h2>
+          </div>
+          <div className="space-y-3">
+            <p><span className="font-semibold">Licensing MO:</span> {data.licensingMOName}</p>
+            <p><span className="font-semibold">Primary MO:</span> {data.primaryMOName}</p>
+            <p><span className="font-semibold">Address:</span> {data.formattedAddress}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Dates Information */}
+      <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+        <div className="flex items-center gap-3 mb-4">
+          <Info className="w-6 h-6 text-primary" />
+          <h2 className="text-xl font-semibold text-primary">Additional Information</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <p><span className="font-semibold">Created:</span> {new Date(data.dateCreated).toLocaleDateString()}</p>
+          <p><span className="font-semibold">Updated:</span> {new Date(data.dateUpdated).toLocaleDateString()}</p>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <WebsiteLayout>
       <div className="container mx-auto px-4 py-8">
@@ -132,8 +193,12 @@ function BarcodeResult() {
                     </svg>
                   </div>
                   <div className="ml-3">
-                    <h3 className="text-lg font-medium text-red-800">Search Error</h3>
-                    <p className="mt-1 text-red-600">{error}</p>
+                    <h3 className="text-lg font-medium text-red-800">Search Result</h3>
+                    <p className="mt-1 text-red-600">
+                      {error === "Barcode not found in any of our databases" 
+                        ? `We couldn't find the barcode ${barcode} in our databases. Please verify the number and try again.`
+                        : error}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -142,6 +207,7 @@ function BarcodeResult() {
             {data && (
               <div className="mt-8">
                 {source === 'gs1' && renderGS1Data(data)}
+                {source === 'gs1Company' && renderGS1CompanyData(data)}
                 {source === 'barcodeReport' && renderBarcodeReportData(data)}
               </div>
             )}

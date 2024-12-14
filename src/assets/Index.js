@@ -9,6 +9,7 @@ import ElectronicLeaflet from "./images/electroincLeaflets.png";
 import Packaging from "./images/packaging.png";
 import ProductRecall from "./images/productRecall.png";
 import Recipe from "./images/recipe.png";
+import PriceList from "./images/PriceList.png";
 
 export const Images = {
   Logo,
@@ -22,4 +23,5 @@ export const Images = {
   Packaging,
   ProductRecall,
   Recipe,
+  PriceList,
 };

@@ -17,45 +17,58 @@ import Services from "../../../components/Website/HomePage/Services";
 import { useNavigate } from "react-router-dom";
 import OrderFeatures from "../../../components/Website/HomePage/OrderFeatures";
 import RetailersSection from "../../../components/Website/HomePage/RetailersSection";
-import { Images } from "../../../assets";
+import { Images } from "../../../assets/Index";
 import SearchGtin from "../../../components/Website/HomePage/SearchGtin";
 
 export default function HomePage() {
   const [codeCount, setCodeCount] = useState("");
+  const navigate = useNavigate();
 
   return (
     <Layout>
       {/* Hero Section with Gradient Background */}
-      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary max-h-[90vh]   2xl:max-h-[60vh] flex items-center ">
+      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary flex items-center">
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20"></div>
-        <div className="container mx-auto px-4 py-20 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-4xl mx-auto text-center text-white"
-          >
-            <h1 className="text-5xl md:text-7xl font-bold mb-6">
-              Global Standard for{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
-                Digital Identity
-              </span>
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-300 mb-10">
-              Empower your business with globally recognized barcodes and
-              digital solutions
-            </p>
-
-            {/* Hero CTA */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <SearchGtin />
+        <div className="container mx-auto px-4 py-10 relative z-10">
+          <div className="flex flex-col md:flex-row items-center gap-">
+            {/* Price List Column */}
+            <div className="">
+              <img
+                src={Images.PriceList}
+                alt="Barcode Price List"
+                className="w-full max-w-[300px] h-auto rounded-lg shadow-lg mx-4 "
+              />
             </div>
 
-            <img
-              src={Images.BarcodeSearch}
-              alt="Barcode Search"
-              className="w-full max-w-xl mx-auto h-auto mt-8 object-contain"
-            />
-          </motion.div>
+            {/* Hero Content Column */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="md:w-2/3 text-center text-white"
+            >
+              <h1 className="md:text-3xl lg:text-5xl font-bold mb-6">
+                Global Standard for{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
+                  Digital Identity
+                </span>
+              </h1>
+              <p className="text-xl md:text-2xl text-gray-300 mb-10">
+                Empower your business with globally recognized barcodes and
+                digital solutions
+              </p>
+
+              {/* Hero CTA */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <SearchGtin />
+              </div>
+
+              <img
+                src={Images.BarcodeSearch}
+                alt="Barcode Search"
+                className="w-full max-w-xl mx-auto h-auto mt-8 object-contain"
+              />
+            </motion.div>
+          </div>
         </div>
       </section>
       <OrderFeatures />
@@ -105,6 +118,7 @@ export default function HomePage() {
               needs
             </p>
             <motion.button
+              onClick={() => navigate("/register/barcodes")}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="bg-white text-gray-900 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center gap-2"
