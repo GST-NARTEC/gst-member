@@ -334,7 +334,7 @@ const MembershipForm = () => {
                 </label>
                 <div className="relative">
                   <input
-                    // disabled={!isVerified}
+                    disabled={!isVerified}
                     type="text"
                     value={watch("companyLicenseNo")}
                     onChange={handleLicenseInputChange}
