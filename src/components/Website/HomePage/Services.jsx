@@ -1,15 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Images } from "../../../assets/Index";
 
 function Services() {
   const services = [
     {
       title: "UPC Barcodes",
-      image: "https://upcs.com/wp-content/uploads/2023/07/Bar%20Code.svg",
+      image: Images.UPCBarcode,
     },
     {
       title: "Amazon UPC Codes",
-      image: "https://upcs.com/wp-content/uploads/2023/07/Bar%20Code.svg",
+      image: Images.AmazonUPC,
     },
     {
       title: "Printed Labels",
@@ -18,11 +19,11 @@ function Services() {
     },
     {
       title: "EAN Codes",
-      image: "https://upcs.com/wp-content/uploads/2023/07/EAN-13.svg",
+      image: Images.EANBarcode,
     },
     {
       title: "ISBN Codes for Books",
-      image: "https://upcs.com/wp-content/uploads/2023/07/EAN-13.svg",
+      image: Images.ISBNBarcode,
     },
   ];
 

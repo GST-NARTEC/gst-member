@@ -7,8 +7,13 @@ import {
   ModalFooter,
   Button,
   Input,
+  Autocomplete,
+  AutocompleteItem,
 } from "@nextui-org/react";
-import { useUpdateUserDocMutation } from "../../store/apis/endpoints/userDocs";
+import { 
+  useUpdateUserDocMutation,
+  useGetDocsTypesQuery 
+} from "../../store/apis/endpoints/userDocs";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
@@ -20,6 +25,14 @@ function EditDocument({ isOpen, onClose, document }) {
   const [updateUserDoc, { isLoading }] = useUpdateUserDocMutation();
   const [preview, setPreview] = useState(null);
   const { user } = useSelector((state) => state.member);
+  const { data: docsTypesResponse, isLoading: docsTypesLoading } = useGetDocsTypesQuery();
+
+  // Transform the docs types data for Autocomplete
+  const documentTypes = docsTypesResponse?.data?.map(type => ({
+    label: type.name,
+    value: type.name,
+    id: type.id
+  })) || [];
 
   useEffect(() => {
     if (document) {
@@ -109,14 +122,23 @@ function EditDocument({ isOpen, onClose, document }) {
         <form onSubmit={handleSubmit}>
           <ModalHeader>Edit Document</ModalHeader>
           <ModalBody className="gap-4">
-            <Input
-              label="Document Name"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
+            <Autocomplete
+              label="Document Type"
+              placeholder="Select document type"
+              defaultItems={documentTypes}
+              selectedKey={formData.name}
+              onSelectionChange={(value) => 
+                setFormData({ ...formData, name: value })
               }
-              required
-            />
+              isLoading={docsTypesLoading}
+              defaultSelectedKey={formData.name}
+            >
+              {(item) => (
+                <AutocompleteItem key={item.value}>
+                  {item.label}
+                </AutocompleteItem>
+              )}
+            </Autocomplete>
 
             {/* Current Document Preview */}
             {preview && (

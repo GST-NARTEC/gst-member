@@ -1,4 +1,5 @@
-import { createSlice} from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import { calculatePrice } from "../../utils/priceCalculations";
 
 const initialState = {
   items: [],
@@ -21,8 +22,17 @@ const cartSlice = createSlice({
       );
       if (existingItem) {
         existingItem.quantity += 1;
+        const { totalPrice, unitPrice } = calculatePrice(existingItem.quantity);
+        existingItem.totalPrice = totalPrice;
+        existingItem.unitPrice = unitPrice;
       } else {
-        state.items.push({ ...action.payload, quantity: 1 });
+        const { totalPrice, unitPrice } = calculatePrice(1);
+        state.items.push({
+          ...action.payload,
+          quantity: 1,
+          totalPrice,
+          unitPrice,
+        });
       }
     },
     updateQuantity: (state, action) => {
@@ -31,7 +41,16 @@ const cartSlice = createSlice({
         .map((item) => {
           if (item.id === productId) {
             const newQuantity = item.quantity + change;
-            return newQuantity > 0 ? { ...item, quantity: newQuantity } : null;
+            if (newQuantity > 0) {
+              const { totalPrice, unitPrice } = calculatePrice(newQuantity);
+              return {
+                ...item,
+                quantity: newQuantity,
+                totalPrice,
+                unitPrice,
+              };
+            }
+            return null;
           }
           return item;
         })
@@ -47,7 +66,21 @@ const cartSlice = createSlice({
       state.items = state.items.filter((item) => item.id !== action.payload);
     },
     setCartTotals: (state, action) => {
-      const { subtotal, vat, total } = action.payload;
+      const subtotal = state.items.reduce((sum, item) => {
+        const { totalPrice } = calculatePrice(item.quantity);
+        const addonsTotal = (item.selectedAddons || []).reduce(
+          (sum, addon) => sum + addon.price * addon.quantity,
+          0
+        );
+        return sum + totalPrice + addonsTotal;
+      }, 0);
+
+      const vat = state.vatDetails.type === "PERCENTAGE"
+        ? subtotal * (state.vatDetails.value / 100)
+        : state.vatDetails.value || 0;
+
+      const total = subtotal + vat;
+
       state.subtotal = subtotal;
       state.vat = vat;
       state.total = total;

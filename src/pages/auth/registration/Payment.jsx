@@ -7,6 +7,7 @@ import { SiStencyl } from "react-icons/si";
 import { GiTakeMyMoney } from "react-icons/gi";
 import PaymentSuccessModal from "../../../components/auth/registration/PaymentSuccessModal";
 import ReactConfetti from "react-confetti";
+import { calculatePrice } from "../../../utils/priceCalculations";
 
 import { useCheckoutMutation } from "../../../store/apis/endpoints/checkout";
 import toast from "react-hot-toast";
@@ -307,52 +308,49 @@ function Payment() {
 
             {/* Cart Items List */}
             <div className="space-y-4 mb-6">
-              {cartItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex justify-between py-2 border-b"
-                >
-                  <div className="flex-1">
-                    <h4 className="text-sm font-medium">{item.title}</h4>
-                    <div className="text-xs text-gray-500 mt-1">
-                      Quantity: {item.quantity}
-                    </div>
-                    {item.selectedAddons && item.selectedAddons.length > 0 && (
-                      <div className="mt-2 pl-3 border-l-2 border-gray-200">
-                        {item.selectedAddons.map((addon, idx) => (
-                          <div
-                            key={idx}
-                            className="text-xs text-gray-500 flex justify-between"
-                          >
-                            <span>
-                              {addon.name} × {addon.quantity}
-                            </span>
-                            <span>
-                              {currencySymbol}{" "}
-                              {(addon.price * addon.quantity).toFixed(2)}
-                            </span>
-                          </div>
-                        ))}
+              {cartItems.map((item) => {
+                const { totalPrice, unitPrice } = calculatePrice(item.quantity);
+                const addonsTotal = (item.selectedAddons || []).reduce(
+                  (sum, addon) => sum + addon.price * addon.quantity,
+                  0
+                );
+                
+                return (
+                  <div key={item.id} className="flex justify-between py-2 border-b">
+                    <div className="flex-1">
+                      <h4 className="text-sm font-medium">{item.title}</h4>
+                      <div className="text-xs text-gray-500 mt-1">
+                        Quantity: {item.quantity}
                       </div>
-                    )}
-                  </div>
-                  <div className="text-right">
-                    <div className="text-sm">
-                      {currencySymbol} {item.price.toFixed(2)} × {item.quantity}
+                      {item.selectedAddons && item.selectedAddons.length > 0 && (
+                        <div className="mt-2 pl-3 border-l-2 border-gray-200">
+                          {item.selectedAddons.map((addon, idx) => (
+                            <div
+                              key={idx}
+                              className="text-xs text-gray-500 flex justify-between"
+                            >
+                              <span>
+                                {addon.name} × {addon.quantity}
+                              </span>
+                              <span>
+                                {currencySymbol} {(addon.price * addon.quantity).toFixed(2)}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                    <div className="text-sm font-medium text-navy-600">
-                      {currencySymbol}{" "}
-                      {(
-                        item.price * item.quantity +
-                        (item.selectedAddons?.reduce(
-                          (sum, addon) => sum + addon.price * addon.quantity,
-                          0
-                        ) || 0)
-                      ).toFixed(2)}
+                    <div className="text-right">
+                      {/* <div className="text-sm">
+                        {currencySymbol} {unitPrice.toFixed(2)} × {item.quantity}
+                      </div> */}
+                      <div className="text-sm font-medium text-navy-600">
+                        {currencySymbol} {(totalPrice + addonsTotal).toFixed(2)}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Summary Calculations */}

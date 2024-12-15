@@ -41,73 +41,193 @@ function MemberDocuments() {
     }
   );
 
-  // Separate general documents and categorized documents
-  const generalDocs = useMemo(() => {
-    return docsData?.data?.user?.docs || [];
-  }, [docsData]);
-
-  const categorizedDocs = useMemo(() => {
-    const docs = docsData?.data?.user?.documents;
+  // Combine all documents into a single array with proper formatting
+  const allDocuments = useMemo(() => {
+    const docs = docsData?.data?.user;
     if (!docs) return [];
 
-    return [
-      ...docs.receipts.map((doc) => ({ ...doc, category: "Receipt" })),
-      ...docs.certificates.map((doc) => ({ ...doc, category: "Certificate" })),
-      ...docs.bankSlips.map((doc) => ({ ...doc, category: "Bank Slip" })),
-      ...docs.invoices.map((doc) => ({
+    // Format general docs
+    const generalDocs = (docs.docs || []).map((doc) => ({
+      ...doc,
+      isGeneral: true,
+      orderNumber: "-",
+      category: "Personal Document",
+      status: "Active",
+      invoice: null,
+    }));
+
+    // Format categorized docs
+    const categorizedDocs = [
+      ...(docs.documents?.receipts || []).map((doc) => ({
         ...doc,
+        name: "Receipt",
+        category: "Receipt",
+        isGeneral: false,
+        invoice: null,
+      })),
+      ...(docs.documents?.certificates || []).map((doc) => ({
+        ...doc,
+        name: "Certificate",
+        category: "Certificate",
+        isGeneral: false,
+        invoice: null,
+      })),
+      ...(docs.documents?.bankSlips || []).map((doc) => ({
+        ...doc,
+        name: "Bank Slip",
+        category: "Bank Slip",
+        isGeneral: false,
+        invoice: null,
+      })),
+      ...(docs.documents?.invoices || []).map((doc) => ({
+        ...doc,
+        name: `Invoice ${doc.invoiceNumber}`,
         category: "Invoice",
+        isGeneral: false,
+        invoice: doc.path,
       })),
     ];
+
+    return [...generalDocs, ...categorizedDocs];
   }, [docsData]);
 
-  const columns = {
-    general: [
-      { name: "NAME", uid: "name" },
-      { name: "DATE", uid: "createdAt" },
-      { name: "ACTIONS", uid: "actions" },
-    ],
-    categorized: [
-      { name: "ORDER ID", uid: "orderNumber" },
-      { name: "DOCUMENT TYPE", uid: "category" },
-      { name: "STATUS", uid: "status" },
-      { name: "DATE", uid: "createdAt" },
-      { name: "ACTIONS", uid: "actions" },
-    ],
-  };
+  const columns = [
+    { name: "DOCUMENT NAME", uid: "name" },
+    { name: "ORDER ID", uid: "orderNumber" },
+    { name: "DOCUMENT TYPE", uid: "category" },
+    { name: "STATUS", uid: "status" },
+    { name: "DOCUMENT", uid: "invoice" },
+    { name: "DATE", uid: "createdAt" },
+    { name: "ACTIONS", uid: "actions" },
+  ];
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState(null);
 
-  const renderCell = (doc, columnKey, isGeneral = false) => {
-    if (isGeneral) {
-      switch (columnKey) {
-        case "name":
+  const renderCell = (doc, columnKey) => {
+    switch (columnKey) {
+      case "name":
+        return (
+          <div className="flex items-center gap-2">
+            <FaIdCard className="text-primary" />
+            <span>{doc.name || "-"}</span>
+          </div>
+        );
+      case "orderNumber":
+        return <p>{doc.orderNumber || "-"}</p>;
+      case "category":
+        return (
+          <Chip color="primary" variant="flat">
+            {doc.category}
+          </Chip>
+        );
+      case "status":
+        return (
+          <Chip
+            color={
+              doc.status?.toLowerCase() === "activated" ? "success" : "warning"
+            }
+            variant="flat"
+          >
+            {doc.status}
+          </Chip>
+        );
+      case "invoice":
+        // Handle document viewing for all types
+        if (doc.isGeneral) {
           return (
-            <div className="flex items-center gap-2">
-              <FaIdCard className="text-primary" />
-              <span>{doc.name}</span>
-            </div>
+            <Tooltip content="View Document">
+              <Button
+                isIconOnly
+                variant="light"
+                as="a"
+                href={doc.doc}
+                target="_blank"
+                className="text-primary"
+              >
+                <FaFileInvoice />
+              </Button>
+            </Tooltip>
           );
-        case "createdAt":
-          return <p>{new Date(doc.createdAt).toLocaleDateString()}</p>;
-        case "actions":
-          return (
-            <div className="flex ">
-              <Tooltip content="View Document">
+        }
+
+        // For different document types
+        switch (doc.category) {
+          case "Invoice":
+            return (
+              <Tooltip content="View Invoice">
                 <Button
                   isIconOnly
                   variant="light"
                   as="a"
-                  href={doc.doc}
+                  href={doc.path}
                   target="_blank"
                   className="text-primary"
                 >
                   <FaFileInvoice />
                 </Button>
               </Tooltip>
+            );
+          case "Receipt":
+            return (
+              <Tooltip content="View Receipt">
+                <Button
+                  isIconOnly
+                  variant="light"
+                  as="a"
+                  href={doc.path}
+                  target="_blank"
+                  className="text-primary"
+                >
+                  <FaFileInvoice />
+                </Button>
+              </Tooltip>
+            );
+          case "Certificate":
+            return (
+              <Tooltip content="View Certificate">
+                <Button
+                  isIconOnly
+                  variant="light"
+                  as="a"
+                  href={doc.path}
+                  target="_blank"
+                  className="text-primary"
+                >
+                  <FaFileInvoice />
+                </Button>
+              </Tooltip>
+            );
+          case "Bank Slip":
+            return (
+              <Tooltip content="View Bank Slip">
+                <Button
+                  isIconOnly
+                  variant="light"
+                  as="a"
+                  href={doc.path}
+                  target="_blank"
+                  className="text-primary"
+                >
+                  <FaFileInvoice />
+                </Button>
+              </Tooltip>
+            );
+          default:
+            return <span>-</span>;
+        }
+      case "createdAt":
+        return <p>{new Date(doc.createdAt).toLocaleDateString()}</p>;
+      case "actions":
+        if (doc.category === "Bank Slip") {
+          return <span>-</span>;
+        }
+
+        if (doc.isGeneral) {
+          return (
+            <div className="flex gap-2">
               <Tooltip content="Edit Document">
                 <Button
                   isIconOnly
@@ -136,50 +256,11 @@ function MemberDocuments() {
               </Tooltip>
             </div>
           );
-        default:
-          return null;
-      }
-    }
-
-    // For categorized documents
-    switch (columnKey) {
-      case "orderNumber":
-        return <p>{doc.orderNumber}</p>;
-      case "category":
+        }
         return (
-          <Chip color="primary" variant="flat">
-            {doc.category}
+          <Chip size="sm" variant="flat">
+            System Generated
           </Chip>
-        );
-      case "status":
-        return (
-          <Chip
-            color={
-              doc.status?.toLowerCase() === "activated" ? "success" : "warning"
-            }
-            variant="flat"
-          >
-            {doc.status}
-          </Chip>
-        );
-      case "createdAt":
-        return <p>{new Date(doc.createdAt).toLocaleDateString()}</p>;
-      case "actions":
-        return (
-          <div className="flex gap-2 justify-center">
-            <Tooltip content="View Document">
-              <Button
-                isIconOnly
-                variant="light"
-                as="a"
-                href={doc.path}
-                target="_blank"
-                className="text-primary"
-              >
-                <FaFileInvoice />
-              </Button>
-            </Tooltip>
-          </div>
         );
       default:
         return null;
@@ -188,107 +269,47 @@ function MemberDocuments() {
 
   return (
     <div className="w-full max-w-[1400px] mx-auto p-6 space-y-8">
-      <div className="flex items-center">
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-[#1B2B65]">Documents</h1>
+        <Button
+          className="bg-[#1B2B65] text-white rounded-full px-6 hover:bg-[#2a3d7c] transition-all"
+          endContent={<FaPlus size={20} />}
+          onPress={() => setIsAddModalOpen(true)}
+        >
+          Add Document
+        </Button>
       </div>
 
-      <div className="space-y-8">
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold text-gray-800">
-              Personal Documents
-            </h2>
-            <Button
-              className="bg-[#1B2B65] text-white rounded-full px-6 hover:bg-[#2a3d7c] transition-all"
-              endContent={<FaPlus size={20} />}
-              onPress={() => setIsAddModalOpen(true)}
-            >
-              Add Document
-            </Button>
-          </div>
-          <Card className="border border-gray-100 shadow-sm">
-            <Table
-              aria-label="Personal documents"
-              classNames={{
-                wrapper: "shadow-none",
-                th: "bg-gray-50/50 font-medium text-gray-600",
-                td: "py-4",
-              }}
-            >
-              <TableHeader columns={columns.general}>
-                {(column) => (
-                  <TableColumn key={column.uid}>{column.name}</TableColumn>
+      <Card className="border border-gray-100 shadow-sm">
+        <Table
+          aria-label="Documents table"
+          classNames={{
+            wrapper: "shadow-none",
+            th: "bg-gray-50/50 font-medium text-gray-600",
+            td: "py-4",
+          }}
+        >
+          <TableHeader columns={columns}>
+            {(column) => (
+              <TableColumn key={column.uid}>{column.name}</TableColumn>
+            )}
+          </TableHeader>
+          <TableBody
+            items={allDocuments}
+            isLoading={isLoading}
+            loadingContent={<Spinner />}
+            emptyContent="No documents found"
+          >
+            {(item) => (
+              <TableRow key={item.id || `${item.orderNumber}-${item.category}`}>
+                {(columnKey) => (
+                  <TableCell>{renderCell(item, columnKey)}</TableCell>
                 )}
-              </TableHeader>
-              <TableBody
-                items={generalDocs}
-                isLoading={isLoading}
-                loadingContent={<Spinner />}
-                emptyContent="No personal documents found"
-              >
-                {(item) => (
-                  <TableRow key={item.id}>
-                    {(columnKey) => (
-                      <TableCell>{renderCell(item, columnKey, true)}</TableCell>
-                    )}
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </Card>
-        </div>
-
-        <div>
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">
-            Business Documents
-          </h2>
-          <Card className="border border-gray-100 shadow-sm">
-            <Table
-              aria-label="Business documents"
-              classNames={{
-                wrapper: "shadow-none",
-                th: "bg-gray-50/50 font-medium text-gray-600",
-                td: "py-4",
-              }}
-            >
-              <TableHeader columns={columns.categorized}>
-                {(column) => (
-                  <TableColumn key={column.uid}>{column.name}</TableColumn>
-                )}
-              </TableHeader>
-              <TableBody
-                items={categorizedDocs}
-                isLoading={isLoading}
-                loadingContent={<Spinner />}
-                emptyContent="No business documents found"
-              >
-                {(item) => (
-                  <TableRow key={`${item.orderNumber}-${item.category}`}>
-                    {(columnKey) => (
-                      <TableCell>{renderCell(item, columnKey)}</TableCell>
-                    )}
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </Card>
-        </div>
-
-        <div className="bg-white p-4 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-4">Terms & Conditions</h2>
-          <div className="flex items-center space-x-4">
-            <a
-              href="https://api.gstsa1.org/assets/docs/terms-and-conditions.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center space-x-2 text-blue-600 hover:text-blue-800"
-            >
-              <FaFilePdf className="text-red-600 text-xl" />
-              <span>Terms and Conditions Document</span>
-            </a>
-          </div>
-        </div>
-      </div>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </Card>
 
       <AddDocument
         isOpen={isAddModalOpen}
@@ -304,6 +325,21 @@ function MemberDocuments() {
         onClose={() => setIsDeleteModalOpen(false)}
         document={selectedDocument}
       />
+
+      <div className="bg-white p-4 rounded-lg shadow">
+        <h2 className="text-lg font-semibold mb-4">Terms & Conditions</h2>
+        <div className="flex items-center space-x-4">
+          <a
+            href="https://api.gstsa1.org/assets/docs/terms-and-conditions.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center space-x-2 text-blue-600 hover:text-blue-800"
+          >
+            <FaFilePdf className="text-red-600 text-xl" />
+            <span>Terms and Conditions Document</span>
+          </a>
+        </div>
+      </div>
     </div>
   );
 }

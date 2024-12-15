@@ -10,6 +10,10 @@ import Packaging from "./images/packaging.png";
 import ProductRecall from "./images/productRecall.png";
 import Recipe from "./images/recipe.png";
 import PriceList from "./images/PriceList.png";
+import UPCBarcode from "./images/upcBarcodes.png"
+import ISBNBarcode from "./images/IsbnCode.png"
+import EANBarcode from "./images/eanCode.png"
+import AmazonUPC from "./images/amazonUpcCode.png"
 
 export const Images = {
   Logo,
@@ -24,4 +28,8 @@ export const Images = {
   ProductRecall,
   Recipe,
   PriceList,
+  UPCBarcode,
+  ISBNBarcode,
+  EANBarcode,
+  AmazonUPC,
 };

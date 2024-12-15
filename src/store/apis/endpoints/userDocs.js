@@ -7,6 +7,10 @@ export const userDocsApiSlice = apiSlice.injectEndpoints({
       query: (userId) => `/v1/user-docs/${userId}`,
     }),
 
+    getDocsTypes: builder.query({
+      query: () => "/v1/doc-types",
+    }),
+
     // Create a new user document
     createUserDoc: builder.mutation({
       query: (docData) => ({
@@ -43,4 +47,5 @@ export const {
   useCreateUserDocMutation,
   useUpdateUserDocMutation,
   useDeleteUserDocMutation,
+  useGetDocsTypesQuery,
 } = userDocsApiSlice;

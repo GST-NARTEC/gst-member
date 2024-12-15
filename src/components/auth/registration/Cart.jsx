@@ -13,6 +13,7 @@ import {
 } from "../../../store/slices/cartSlice";
 import { useNavigate } from "react-router-dom";
 import Addons from "./Addons";
+import { calculatePrice } from '../../../utils/priceCalculations';
 
 function Cart({ currencySymbol, vatDetails, defaultImage }) {
   const dispatch = useDispatch();
@@ -30,12 +31,8 @@ function Cart({ currencySymbol, vatDetails, defaultImage }) {
 
   const getCartTotals = () => {
     const subtotal = cart.reduce((sum, item) => {
-      const itemTotal = item.price * item.quantity;
-      const addonsTotal = (item.selectedAddons || []).reduce(
-        (addonSum, addon) => addonSum + addon.price * addon.quantity,
-        0
-      );
-      return sum + itemTotal + addonsTotal;
+      const itemTotal = getItemTotal(item);
+      return sum + itemTotal;
     }, 0);
 
     const vatAmount =
@@ -63,12 +60,12 @@ function Cart({ currencySymbol, vatDetails, defaultImage }) {
   };
 
   const getItemTotal = (item) => {
-    const itemPrice = item.price * item.quantity;
+    const { totalPrice } = calculatePrice(item.quantity);
     const addonsTotal = (item.selectedAddons || []).reduce(
       (sum, addon) => sum + addon.price * addon.quantity,
       0
     );
-    return itemPrice + addonsTotal;
+    return totalPrice + addonsTotal;
   };
 
   const updateItemQuantity = (productId, change) => {
@@ -96,87 +93,90 @@ function Cart({ currencySymbol, vatDetails, defaultImage }) {
       </div>
 
       <div className="space-y-4 max-h-[calc(100vh-300px)] overflow-y-auto">
-        {cart.map((item, index) => (
-          <div
-            key={item.id}
-            className="relative border border-gray-200 rounded-lg p-3 shadow-sm"
-          >
-            <div className="flex gap-3">
-              <div className="w-24">
-                <Image
-                  src={item.image || defaultImage}
-                  alt={item.name}
-                  className="w-24 h-20 object-contain mb-1"
-                />
-                <div className="flex items-center bg-gray-50 rounded-md border border-gray-200">
-                  <button
-                    onClick={() => updateItemQuantity(item.id, -1)}
-                    className="px-2 py-0.5 text-gray-500 hover:text-gray-700"
-                  >
-                    −
-                  </button>
-                  <span className="px-2 py-0.5 text-sm">{item.quantity}</span>
-                  <button
-                    onClick={() => updateItemQuantity(item.id, 1)}
-                    className="px-2 py-0.5 text-gray-500 hover:text-gray-700"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex-grow flex flex-col justify-between">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <span className="text-gray-500 text-sm">{item.title}</span>
-                    {item.addons?.length > 0 && (
-                      <button
-                        onClick={() => handleAddonsClick(item, index)}
-                        className="ml-2 text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1"
-                      >
-                        <FaPlus size={10} />
-                        Add Options
-                      </button>
-                    )}
+        {cart.map((item, index) => {
+          const { unitPrice, totalPrice } = calculatePrice(item.quantity);
+          return (
+            <div
+              key={item.id}
+              className="relative border border-gray-200 rounded-lg p-3 shadow-sm"
+            >
+              <div className="flex gap-3">
+                <div className="w-24">
+                  <Image
+                    src={item.image || defaultImage}
+                    alt={item.name}
+                    className="w-24 h-20 object-contain mb-1"
+                  />
+                  <div className="flex items-center bg-gray-50 rounded-md border border-gray-200">
+                    <button
+                      onClick={() => updateItemQuantity(item.id, -1)}
+                      className="px-2 py-0.5 text-gray-500 hover:text-gray-700"
+                    >
+                      −
+                    </button>
+                    <span className="px-2 py-0.5 text-sm">{item.quantity}</span>
+                    <button
+                      onClick={() => updateItemQuantity(item.id, 1)}
+                      className="px-2 py-0.5 text-gray-500 hover:text-gray-700"
+                    >
+                      +
+                    </button>
                   </div>
-                  <button
-                    onClick={() => removeItemFromCart(item.id)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    <MdClose size={16} />
-                  </button>
                 </div>
 
-                {item.selectedAddons && item.selectedAddons.length > 0 && (
-                  <div className="mt-2">
-                    <div className="text-xs text-gray-500">
-                      {item.selectedAddons.map((addon, idx) => (
-                        <div key={idx} className="flex justify-between">
-                          <span>
-                            {addon.name} × {addon.quantity}
-                          </span>
-                          <span>
-                            {currencySymbol}{" "}
-                            {(addon.price * addon.quantity).toFixed(2)}
-                          </span>
-                        </div>
-                      ))}
+                <div className="flex-grow flex flex-col justify-between">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <span className="text-gray-500 text-sm">{item.title}</span>
+                      {item.addons?.length > 0 && (
+                        <button
+                          onClick={() => handleAddonsClick(item, index)}
+                          className="ml-2 text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                        >
+                          <FaPlus size={10} />
+                          Add Options
+                        </button>
+                      )}
                     </div>
+                    <button
+                      onClick={() => removeItemFromCart(item.id)}
+                      className="text-gray-400 hover:text-gray-600"
+                    >
+                      <MdClose size={16} />
+                    </button>
                   </div>
-                )}
 
-                <div className="flex justify-end flex-col items-end">
-                  <span className="text-sm">
-                    {currencySymbol} {item.price.toFixed(2)} × {item.quantity}
-                  </span>
-                  <span className="text-sm font-bold">
-                    {currencySymbol} {getItemTotal(item).toFixed(2)}
-                  </span>
+                  {item.selectedAddons && item.selectedAddons.length > 0 && (
+                    <div className="mt-2">
+                      <div className="text-xs text-gray-500">
+                        {item.selectedAddons.map((addon, idx) => (
+                          <div key={idx} className="flex justify-between">
+                            <span>
+                              {addon.name} × {addon.quantity}
+                            </span>
+                            <span>
+                              {currencySymbol}{" "}
+                              {(addon.price * addon.quantity).toFixed(2)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex justify-end flex-col items-end">
+                    {/* <span className="text-sm">
+                      {currencySymbol} {unitPrice.toFixed(2)} × {item.quantity}
+                    </span> */}
+                    <span className="text-sm font-bold">
+                      {currencySymbol} {getItemTotal(item).toFixed(2)}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {cart.length > 0 && (
