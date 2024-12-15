@@ -100,10 +100,10 @@ function MyBarcodes() {
             </DropdownTrigger>
             <DropdownMenu>
               <DropdownItem startContent={<FaEye />}>View</DropdownItem>
-              <DropdownItem startContent={<FaEdit />}>Edit</DropdownItem>
-              <DropdownItem startContent={<FaQrcode />}>
+              {/* <DropdownItem startContent={<FaEdit />}>Edit</DropdownItem> */}
+              {/* <DropdownItem startContent={<FaQrcode />}>
                 Digital Links
-              </DropdownItem>
+              </DropdownItem> */}
             </DropdownMenu>
           </Dropdown>
         );

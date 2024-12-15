@@ -1,21 +1,17 @@
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
-
-const measurementUnits = [
-  { label: "Kilogram (kg)", value: "kg", description: "Standard unit of mass" },
-  { label: "Gram (g)", value: "g", description: "Metric unit of mass" },
-  { label: "Liter (L)", value: "l", description: "Metric unit of volume" },
-  { label: "Milliliter (mL)", value: "ml", description: "Metric unit of volume" },
-  { label: "Piece (pc)", value: "pc", description: "Count by individual items" },
-  { label: "Box", value: "box", description: "Standard packaging unit" },
-  { label: "Carton", value: "carton", description: "Larger packaging unit" },
-  { label: "Meter (m)", value: "m", description: "Unit of length" },
-  { label: "Centimeter (cm)", value: "cm", description: "Unit of length" },
-  { label: "Square Meter (m²)", value: "m2", description: "Unit of area" },
-  { label: "Pack", value: "pack", description: "Group packaging unit" },
-  { label: "Dozen", value: "dozen", description: "Group of twelve items" },
-];
+import { useGetUnitOfMesurmentQuery } from "../../store/apis/endpoints/unitOfMesurment";
 
 function UnitOfMeasure({ value, onChange }) {
+  const { data, isLoading } = useGetUnitOfMesurmentQuery();
+
+  // Transform API data to match the required format
+  const measurementUnits =
+    data?.data?.map((unit) => ({
+      label: unit.name,
+      value: unit.name,
+      description: `Code: ${unit.code}`,
+    })) || [];
+
   return (
     <Autocomplete
       label="Unit of Measure"
@@ -23,6 +19,7 @@ function UnitOfMeasure({ value, onChange }) {
       defaultItems={measurementUnits}
       selectedKey={value}
       onSelectionChange={(value) => onChange(value)}
+      isLoading={isLoading}
     >
       {(item) => (
         <AutocompleteItem key={item.value} textValue={item.label}>
