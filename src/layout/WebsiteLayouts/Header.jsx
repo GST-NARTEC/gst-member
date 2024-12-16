@@ -32,8 +32,16 @@ export const Header = () => {
         { name: "Inventory Management", href: "#" },
       ],
     },
-    { name: "Resources", href: "#" },
-    { name: "Contact", href: "#" },
+    { 
+      name: "Resources", 
+      href: "https://gstsa1.org/template1/our-clients",
+      isExternal: true 
+    },
+    { 
+      name: "Contact", 
+      href: "https://gstsa1.org/template3/contact-us",
+      isExternal: true 
+    },
   ];
 
   return (
@@ -90,23 +98,46 @@ export const Header = () => {
           <nav className="hidden lg:flex items-center gap-8 z-50">
             {navItems.map((item) => (
               <div key={item.name} className="relative group">
-                <a
-                  href={item.href}
-                  className="flex items-center gap-1 text-gray-700 hover:text-primary py-2"
-                >
-                  {item.name}
-                  {item.submenu && <ChevronDown className="w-4 h-4" />}
-                </a>
+                {item.isExternal ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-gray-700 hover:text-primary py-2"
+                  >
+                    {item.name}
+                  </a>
+                ) : (
+                  <a
+                    href={item.href}
+                    className="flex items-center gap-1 text-gray-700 hover:text-primary py-2"
+                  >
+                    {item.name}
+                    {item.submenu && <ChevronDown className="w-4 h-4" />}
+                  </a>
+                )}
                 {item.submenu && (
                   <div className="absolute top-full z-10 left-0 w-48 bg-white shadow-lg rounded-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
                     {item.submenu.map((subitem) => (
-                      <a
-                        key={subitem.name}
-                        href={subitem.href}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                      >
-                        {subitem.name}
-                      </a>
+                      item.name === "Products" ? (
+                        <a
+                          key={subitem.name}
+                          onClick={() => navigate("/register/barcodes")}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
+                        >
+                          {subitem.name}
+                        </a>
+                      ) : (
+                        <a
+                          key={subitem.name}
+                          href="https://gstsa1.org/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer"
+                        >
+                          {subitem.name}
+                        </a>
+                      )
                     ))}
                   </div>
                 )}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Table,
@@ -11,9 +11,24 @@ import {
   CardBody,
   Button,
   Pagination,
+  useDisclosure,
+  Input,
+  Spinner,
 } from "@nextui-org/react";
 import MainLayout from "../../../layout/PortalLayouts/MainLayout";
 import { Images } from "../../../assets/Index";
+import AddDigitalLink from "./AddDigitalLink";
+import EditDigitalLink from "./EditDigitalLink";
+import DeleteDigitalLink from "./DeleteDigitalLink";
+import toast from "react-hot-toast";
+import { useGetDigitalLinksQuery, useGetDigitalLinksSECQuery } from "../../../store/apis/endpoints/digitalLink";
+import { useDebounce } from "../../../hooks/useDebounce";
+// react icons
+import { FaSearch, FaEdit, FaTrash } from "react-icons/fa";
+
+import { useSelector } from "react-redux";
+import AddDigitalLinkSEC from "./AddDigitalLinkSEC";
+import DigitalLinkSECTable from "./DigitalLinkSECTable";
 
 const digitalLinks = [
   {
@@ -58,32 +73,137 @@ const digitalLinks = [
   },
 ];
 
-const dummyTableData = [
-  {
-    id: 1,
-    targetUrl: "https://example.com/safety/123",
-    digitalInfoType: "Safety Information",
-    gtin: "6287021565303",
-    createdAt: "2024-03-20",
-    updatedAt: "2024-03-21",
-  },
-  // Add more dummy data as needed
-];
-
 function DigitalLink() {
   const location = useLocation();
+  const { user } = useSelector((state) => state.member);
   const { gtin, productName, brandName } = location.state || {};
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedCard, setSelectedCard] = useState(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onClose: onEditClose,
+  } = useDisclosure();
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
+  const [selectedDigitalLink, setSelectedDigitalLink] = useState(null);
+  const {
+    isOpen: isSecOpen,
+    onOpen: onSecOpen,
+    onClose: onSecClose,
+  } = useDisclosure();
+
+  const {
+    data: digitalLinksData,
+    isLoading,
+    isFetching,
+  } = useGetDigitalLinksQuery(
+    {
+      gtin,
+      digitalLinkType:
+        selectedCard !== null ? digitalLinks[selectedCard].title : "",
+      page,
+      limit: rowsPerPage,
+      search: debouncedSearch,
+    },
+    {
+      skip: !gtin || selectedCard === null,
+    }
+  );
+
+  const {
+    data: secData,
+    isLoading: isSecLoading,
+    isFetching: isSecFetching,
+  } = useGetDigitalLinksSECQuery(
+    {
+      page,
+      limit: rowsPerPage,
+      search: debouncedSearch,
+    },
+    {
+      skip: !selectedCard || digitalLinks[selectedCard]?.title !== "Saudi Electricity Company",
+    }
+  );
+
+  const tableData = useMemo(() => {
+    return digitalLinksData?.data?.digitalLinks || [];
+  }, [digitalLinksData]);
+
+  const pages = useMemo(() => {
+    return digitalLinksData?.data?.pagination?.totalPages || 0;
+  }, [digitalLinksData]);
 
   const columns = [
     { name: "ID", uid: "id" },
-    { name: "TARGET URL", uid: "targetUrl" },
-    { name: "DIGITAL INFORMATION TYPE", uid: "digitalInfoType" },
+    { name: "TARGET URL", uid: "url" },
+    { name: "DIGITAL TYPE", uid: "digitalType" },
     { name: "GTIN", uid: "gtin" },
     { name: "CREATED AT", uid: "createdAt" },
     { name: "UPDATED AT", uid: "updatedAt" },
     { name: "ACTIONS", uid: "actions" },
   ];
+
+  const handleCardClick = (index) => {
+    if (digitalLinks[index].title === "Saudi Electricity Company" && !user?.isSec) {
+      return;
+    }
+    setSelectedCard(index);
+  };
+
+  const handleAddDigitalLink = () => {
+    if (selectedCard !== null) {
+      if (digitalLinks[selectedCard].title === "Saudi Electricity Company") {
+        onSecOpen();
+      } else {
+        onOpen();
+      }
+    } else {
+      toast.error("Please select a digital link type first");
+    }
+  };
+
+  const topContent = useMemo(() => {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-primary mb-4">
+              {selectedCard !== null
+                ? digitalLinks[selectedCard].title
+                : "Digital Links"}
+            </h1>
+          </div>
+          <Input
+            isClearable
+            className="w-full sm:max-w-[44%]"
+            placeholder="Search by URL or digital type..."
+            startContent={<FaSearch className="text-default-300" />}
+            value={search}
+            onClear={() => setSearch("")}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <div className="">
+            <Button
+              color="primary"
+              className="px-8"
+              startContent={<span>+</span>}
+              onClick={handleAddDigitalLink}
+            >
+              Add Digital Link
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }, [selectedCard, search]);
 
   return (
     <MainLayout>
@@ -119,13 +239,6 @@ function DigitalLink() {
                 </div>
               </div>
             </div>
-            <Button
-              color="primary"
-              className="px-8"
-              startContent={<span>+</span>}
-            >
-              Add Digital Link
-            </Button>
           </div>
         </div>
 
@@ -133,8 +246,21 @@ function DigitalLink() {
           {digitalLinks.map((link, index) => (
             <Card
               key={index}
-              isPressable
-              className="hover:scale-105 transition-transform"
+              isPressable={!(link.title === "Saudi Electricity Company" && !user?.isSec)}
+              className={`transition-transform ${
+                selectedCard === index ? "border-2 border-primary" : ""
+              } ${
+                link.title === "Saudi Electricity Company" && !user?.isSec
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:scale-105"
+              }`}
+              onClick={() => {
+                if (link.title === "Saudi Electricity Company" && !user?.isSec) {
+                  toast.error("You don't have access to Saudi Electricity Company features");
+                  return;
+                }
+                handleCardClick(index);
+              }}
             >
               <CardBody className="flex flex-row items-center p-4 gap-4">
                 <img
@@ -145,6 +271,11 @@ function DigitalLink() {
                 <div>
                   <h3 className="font-semibold text-primary">{link.title}</h3>
                   <p className="text-sm text-gray-500">{link.description}</p>
+                  {link.title === "Saudi Electricity Company" && !user?.isSec && (
+                    <span className="text-xs text-danger mt-1 block">
+                      Access restricted
+                    </span>
+                  )}
                 </div>
               </CardBody>
             </Card>
@@ -152,43 +283,124 @@ function DigitalLink() {
         </div>
 
         <div className="mt-8">
-          <h2 className="text-xl font-bold text-primary mb-4">
-            Controlled Serials
-          </h2>
-          <Table aria-label="Controlled Serials table">
-            <TableHeader columns={columns}>
-              {(column) => (
-                <TableColumn key={column.uid}>{column.name}</TableColumn>
-              )}
-            </TableHeader>
-            <TableBody items={dummyTableData}>
-              {(item) => (
-                <TableRow key={item.id}>
-                  {(columnKey) => (
-                    <TableCell>
-                      {columnKey === "actions" ? (
-                        <Button size="sm" color="primary">
-                          View
-                        </Button>
-                      ) : (
-                        item[columnKey]
-                      )}
-                    </TableCell>
-                  )}
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-          <div className="flex justify-center mt-4">
-            <Pagination
-              total={10}
+          {selectedCard !== null && digitalLinks[selectedCard].title === "Saudi Electricity Company" ? (
+            <DigitalLinkSECTable
+              data={secData?.data}
+              isLoading={isSecLoading || isSecFetching}
               page={page}
-              onChange={setPage}
-              color="primary"
+              setPage={setPage}
+              search={search}
+              setSearch={setSearch}
+              onEdit={(item) => {
+                setSelectedDigitalLink(item);
+                onEditOpen();
+              }}
+              onDelete={(item) => {
+                setSelectedDigitalLink(item);
+                onDeleteOpen();
+              }}
+              onAdd={onSecOpen}
             />
-          </div>
+          ) : (
+            <Table
+              topContent={topContent}
+              bottomContent={
+                <div className="flex w-full justify-center">
+                  <Pagination
+                    isCompact
+                    showControls
+                    showShadow
+                    color="primary"
+                    page={page}
+                    total={pages}
+                    onChange={(page) => setPage(page)}
+                  />
+                </div>
+              }
+              aria-label="Digital links table"
+            >
+              <TableHeader columns={columns}>
+                {(column) => (
+                  <TableColumn key={column.uid}>{column.name}</TableColumn>
+                )}
+              </TableHeader>
+              <TableBody
+                items={tableData}
+                isLoading={isFetching || isLoading}
+                loadingContent={<Spinner />}
+                emptyContent={<div>No digital links found</div>}
+              >
+                {(item) => (
+                  <TableRow key={item.id}>
+                    {(columnKey) => (
+                      <TableCell>
+                        {columnKey === "actions" ? (
+                          <div className="flex gap-2">
+                            <Button
+                              isIconOnly
+                              size="sm"
+                              variant="light"
+                              onClick={() => {
+                                setSelectedDigitalLink(item);
+                                onEditOpen();
+                              }}
+                            >
+                              <FaEdit className="text-primary" />
+                            </Button>
+                            <Button
+                              isIconOnly
+                              size="sm"
+                              variant="light"
+                              onClick={() => {
+                                setSelectedDigitalLink(item);
+                                onDeleteOpen();
+                              }}
+                            >
+                              <FaTrash className="text-danger" />
+                            </Button>
+                          </div>
+                        ) : columnKey === "createdAt" ||
+                          columnKey === "updatedAt" ? (
+                          new Date(item[columnKey]).toLocaleDateString()
+                        ) : (
+                          item[columnKey]
+                        )}
+                      </TableCell>
+                    )}
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          )}
         </div>
       </div>
+
+      <AddDigitalLink
+        isOpen={isOpen}
+        onClose={onClose}
+        gtin={gtin}
+        digitalType={
+          selectedCard !== null ? digitalLinks[selectedCard].title : ""
+        }
+      />
+
+      <AddDigitalLinkSEC
+        isOpen={isSecOpen}
+        onClose={onSecClose}
+        gtin={gtin}
+      />
+
+      <EditDigitalLink
+        isOpen={isEditOpen}
+        onClose={onEditClose}
+        digitalLink={selectedDigitalLink}
+      />
+
+      <DeleteDigitalLink
+        isOpen={isDeleteOpen}
+        onClose={onDeleteClose}
+        digitalLink={selectedDigitalLink}
+      />
     </MainLayout>
   );
 }
