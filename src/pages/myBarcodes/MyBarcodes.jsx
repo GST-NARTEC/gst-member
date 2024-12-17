@@ -33,12 +33,22 @@ import { useSelector } from "react-redux";
 import { format } from "date-fns";
 import QRCode from "react-qr-code";
 import { useNavigate } from "react-router-dom";
+import { useDebounce } from "../../hooks/useDebounce";
 
 function MyBarcodes() {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.member);
-  const { data, isLoading } = useMemberGtinsQuery(user.id);
   const [page, setPage] = React.useState(1);
+  const [search, setSearch] = React.useState("");
+  const debouncedSearch = useDebounce(search, 500);
+  const ITEMS_PER_PAGE = 10;
+
+  const { data, isLoading } = useMemberGtinsQuery({
+    userId: user.id,
+    page,
+    limit: ITEMS_PER_PAGE,
+    search: debouncedSearch
+  });
 
   const columns = [
     { name: "GTIN", uid: "gtin" },
@@ -127,17 +137,20 @@ function MyBarcodes() {
             Buy Barcodes
           </Button>
         </div>
-        <div className="flex justify-between items-center">
+        {/* <div className="flex justify-between items-center">
           <Input
             isClearable
+            value={search}
+            onClear={() => setSearch("")}
+            onChange={(e) => setSearch(e.target.value)}
             className="w-full sm:max-w-[44%]"
             placeholder="Search by barcode..."
             startContent={<FaSearch className="text-default-300" />}
           />
-        </div>
+        </div> */}
       </div>
     ),
-    []
+    [search]
   );
 
   const bottomContent = useMemo(() => {

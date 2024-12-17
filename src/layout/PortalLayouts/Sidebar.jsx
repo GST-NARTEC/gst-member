@@ -21,6 +21,8 @@ import { Images } from "../../assets/Index";
 import { MdEmail } from "react-icons/md";
 import { useDispatch } from "react-redux";
 import { logout } from "../../store/slices/memberSlice";
+import { clearCart } from "../../store/slices/cartSlice";
+
 function Sidebar({ isOpen, toggleSidebar, isLargeScreenCollapsed }) {
   const location = useLocation();
   const [openDropdowns, setOpenDropdowns] = useState({});
@@ -29,6 +31,7 @@ function Sidebar({ isOpen, toggleSidebar, isLargeScreenCollapsed }) {
 
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(clearCart());
   };
 
   const menuItems = [

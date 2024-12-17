@@ -26,9 +26,14 @@ export const memberApi = apiSlice.injectEndpoints({
     }),
 
     memberGtins: builder.query({
-      query: (userId) => ({
+      query: ({ userId, page, limit }) => ({
         url: `/user/v1/${userId}/gtins`,
         method: "GET",
+        params: {
+          page,
+          limit,
+          
+        }
       }),
     }),
   }),
