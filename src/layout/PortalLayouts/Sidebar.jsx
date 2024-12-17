@@ -82,16 +82,16 @@ function Sidebar({ isOpen, toggleSidebar, isLargeScreenCollapsed }) {
       icon: <FaFileContract />,
       label: "GST Terms & Conditions",
     },
-    {
-      // path: "/member-portal/data-policy",
-      icon: <FaFileAlt />,
-      label: "Data Declaration Policy",
-    },
-    {
-      // path: "/member-portal/contract",
-      icon: <FaHandshake />,
-      label: "My GST Contract",
-    },
+    // {
+    //   // path: "/member-portal/data-policy",
+    //   icon: <FaFileAlt />,
+    //   label: "Data Declaration Policy",
+    // },
+    // {
+    //   // path: "/member-portal/contract",
+    //   icon: <FaHandshake />,
+    //   label: "My GST Contract",
+    // },
     {
       // path: "/logout",
       icon: <FaSignOutAlt />,
