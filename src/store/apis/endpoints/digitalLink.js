@@ -75,6 +75,13 @@ export const digitalLinkApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["SEC"],
     }),
+
+    checkSecGtin: builder.query({
+      query: (gtin) => ({
+        url: `/v1/orders/sec/${gtin}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -87,4 +94,5 @@ export const {
   useGetDigitalLinksSECQuery,
   useUpdateDigitalLinkSECMutation,
   useDeleteDigitalLinkSECMutation,
+  useCheckSecGtinQuery,
 } = digitalLinkApiSlice;

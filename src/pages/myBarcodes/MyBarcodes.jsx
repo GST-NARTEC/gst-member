@@ -26,13 +26,16 @@ import {
   FaEllipsisV,
   FaQrcode,
   FaFileAlt,
+  FaShoppingCart,
 } from "react-icons/fa";
 import { useMemberGtinsQuery } from "../../store/apis/endpoints/member";
 import { useSelector } from "react-redux";
 import { format } from "date-fns";
 import QRCode from "react-qr-code";
+import { useNavigate } from "react-router-dom";
 
 function MyBarcodes() {
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.member);
   const { data, isLoading } = useMemberGtinsQuery(user.id);
   const [page, setPage] = React.useState(1);
@@ -83,7 +86,6 @@ function MyBarcodes() {
       case "status":
         return (
           <Chip
-          
             color={item.status === "Sold" ? "success" : "primary"}
             variant="flat"
           >
@@ -115,7 +117,16 @@ function MyBarcodes() {
   const topContent = useMemo(
     () => (
       <div className="flex flex-col gap-4">
-        <h1 className="text-2xl font-bold">My Barcodes</h1>
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold">My Barcodes</h1>
+          <Button
+            color="primary"
+            startContent={<FaShoppingCart />}
+            onClick={() => navigate("/member-portal/my-barcodes/buy")}
+          >
+            Buy Barcodes
+          </Button>
+        </div>
         <div className="flex justify-between items-center">
           <Input
             isClearable

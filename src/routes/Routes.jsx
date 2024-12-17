@@ -11,6 +11,8 @@ import Billing from "../pages/myBilling/Billing";
 import AddMyProduct from "../pages/myProducts/AddMyProduct";
 import EditMyProduct from "../pages/myProducts/EditMyProduct";
 import DigitalLink from "../pages/myProducts/digitalLink/DigitalLink";
+import Barcodes from "../pages/myBarcodes/BuyBarcodes/Barcodes";
+import Payment from "../pages/myBarcodes/BuyBarcodes/Payment";
 
 export default function AppRoutes() {
   return (
@@ -22,6 +24,8 @@ export default function AppRoutes() {
         <Route path="/member-portal/dashboard" element={<Dashboard />} />
         <Route path="/member-portal/my-profile" element={<MyProfile />} />
         <Route path="/member-portal/my-barcodes" element={<MyBarcodes />} />
+        <Route path="/member-portal/my-barcodes/buy" element={<Barcodes />} />
+        <Route path="/member-portal/my-barcodes/buy/payment" element={<Payment />} />
 
         <Route path="/member-portal/my-products" element={<MyProducts />} />
         <Route
@@ -37,9 +41,6 @@ export default function AppRoutes() {
         />
         <Route path="/member-portal/billing" element={<Billing />} />
         <Route path="/member-portal/my-products/digital-link/:id" element={<DigitalLink />} />
-        {/* Add more protected routes here */}
-        {/* <Route path="/member-portal/profile" element={<Profile />} /> */}
-        {/* <Route path="/member-portal/settings" element={<Settings />} /> */}
       </Route>
     </Routes>
   );

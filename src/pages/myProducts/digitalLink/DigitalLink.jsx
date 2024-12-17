@@ -21,12 +21,15 @@ import AddDigitalLink from "./AddDigitalLink";
 import EditDigitalLink from "./EditDigitalLink";
 import DeleteDigitalLink from "./DeleteDigitalLink";
 import toast from "react-hot-toast";
-import { useGetDigitalLinksQuery, useGetDigitalLinksSECQuery } from "../../../store/apis/endpoints/digitalLink";
+import {
+  useGetDigitalLinksQuery,
+  useGetDigitalLinksSECQuery,
+  useCheckSecGtinQuery,
+} from "../../../store/apis/endpoints/digitalLink";
 import { useDebounce } from "../../../hooks/useDebounce";
 // react icons
 import { FaSearch, FaEdit, FaTrash } from "react-icons/fa";
 
-import { useSelector } from "react-redux";
 import AddDigitalLinkSEC from "./AddDigitalLinkSEC";
 import DigitalLinkSECTable from "./DigitalLinkSECTable";
 
@@ -75,8 +78,11 @@ const digitalLinks = [
 
 function DigitalLink() {
   const location = useLocation();
-  const { user } = useSelector((state) => state.member);
   const { gtin, productName, brandName } = location.state || {};
+  const { data: secGtinData, isLoading: isSecGtinLoading } =
+    useCheckSecGtinQuery(gtin, {
+      skip: !gtin,
+    });
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
@@ -129,7 +135,9 @@ function DigitalLink() {
       search: debouncedSearch,
     },
     {
-      skip: !selectedCard || digitalLinks[selectedCard]?.title !== "Saudi Electricity Company",
+      skip:
+        !selectedCard ||
+        digitalLinks[selectedCard]?.title !== "Saudi Electricity Company",
     }
   );
 
@@ -152,7 +160,10 @@ function DigitalLink() {
   ];
 
   const handleCardClick = (index) => {
-    if (digitalLinks[index].title === "Saudi Electricity Company" && !user?.isSec) {
+    if (
+      digitalLinks[index].title === "Saudi Electricity Company" &&
+      !secGtinData?.data?.order?.isSec
+    ) {
       return;
     }
     setSelectedCard(index);
@@ -246,17 +257,30 @@ function DigitalLink() {
           {digitalLinks.map((link, index) => (
             <Card
               key={index}
-              isPressable={!(link.title === "Saudi Electricity Company" && !user?.isSec)}
+              isPressable={
+                !(
+                  link.title === "Saudi Electricity Company" &&
+                  !secGtinData?.data?.order?.isSec
+                )
+              }
               className={`transition-transform ${
                 selectedCard === index ? "border-2 border-primary" : ""
               } ${
-                link.title === "Saudi Electricity Company" && !user?.isSec
+                link.title === "Saudi Electricity Company" &&
+                !secGtinData?.data?.order?.isSec
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:scale-105"
               }`}
               onClick={() => {
-                if (link.title === "Saudi Electricity Company" && !user?.isSec) {
-                  toast.error("You don't have access to Saudi Electricity Company features");
+                if (
+                  link.title === "Saudi Electricity Company" &&
+                  !secGtinData?.data?.order?.isSec
+                ) {
+                  toast.error(
+                    isSecGtinLoading
+                      ? "Checking SEC access..."
+                      : "You don't have access to Saudi Electricity Company features"
+                  );
                   return;
                 }
                 handleCardClick(index);
@@ -271,11 +295,14 @@ function DigitalLink() {
                 <div>
                   <h3 className="font-semibold text-primary">{link.title}</h3>
                   <p className="text-sm text-gray-500">{link.description}</p>
-                  {link.title === "Saudi Electricity Company" && !user?.isSec && (
-                    <span className="text-xs text-danger mt-1 block">
-                      Access restricted
-                    </span>
-                  )}
+                  {link.title === "Saudi Electricity Company" &&
+                    !secGtinData?.data?.order?.isSec && (
+                      <span className="text-xs text-danger mt-1 block">
+                        {isSecGtinLoading
+                          ? "Checking access..."
+                          : "Access restricted"}
+                      </span>
+                    )}
                 </div>
               </CardBody>
             </Card>
@@ -283,7 +310,8 @@ function DigitalLink() {
         </div>
 
         <div className="mt-8">
-          {selectedCard !== null && digitalLinks[selectedCard].title === "Saudi Electricity Company" ? (
+          {selectedCard !== null &&
+          digitalLinks[selectedCard].title === "Saudi Electricity Company" ? (
             <DigitalLinkSECTable
               data={secData?.data}
               isLoading={isSecLoading || isSecFetching}
@@ -384,11 +412,7 @@ function DigitalLink() {
         }
       />
 
-      <AddDigitalLinkSEC
-        isOpen={isSecOpen}
-        onClose={onSecClose}
-        gtin={gtin}
-      />
+      <AddDigitalLinkSEC isOpen={isSecOpen} onClose={onSecClose} gtin={gtin} />
 
       <EditDigitalLink
         isOpen={isEditOpen}
