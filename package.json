@@ -13,6 +13,7 @@
     "@nextui-org/react": "^2.4.8",
     "@react-google-maps/api": "^2.20.3",
     "@reduxjs/toolkit": "^2.3.0",
+    "bwip-js": "^4.5.1",
     "copyfiles": "^2.4.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^11.11.17",
