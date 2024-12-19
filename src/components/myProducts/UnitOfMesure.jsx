@@ -9,7 +9,7 @@ function UnitOfMeasure({ value, onChange }) {
     data?.data?.map((unit) => ({
       label: unit.name,
       value: unit.name,
-      description: `Code: ${unit.code}`,
+      // description: `Code: ${unit.code}`,
     })) || [];
 
   return (
@@ -25,9 +25,9 @@ function UnitOfMeasure({ value, onChange }) {
         <AutocompleteItem key={item.value} textValue={item.label}>
           <div className="flex flex-col">
             <span>{item.label}</span>
-            <span className="text-small text-default-400">
-              {item.description}
-            </span>
+            {/* <span className="text-small text-default-400"> */}
+              {/* {item.description} */}
+            {/* </span> */}
           </div>
         </AutocompleteItem>
       )}

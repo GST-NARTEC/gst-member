@@ -17,7 +17,6 @@ const checkout = apiSlice.injectEndpoints({
         body: orderData,
       }),
     }),
-    
   }),
 });
 
