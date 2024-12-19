@@ -1,17 +1,30 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Package2, Building2, Globe, Tag, Info, Box, MapPin } from "lucide-react";
+import {
+  Package2,
+  Building2,
+  Globe,
+  Tag,
+  Info,
+  Box,
+  MapPin,
+} from "lucide-react";
 import WebsiteLayout from "../../../layout/WebsiteLayouts/Layout";
 import SearchGtin from "../../../components/Website/HomePage/SearchGtin";
-import { fetchBarcodeData, resetExternalData } from "../../../store/apis/externalApis/externalDataSlice";
+import {
+  fetchBarcodeData,
+  resetExternalData,
+} from "../../../store/apis/externalApis/externalDataSlice";
 import { formatImageUrl } from "../../../utils/formatImageUrl";
-
+import BarcodeLookup from "./BarcodeLookup";
 
 function BarcodeResult() {
   const { barcode } = useParams();
   const dispatch = useDispatch();
-  const { data, source, loading, error } = useSelector((state) => state.externalData);
+  const { data, source, loading, error } = useSelector(
+    (state) => state.externalData
+  );
 
   useEffect(() => {
     if (barcode) {
@@ -48,7 +61,9 @@ function BarcodeResult() {
           <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
             <div className="flex items-center gap-3 mb-4">
               <Building2 className="w-6 h-6 text-primary" />
-              <h2 className="text-xl font-semibold text-primary">Company Details</h2>
+              <h2 className="text-xl font-semibold text-primary">
+                Company Details
+              </h2>
             </div>
             <div className="space-y-3">
               <p className="flex items-center gap-2">
@@ -57,8 +72,14 @@ function BarcodeResult() {
                   {data.brandName?.value}
                 </span>
               </p>
-              <p><span className="font-semibold">Company:</span> {data.companyName}</p>
-              <p><span className="font-semibold">License:</span> {data.licenceType}</p>
+              <p>
+                <span className="font-semibold">Company:</span>{" "}
+                {data.companyName}
+              </p>
+              <p>
+                <span className="font-semibold">License:</span>{" "}
+                {data.licenceType}
+              </p>
             </div>
           </div>
 
@@ -66,11 +87,19 @@ function BarcodeResult() {
           <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
             <div className="flex items-center gap-3 mb-4">
               <Package2 className="w-6 h-6 text-primary" />
-              <h2 className="text-xl font-semibold text-primary">Product Details</h2>
+              <h2 className="text-xl font-semibold text-primary">
+                Product Details
+              </h2>
             </div>
             <div className="space-y-3">
-              <p><span className="font-semibold">Category:</span> {data.gpcCategoryName}</p>
-              <p><span className="font-semibold">Net Content:</span> {data.unitValue} {data.unitCode}</p>
+              <p>
+                <span className="font-semibold">Category:</span>{" "}
+                {data.gpcCategoryName}
+              </p>
+              <p>
+                <span className="font-semibold">Net Content:</span>{" "}
+                {data.unitValue} {data.unitCode}
+              </p>
               <p className="text-gray-700">{data.productDescription?.value}</p>
             </div>
           </div>
@@ -84,17 +113,30 @@ function BarcodeResult() {
             <Globe className="w-6 h-6 text-primary" />
             <h2 className="text-xl font-semibold text-primary">Distribution</h2>
           </div>
-          <p><span className="font-semibold">Market:</span> {data.countryOfSaleName}</p>
-          <p className="mt-2"><span className="font-semibold">Address:</span> {data.formattedAddress}</p>
+          <p>
+            <span className="font-semibold">Market:</span>{" "}
+            {data.countryOfSaleName}
+          </p>
+          <p className="mt-2">
+            <span className="font-semibold">Address:</span>{" "}
+            {data.formattedAddress}
+          </p>
         </div>
 
         <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
           <div className="flex items-center gap-3 mb-4">
             <Info className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-semibold text-primary">Additional Info</h2>
+            <h2 className="text-xl font-semibold text-primary">
+              Additional Info
+            </h2>
           </div>
-          <p><span className="font-semibold">Registration Date:</span> {new Date(data.companyRegistrationDate).toLocaleDateString()}</p>
-          <p><span className="font-semibold">Type:</span> {data.type}</p>
+          <p>
+            <span className="font-semibold">Registration Date:</span>{" "}
+            {new Date(data.companyRegistrationDate).toLocaleDateString()}
+          </p>
+          <p>
+            <span className="font-semibold">Type:</span> {data.type}
+          </p>
         </div>
       </div>
     </div>
@@ -104,9 +146,17 @@ function BarcodeResult() {
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">{data.title}</h1>
       <div className="space-y-2">
-        <p><span className="font-semibold">Barcode:</span> {data.barcode}</p>
-        <p><span className="font-semibold">Created:</span> {new Date(data.created_at).toLocaleDateString()}</p>
-        <p><span className="font-semibold">Updated:</span> {new Date(data.updated_at).toLocaleDateString()}</p>
+        <p>
+          <span className="font-semibold">Barcode:</span> {data.barcode}
+        </p>
+        <p>
+          <span className="font-semibold">Created:</span>{" "}
+          {new Date(data.created_at).toLocaleDateString()}
+        </p>
+        <p>
+          <span className="font-semibold">Updated:</span>{" "}
+          {new Date(data.updated_at).toLocaleDateString()}
+        </p>
       </div>
     </div>
   );
@@ -127,16 +177,31 @@ function BarcodeResult() {
         <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
           <div className="flex items-center gap-3 mb-4">
             <Building2 className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-semibold text-primary">Company Details</h2>
+            <h2 className="text-xl font-semibold text-primary">
+              Company Details
+            </h2>
           </div>
           <div className="space-y-3">
-            <p><span className="font-semibold">Company:</span> {data.companyName}</p>
-            <p><span className="font-semibold">License Key:</span> {data.licenceKey}</p>
-            <p><span className="font-semibold">License Type:</span> {data.licenceType}</p>
-            <p><span className="font-semibold">License Status:</span> 
-              <span className={`ml-2 px-2 py-1 rounded ${
-                data.licenceStatus === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-              }`}>
+            <p>
+              <span className="font-semibold">Company:</span> {data.companyName}
+            </p>
+            <p>
+              <span className="font-semibold">License Key:</span>{" "}
+              {data.licenceKey}
+            </p>
+            <p>
+              <span className="font-semibold">License Type:</span>{" "}
+              {data.licenceType}
+            </p>
+            <p>
+              <span className="font-semibold">License Status:</span>
+              <span
+                className={`ml-2 px-2 py-1 rounded ${
+                  data.licenceStatus === "ACTIVE"
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }`}
+              >
                 {data.licenceStatus}
               </span>
             </p>
@@ -146,12 +211,23 @@ function BarcodeResult() {
         <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
           <div className="flex items-center gap-3 mb-4">
             <Globe className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-semibold text-primary">GS1 Information</h2>
+            <h2 className="text-xl font-semibold text-primary">
+              GS1 Information
+            </h2>
           </div>
           <div className="space-y-3">
-            <p><span className="font-semibold">Licensing MO:</span> {data.licensingMOName}</p>
-            <p><span className="font-semibold">Primary MO:</span> {data.primaryMOName}</p>
-            <p><span className="font-semibold">Address:</span> {data.formattedAddress}</p>
+            <p>
+              <span className="font-semibold">Licensing MO:</span>{" "}
+              {data.licensingMOName}
+            </p>
+            <p>
+              <span className="font-semibold">Primary MO:</span>{" "}
+              {data.primaryMOName}
+            </p>
+            <p>
+              <span className="font-semibold">Address:</span>{" "}
+              {data.formattedAddress}
+            </p>
           </div>
         </div>
       </div>
@@ -160,11 +236,19 @@ function BarcodeResult() {
       <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
         <div className="flex items-center gap-3 mb-4">
           <Info className="w-6 h-6 text-primary" />
-          <h2 className="text-xl font-semibold text-primary">Additional Information</h2>
+          <h2 className="text-xl font-semibold text-primary">
+            Additional Information
+          </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <p><span className="font-semibold">Created:</span> {new Date(data.dateCreated).toLocaleDateString()}</p>
-          <p><span className="font-semibold">Updated:</span> {new Date(data.dateUpdated).toLocaleDateString()}</p>
+          <p>
+            <span className="font-semibold">Created:</span>{" "}
+            {new Date(data.dateCreated).toLocaleDateString()}
+          </p>
+          <p>
+            <span className="font-semibold">Updated:</span>{" "}
+            {new Date(data.dateUpdated).toLocaleDateString()}
+          </p>
         </div>
       </div>
     </div>
@@ -175,27 +259,41 @@ function BarcodeResult() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           <SearchGtin />
-          
+
           <div className="mt-8">
             {loading && (
               <div className="text-center py-12">
                 <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto"></div>
-                <p className="mt-4 text-lg text-gray-600">Searching for product information...</p>
+                <p className="mt-4 text-lg text-gray-600">
+                  Searching for product information...
+                </p>
               </div>
             )}
-            
+
             {error && (
               <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <svg className="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    <svg
+                      className="h-6 w-6 text-red-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                      />
                     </svg>
                   </div>
                   <div className="ml-3">
-                    <h3 className="text-lg font-medium text-red-800">Search Result</h3>
+                    <h3 className="text-lg font-medium text-red-800">
+                      Search Result
+                    </h3>
                     <p className="mt-1 text-red-600">
-                      {error === "Barcode not found in any of our databases" 
+                      {error === "Barcode not found in any of our databases"
                         ? `We couldn't find the barcode ${barcode} in our databases. Please verify the number and try again.`
                         : error}
                     </p>
@@ -203,12 +301,13 @@ function BarcodeResult() {
                 </div>
               </div>
             )}
-            
+
             {data && (
               <div className="mt-8">
-                {source === 'gs1' && renderGS1Data(data)}
-                {source === 'gs1Company' && renderGS1CompanyData(data)}
-                {source === 'barcodeReport' && renderBarcodeReportData(data)}
+                {source === "gs1" && renderGS1Data(data)}
+                {source === "gs1Company" && renderGS1CompanyData(data)}
+                {source === "barcodeLookup" && <BarcodeLookup data={data} />}
+                {source === "barcodeReport" && renderBarcodeReportData(data)}
               </div>
             )}
           </div>

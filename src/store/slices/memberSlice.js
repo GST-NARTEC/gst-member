@@ -16,7 +16,7 @@ const memberSlice = createSlice({
       state.accessToken = null;
       state.refreshToken = null;
       state.isAuthenticated = false;
-      
+
       const { user, accessToken, refreshToken } = action.payload;
       state.user = user;
       state.accessToken = accessToken;
@@ -35,5 +35,12 @@ const memberSlice = createSlice({
   },
 });
 
-export const { setCredentials, updateAccessToken, logout } = memberSlice.actions;
+export const { setCredentials, updateAccessToken, logout } =
+  memberSlice.actions;
 export default memberSlice.reducer;
+
+export const selectCurrentUser = (state) => state.member.user;
+export const selectCurrentAccessToken = (state) => state.member.accessToken;
+export const selectCurrentRefreshToken = (state) => state.member.refreshToken;
+export const selectCurrentIsAuthenticated = (state) =>
+  state.member.isAuthenticated;

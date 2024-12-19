@@ -30,6 +30,9 @@ import { useDebounce } from "../../../hooks/useDebounce";
 // react icons
 import { FaSearch, FaEdit, FaTrash } from "react-icons/fa";
 
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../../store/slices/memberSlice";
+
 import AddDigitalLinkSEC from "./AddDigitalLinkSEC";
 import DigitalLinkSECTable from "./DigitalLinkSECTable";
 
@@ -77,11 +80,14 @@ const digitalLinks = [
 ];
 
 function DigitalLink() {
+  const user = useSelector(selectCurrentUser);
+
+  console.log(user);
   const location = useLocation();
   const { gtin, productName, brandName } = location.state || {};
   const { data: secGtinData, isLoading: isSecGtinLoading } =
-    useCheckSecGtinQuery(gtin, {
-      skip: !gtin,
+    useCheckSecGtinQuery(user?.id, {
+      skip: !user?.id,
     });
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -162,7 +168,7 @@ function DigitalLink() {
   const handleCardClick = (index) => {
     if (
       digitalLinks[index].title === "Saudi Electricity Company" &&
-      !secGtinData?.data?.order?.isSec
+      !secGtinData?.data?.isSec
     ) {
       return;
     }
@@ -260,21 +266,21 @@ function DigitalLink() {
               isPressable={
                 !(
                   link.title === "Saudi Electricity Company" &&
-                  !secGtinData?.data?.order?.isSec
+                  !secGtinData?.data?.isSec
                 )
               }
               className={`transition-transform ${
                 selectedCard === index ? "border-2 border-primary" : ""
               } ${
                 link.title === "Saudi Electricity Company" &&
-                !secGtinData?.data?.order?.isSec
+                !secGtinData?.data?.isSec
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:scale-105"
               }`}
               onClick={() => {
                 if (
                   link.title === "Saudi Electricity Company" &&
-                  !secGtinData?.data?.order?.isSec
+                  !secGtinData?.data?.isSec
                 ) {
                   toast.error(
                     isSecGtinLoading
@@ -296,7 +302,7 @@ function DigitalLink() {
                   <h3 className="font-semibold text-primary">{link.title}</h3>
                   <p className="text-sm text-gray-500">{link.description}</p>
                   {link.title === "Saudi Electricity Company" &&
-                    !secGtinData?.data?.order?.isSec && (
+                    !secGtinData?.data?.isSec && (
                       <span className="text-xs text-danger mt-1 block">
                         {isSecGtinLoading
                           ? "Checking access..."

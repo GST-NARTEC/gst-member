@@ -25,7 +25,7 @@ function Payment() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [createOrder, { isLoading, isSucess, isError, error }] =
+  const [createOrder, { isLoading, isSuccess, isError, error }] =
     useCreateOrderMutation();
 
   const [paymentMethod, setPaymentMethod] = useState("bank");
@@ -74,7 +74,7 @@ function Payment() {
   };
 
   useEffect(() => {
-    if (isSucess) {
+    if (isSuccess) {
       setShowConfetti(true);
       dispatch(clearCart());
       toast.success("Order created successfully");
@@ -85,7 +85,7 @@ function Payment() {
     } else if (isError) {
       toast.error(error?.data?.message || "Payment failed");
     }
-  }, [isSucess, isError, error]);
+  }, [isSuccess, isError, error]);
 
   // Add this useEffect for window resize
   useEffect(() => {

@@ -30,7 +30,7 @@ export const fetchBarcodeData = createAsyncThunk(
     try {
       const barcodeLookupApiKey = import.meta.env.VITE_BARCODE_LOOKUP_API_KEY;
       const barcodeLookupResponse = await fetch(
-        `https://api.barcodelookup.com/v3/products?barcode=${barcode}&formatted=y&key=${barcodeLookupApiKey}`
+        `https://api.gstsa1.org/api/v1/barcode-lookup/${barcode}`
       );
       const barcodeLookupData = await barcodeLookupResponse.json();
 
