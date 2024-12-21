@@ -28,6 +28,7 @@ import MainLayout from "../../layout/PortalLayouts/MainLayout";
 import { FaTrash, FaEdit, FaEllipsisV, FaLink } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import DeleteMyProduct from "./DeleteMyProduct";
+import { useGetUserTotalSECQuantityQuery } from "../../store/apis/endpoints/user";
 
 const INITIAL_VISIBLE_COLUMNS = [
   "title",
@@ -47,6 +48,7 @@ function MyProducts() {
   const debouncedSearch = useDebounce(searchQuery, 500);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
+  const { data: totalSECQuantity } = useGetUserTotalSECQuantityQuery();
 
   const { data, isLoading, isFetching } = useGetUserProductsQuery({
     page,

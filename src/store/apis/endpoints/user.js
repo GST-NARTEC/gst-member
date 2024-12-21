@@ -51,6 +51,13 @@ const user = apiSlice.injectEndpoints({
       providesTags: ["userDetails"],
     }),
 
+    getUserTotalSECQuantity: builder.query({
+      query: () => ({
+        url: `/user/v1/total-sec-quantity`,
+        method: "GET",
+      }),
+    }),
+
     updateUser: builder.mutation({
       query: (data) => ({
         url: `/user/v1/${data.id}`,
@@ -70,4 +77,5 @@ export const {
   useGetUserQuery,
   useGetUserByIdQuery,
   useUpdateUserMutation,
+  useGetUserTotalSECQuantityQuery,
 } = user;

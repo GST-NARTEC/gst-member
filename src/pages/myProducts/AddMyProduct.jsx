@@ -7,6 +7,8 @@ import {
   CardBody,
   Image,
   Switch,
+  Checkbox,
+  Chip,
 } from "@nextui-org/react";
 import { FaArrowLeft, FaUpload, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -15,10 +17,13 @@ import UnitOfMeasure from "../../components/myProducts/UnitOfMesure";
 import CountryOfSale from "../../components/myProducts/CountryOfSale";
 import CountryOfOrigon from "../../components/myProducts/CountryOfOrigon";
 import MyBrands from "../../components/myProducts/MyBrands";
+import { useGetUserTotalSECQuantityQuery } from "../../store/apis/endpoints/user";
 import { useCreateUserProductMutation } from "../../store/apis/endpoints/userProducts";
 
 function AddMyProduct() {
   const navigate = useNavigate();
+  const { data: totalSECQuantity } = useGetUserTotalSECQuantityQuery();
+  console.log(totalSECQuantity);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -32,10 +37,13 @@ function AddMyProduct() {
     brandName: "",
     countryOfOrigin: "",
     countryOfSale: "",
+    isSec: false,
   });
 
   const [createUserProduct, { isLoading: isCreating }] =
     useCreateUserProductMutation();
+
+  const isSecEnabled = totalSECQuantity?.data?.secQuantity > 0;
 
   const handleImageChange = (e, index) => {
     const file = e.target.files[0];
@@ -69,6 +77,7 @@ function AddMyProduct() {
       productData.append("brandName", formData.brandName);
       productData.append("countryOfOrigin", formData.countryOfOrigin);
       productData.append("countryOfSale", formData.countryOfSale);
+      productData.append("isSec", formData.isSec);
 
       // Append images, filtering out null values
       formData.images.forEach((image, index) => {
@@ -128,6 +137,38 @@ function AddMyProduct() {
                     }
                   />
                   <span className="text-sm">{formData.status}</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <Checkbox
+                    aria-label="SEC Product"
+                    isSelected={formData.isSec}
+                    onValueChange={(checked) =>
+                      setFormData((prev) => ({ ...prev, isSec: checked }))
+                    }
+                    isDisabled={!isSecEnabled}
+                    classNames={{
+                      base: "inline-flex w-full max-w-md bg-content1 hover:bg-content2 items-center justify-start cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent data-[selected=true]:border-primary",
+                      label: "w-full",
+                    }}
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <div>
+                        <p className="text-medium font-medium">Saudi Electricity Company Product</p>
+                        <p className="text-tiny text-default-500">
+                          {isSecEnabled 
+                            ? "You can register this product as SEC" 
+                            : "You don't have any SEC quantity available"}
+                        </p>
+                      </div>
+                      <Chip
+                        color={isSecEnabled ? "success" : "warning"}
+                        size="sm"
+                        variant="flat"
+                      >
+                        {`SEC Quantity: ${totalSECQuantity?.data?.secQuantity || 0}`}
+                      </Chip>
+                    </div>
+                  </Checkbox>
                 </div>
                 <Textarea
                   label="Description"
