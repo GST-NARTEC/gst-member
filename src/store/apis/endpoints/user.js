@@ -56,6 +56,7 @@ const user = apiSlice.injectEndpoints({
         url: `/user/v1/total-sec-quantity`,
         method: "GET",
       }),
+      providesTags: ["userTotalSECQuantity"],
     }),
 
     updateUser: builder.mutation({

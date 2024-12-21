@@ -21,17 +21,13 @@ import AddDigitalLink from "./AddDigitalLink";
 import EditDigitalLink from "./EditDigitalLink";
 import DeleteDigitalLink from "./DeleteDigitalLink";
 import toast from "react-hot-toast";
-import {
-  useGetDigitalLinksQuery,
-  useGetDigitalLinksSECQuery,
-  useCheckSecGtinQuery,
-} from "../../../store/apis/endpoints/digitalLink";
 import { useDebounce } from "../../../hooks/useDebounce";
 // react icons
-import { FaSearch, FaEdit, FaTrash } from "react-icons/fa";
+import { FaSearch, FaEdit, FaTrash, FaLeaf } from "react-icons/fa";
 
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../../store/slices/memberSlice";
+import { useGetDigitalLinksQuery, useGetDigitalLinksSECQuery } from "../../../store/apis/endpoints/digitalLink";
 
 import AddDigitalLinkSEC from "./AddDigitalLinkSEC";
 import DigitalLinkSECTable from "./DigitalLinkSECTable";
@@ -77,18 +73,17 @@ const digitalLinks = [
     title: "Electronic Leaflets",
     description: "Digital product documentation",
   },
+  {
+    icon: Images.SustainabilityInfo,
+    title: "Sustainability Info",
+    description: "Environmental impact and sustainability details",
+  },
 ];
 
 function DigitalLink() {
   const user = useSelector(selectCurrentUser);
-
-  console.log(user);
   const location = useLocation();
-  const { gtin, productName, brandName } = location.state || {};
-  const { data: secGtinData, isLoading: isSecGtinLoading } =
-    useCheckSecGtinQuery(user?.id, {
-      skip: !user?.id,
-    });
+  const { gtin, productName, brandName, isSec } = location.state || {};
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
@@ -166,10 +161,7 @@ function DigitalLink() {
   ];
 
   const handleCardClick = (index) => {
-    if (
-      digitalLinks[index].title === "Saudi Electricity Company" &&
-      !secGtinData?.data?.isSec
-    ) {
+    if (digitalLinks[index].title === "Saudi Electricity Company" && !isSec) {
       return;
     }
     setSelectedCard(index);
@@ -259,34 +251,23 @@ function DigitalLink() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           {digitalLinks.map((link, index) => (
             <Card
               key={index}
               isPressable={
-                !(
-                  link.title === "Saudi Electricity Company" &&
-                  !secGtinData?.data?.isSec
-                )
+                !(link.title === "Saudi Electricity Company" && !isSec)
               }
               className={`transition-transform ${
                 selectedCard === index ? "border-2 border-primary" : ""
               } ${
-                link.title === "Saudi Electricity Company" &&
-                !secGtinData?.data?.isSec
+                link.title === "Saudi Electricity Company" && !isSec
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:scale-105"
               }`}
               onClick={() => {
-                if (
-                  link.title === "Saudi Electricity Company" &&
-                  !secGtinData?.data?.isSec
-                ) {
-                  toast.error(
-                    isSecGtinLoading
-                      ? "Checking SEC access..."
-                      : "You don't have access to Saudi Electricity Company features"
-                  );
+                if (link.title === "Saudi Electricity Company" && !isSec) {
+                  toast.error("You don't have access to Saudi Electricity Company features");
                   return;
                 }
                 handleCardClick(index);
@@ -301,14 +282,11 @@ function DigitalLink() {
                 <div>
                   <h3 className="font-semibold text-primary">{link.title}</h3>
                   <p className="text-sm text-gray-500">{link.description}</p>
-                  {link.title === "Saudi Electricity Company" &&
-                    !secGtinData?.data?.isSec && (
-                      <span className="text-xs text-danger mt-1 block">
-                        {isSecGtinLoading
-                          ? "Checking access..."
-                          : "Access restricted"}
-                      </span>
-                    )}
+                  {link.title === "Saudi Electricity Company" && !isSec && (
+                    <span className="text-xs text-danger mt-1 block">
+                      Access restricted
+                    </span>
+                  )}
                 </div>
               </CardBody>
             </Card>

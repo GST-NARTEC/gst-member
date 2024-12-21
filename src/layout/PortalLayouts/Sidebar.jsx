@@ -76,7 +76,7 @@ function Sidebar({ isOpen, toggleSidebar, isLargeScreenCollapsed }) {
       label: "My Subscription",
     },
     {
-      // path: "/help-desk",
+      path: "/member-portal/help-support",
       icon: <FaQuestionCircle />,
       label: "Help Desk",
     },

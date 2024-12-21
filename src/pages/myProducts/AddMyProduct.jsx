@@ -9,6 +9,7 @@ import {
   Switch,
   Checkbox,
   Chip,
+  Skeleton,
 } from "@nextui-org/react";
 import { FaArrowLeft, FaUpload, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +23,7 @@ import { useCreateUserProductMutation } from "../../store/apis/endpoints/userPro
 
 function AddMyProduct() {
   const navigate = useNavigate();
-  const { data: totalSECQuantity } = useGetUserTotalSECQuantityQuery();
+  const { data: totalSECQuantity, isLoading: isLoadingTotalSECQuantity } = useGetUserTotalSECQuantityQuery();
   console.log(totalSECQuantity);
   const [formData, setFormData] = useState({
     title: "",
@@ -138,37 +139,90 @@ function AddMyProduct() {
                   />
                   <span className="text-sm">{formData.status}</span>
                 </div>
-                <div className="flex items-center space-x-4">
-                  <Checkbox
-                    aria-label="SEC Product"
-                    isSelected={formData.isSec}
-                    onValueChange={(checked) =>
-                      setFormData((prev) => ({ ...prev, isSec: checked }))
-                    }
-                    isDisabled={!isSecEnabled}
-                    classNames={{
-                      base: "inline-flex w-full max-w-md bg-content1 hover:bg-content2 items-center justify-start cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent data-[selected=true]:border-primary",
-                      label: "w-full",
-                    }}
+                <div className="md:col-span-2">
+                  <div
+                    className={`p-4 rounded-xl transition-all duration-300 ${
+                      formData.isSec
+                        ? "bg-gradient-to-r from-primary/10 to-primary/5 border-2 border-primary"
+                        : "bg-default-100 border-2 border-transparent"
+                    }`}
                   >
-                    <div className="flex items-center justify-between w-full">
-                      <div>
-                        <p className="text-medium font-medium">Saudi Electricity Company Product</p>
-                        <p className="text-tiny text-default-500">
-                          {isSecEnabled 
-                            ? "You can register this product as SEC" 
-                            : "You don't have any SEC quantity available"}
-                        </p>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`p-2 rounded-lg ${
+                            formData.isSec ? "bg-primary/10" : "bg-default-200"
+                          }`}
+                        >
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className={`${
+                              formData.isSec
+                                ? "text-primary"
+                                : "text-default-500"
+                            }`}
+                          >
+                            <path
+                              d="M12 2L4 6V12C4 17.55 7.84 22.73 12 24C16.16 22.73 20 17.55 20 12V6L12 2Z"
+                              fill="currentColor"
+                              opacity={0.2}
+                            />
+                            <path
+                              d="M12 2L4 6V12C4 17.55 7.84 22.73 12 24C16.16 22.73 20 17.55 20 12V6L12 2ZM12 22C8.52 20.97 6 16.87 6 12V7.09L12 4.18L18 7.09V12C18 16.87 15.48 20.97 12 22Z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </div>
+                        <div>
+                          <h3 className="text-medium font-semibold">
+                            Saudi Electricity Company Product
+                          </h3>
+                          <p className="text-sm text-default-500">
+                            {isSecEnabled
+                              ? "Register this product as an official SEC product"
+                              : "You don't have any SEC quantity available"}
+                          </p>
+                        </div>
                       </div>
-                      <Chip
-                        color={isSecEnabled ? "success" : "warning"}
-                        size="sm"
-                        variant="flat"
-                      >
-                        {`SEC Quantity: ${totalSECQuantity?.data?.secQuantity || 0}`}
-                      </Chip>
+
+                      <div className="flex items-center gap-3">
+                        {isLoadingTotalSECQuantity ? (
+                          <Skeleton className="w-24 h-6 rounded-full" />
+                        ) : (
+                          <Chip
+                            className="min-w-[120px]"
+                            startContent={
+                              <div
+                                className={`w-2 h-2 rounded-full mx-2 ${
+                                  isSecEnabled ? "bg-success" : "bg-warning"
+                              }`}
+                            />
+                          }
+                          variant="flat"
+                          color={isSecEnabled ? "success" : "warning"}
+                        >
+                          {`${
+                            totalSECQuantity?.data?.secQuantity || 0
+                          } Available`}
+                        </Chip>
+                      )}
+
+                      <Switch
+                        isDisabled={!isSecEnabled}
+                        size="lg"
+                        color="primary"
+                        isSelected={formData.isSec}
+                          onValueChange={(checked) =>
+                            setFormData((prev) => ({ ...prev, isSec: checked }))
+                          }
+                        />
+                      </div>
                     </div>
-                  </Checkbox>
+                  </div>
                 </div>
                 <Textarea
                   label="Description"

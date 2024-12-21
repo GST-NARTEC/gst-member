@@ -30,6 +30,7 @@ import OrderDetailsModal from "./OrderDetailsModal";
 import { useSelector } from "react-redux";
 import { selectCurrencySymbol } from "../../store/slices/currencySymbolSlice";
 import BankSlipModal from "./BankSlipModal";
+import { FaSync } from "react-icons/fa";
 
 function OrdersTable() {
   const { user: memberUser } = useSelector((state) => state.member);
@@ -40,7 +41,12 @@ function OrdersTable() {
   const [isBankSlipModalOpen, setIsBankSlipModalOpen] = useState(false);
   const currencySymbol = useSelector(selectCurrencySymbol);
 
-  const { data: ordersData, isLoading } = useGetUserByIdQuery(
+  const {
+    data: ordersData,
+    isLoading,
+    refetch,
+    isFetching,
+  } = useGetUserByIdQuery(
     {
       id: memberUser?.id,
       params: { fields: "invoices" },
@@ -168,7 +174,16 @@ function OrdersTable() {
   const topContent = useMemo(
     () => (
       <div className="flex flex-col gap-4">
-        <h1 className="text-2xl font-bold">Orders</h1>
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold">Orders</h1>
+          <Button
+            startContent={<FaSync className={`text-default-300`} />}
+            onClick={refetch}
+            color="primary"
+          >
+            Refresh
+          </Button>
+        </div>
         <div className="flex justify-between items-center">
           <Input
             isClearable
@@ -227,7 +242,7 @@ function OrdersTable() {
         </TableHeader>
         <TableBody
           items={orders}
-          isLoading={isLoading}
+          isLoading={isLoading || isFetching}
           emptyContent="No orders found"
           loadingContent={<Spinner />}
         >

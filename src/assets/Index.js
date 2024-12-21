@@ -14,6 +14,7 @@ import UPCBarcode from "./images/upcBarcodes.png"
 import ISBNBarcode from "./images/IsbnCode.png"
 import EANBarcode from "./images/eanCode.png"
 import AmazonUPC from "./images/amazonUpcCode.png"
+import SustainabilityInfo from "./images/Sustainabilityinfo.png"
 
 export const Images = {
   Logo,
@@ -32,4 +33,5 @@ export const Images = {
   ISBNBarcode,
   EANBarcode,
   AmazonUPC,
+  SustainabilityInfo,
 };

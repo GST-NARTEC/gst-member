@@ -33,7 +33,7 @@ const userProducts = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["UserProducts", "UserProductsById"],
+      invalidatesTags: ["UserProducts", "UserProductsById", "userTotalSECQuantity"],
     }),
 
     updateUserProduct: builder.mutation({

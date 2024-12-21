@@ -178,7 +178,7 @@ function MemberPersonalInfo() {
         <h3 className="text-lg font-semibold text-gray-800 mb-4">
           Company Information
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
               <MdBusiness className="w-4 h-4 mr-2 text-navy-700" />
@@ -225,17 +225,6 @@ function MemberPersonalInfo() {
             />
           </div>
 
-          <div>
-            <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-              <MdLocationOn className="w-4 h-4 mr-2 text-navy-700" />
-              Zip Code
-            </label>
-            <input
-              type="text"
-              {...register("zipCode")}
-              className="w-full px-3 py-2 border border-gray-400 rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent outline-none bg-gray-50"
-            />
-          </div>
         </div>
       </div>
 
@@ -255,6 +244,20 @@ function MemberPersonalInfo() {
             }}
           />
         </div>
+        
+        <div className="w-1/3  my-5">
+            <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+              <MdLocationOn className="w-4 h-4 mr-2 text-navy-700" />
+              Zip Code
+            </label>
+            <input
+              type="text"
+              {...register("zipCode")}
+              className="w-full px-3 py-2 border border-gray-400 rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent outline-none bg-gray-50"
+            />
+          </div>
+
+          
 
         <LocationPicker
           onLocationChange={handleLocationChange}
