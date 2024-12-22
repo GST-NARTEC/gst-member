@@ -55,6 +55,7 @@ function MyBarcodes() {
     { name: "ORDER NUMBER", uid: "orderNumber" },
     { name: "Order Date", uid: "orderDate" },
     { name: "Activated At", uid: "assignedAt" },
+    { name: "BARCODE TYPE", uid: "barcodeType" },
     { name: "QR CODE", uid: "qrCode" },
     { name: "CERTIFICATE", uid: "certificate" },
     { name: "STATUS", uid: "status" },
@@ -72,6 +73,12 @@ function MyBarcodes() {
             onClick={() => navigator.clipboard.writeText(item.gtin)}
           >
             {item.gtin}
+          </Chip>
+        );
+      case "barcodeType":
+        return (
+          <Chip color="secondary" variant="flat">
+            {item.barcodeType?.type || "N/A"}
           </Chip>
         );
       case "orderDate":

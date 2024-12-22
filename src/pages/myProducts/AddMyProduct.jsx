@@ -7,9 +7,8 @@ import {
   CardBody,
   Image,
   Switch,
-  Checkbox,
-  Chip,
-  Skeleton,
+  Autocomplete,
+  AutocompleteItem,
 } from "@nextui-org/react";
 import { FaArrowLeft, FaUpload, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -18,13 +17,12 @@ import UnitOfMeasure from "../../components/myProducts/UnitOfMesure";
 import CountryOfSale from "../../components/myProducts/CountryOfSale";
 import CountryOfOrigon from "../../components/myProducts/CountryOfOrigon";
 import MyBrands from "../../components/myProducts/MyBrands";
-import { useGetUserTotalSECQuantityQuery } from "../../store/apis/endpoints/user";
-import { useCreateUserProductMutation } from "../../store/apis/endpoints/userProducts";
+import { useCreateUserProductMutation, useGetGtinsCountQuery } from "../../store/apis/endpoints/userProducts";
 
 function AddMyProduct() {
   const navigate = useNavigate();
-  const { data: totalSECQuantity, isLoading: isLoadingTotalSECQuantity } = useGetUserTotalSECQuantityQuery();
-  console.log(totalSECQuantity);
+  const { data: gtinsCount, isLoading: isLoadingGtinsCount } = useGetGtinsCountQuery();
+  console.log(gtinsCount);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -38,13 +36,20 @@ function AddMyProduct() {
     brandName: "",
     countryOfOrigin: "",
     countryOfSale: "",
-    isSec: false,
+    barcodeType: "",
   });
 
   const [createUserProduct, { isLoading: isCreating }] =
     useCreateUserProductMutation();
 
-  const isSecEnabled = totalSECQuantity?.data?.secQuantity > 0;
+  const barcodeTypes = gtinsCount?.data?.barcodeTypes
+    ? Object.entries(gtinsCount.data.barcodeTypes).map(([key, value]) => ({
+        label: key,
+        value: key,
+        count: value,
+        disabled: value === 0,
+      }))
+    : [];
 
   const handleImageChange = (e, index) => {
     const file = e.target.files[0];
@@ -78,7 +83,7 @@ function AddMyProduct() {
       productData.append("brandName", formData.brandName);
       productData.append("countryOfOrigin", formData.countryOfOrigin);
       productData.append("countryOfSale", formData.countryOfSale);
-      productData.append("isSec", formData.isSec);
+      productData.append("barcodeType", formData.barcodeType);
 
       // Append images, filtering out null values
       formData.images.forEach((image, index) => {
@@ -140,89 +145,31 @@ function AddMyProduct() {
                   <span className="text-sm">{formData.status}</span>
                 </div>
                 <div className="md:col-span-2">
-                  <div
-                    className={`p-4 rounded-xl transition-all duration-300 ${
-                      formData.isSec
-                        ? "bg-gradient-to-r from-primary/10 to-primary/5 border-2 border-primary"
-                        : "bg-default-100 border-2 border-transparent"
-                    }`}
+                  <Autocomplete
+                    label="Barcode Type"
+                    placeholder="Select barcode type"
+                    defaultItems={barcodeTypes}
+                    selectedKey={formData.barcodeType}
+                    onSelectionChange={(value) =>
+                      setFormData((prev) => ({ ...prev, barcodeType: value }))
+                    }
+                    isLoading={isLoadingGtinsCount}
                   >
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`p-2 rounded-lg ${
-                            formData.isSec ? "bg-primary/10" : "bg-default-200"
-                          }`}
-                        >
-                          <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            className={`${
-                              formData.isSec
-                                ? "text-primary"
-                                : "text-default-500"
-                            }`}
-                          >
-                            <path
-                              d="M12 2L4 6V12C4 17.55 7.84 22.73 12 24C16.16 22.73 20 17.55 20 12V6L12 2Z"
-                              fill="currentColor"
-                              opacity={0.2}
-                            />
-                            <path
-                              d="M12 2L4 6V12C4 17.55 7.84 22.73 12 24C16.16 22.73 20 17.55 20 12V6L12 2ZM12 22C8.52 20.97 6 16.87 6 12V7.09L12 4.18L18 7.09V12C18 16.87 15.48 20.97 12 22Z"
-                              fill="currentColor"
-                            />
-                          </svg>
+                    {(item) => (
+                      <AutocompleteItem
+                        key={item.value}
+                        textValue={item.label}
+                        isDisabled={item.disabled}
+                      >
+                        <div className="flex justify-between items-center">
+                          <span>{item.label}</span>
+                          <span className="text-small text-default-400">
+                            Available: {item.count}
+                          </span>
                         </div>
-                        <div>
-                          <h3 className="text-medium font-semibold">
-                            Saudi Electricity Company Product
-                          </h3>
-                          <p className="text-sm text-default-500">
-                            {isSecEnabled
-                              ? "Register this product as an official SEC product"
-                              : "You don't have any SEC quantity available"}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        {isLoadingTotalSECQuantity ? (
-                          <Skeleton className="w-24 h-6 rounded-full" />
-                        ) : (
-                          <Chip
-                            className="min-w-[120px]"
-                            startContent={
-                              <div
-                                className={`w-2 h-2 rounded-full mx-2 ${
-                                  isSecEnabled ? "bg-success" : "bg-warning"
-                              }`}
-                            />
-                          }
-                          variant="flat"
-                          color={isSecEnabled ? "success" : "warning"}
-                        >
-                          {`${
-                            totalSECQuantity?.data?.secQuantity || 0
-                          } Available`}
-                        </Chip>
-                      )}
-
-                      <Switch
-                        isDisabled={!isSecEnabled}
-                        size="lg"
-                        color="primary"
-                        isSelected={formData.isSec}
-                          onValueChange={(checked) =>
-                            setFormData((prev) => ({ ...prev, isSec: checked }))
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
+                      </AutocompleteItem>
+                    )}
+                  </Autocomplete>
                 </div>
                 <Textarea
                   label="Description"

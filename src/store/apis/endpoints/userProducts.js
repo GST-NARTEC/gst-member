@@ -33,7 +33,12 @@ const userProducts = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["UserProducts", "UserProductsById", "userTotalSECQuantity"],
+      invalidatesTags: [
+        "UserProducts",
+        "UserProductsById",
+        "userTotalSECQuantity",
+        "GtinsCount",
+      ],
     }),
 
     updateUserProduct: builder.mutation({
@@ -50,7 +55,7 @@ const userProducts = apiSlice.injectEndpoints({
         url: `/v1/user-products/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["UserProducts"],
+      invalidatesTags: ["UserProducts", "GtinsCount"],
     }),
 
     deleteUserProductImage: builder.mutation({
@@ -59,6 +64,14 @@ const userProducts = apiSlice.injectEndpoints({
         method: "DELETE",
       }),
       invalidatesTags: ["UserProducts", "UserProductsById"],
+    }),
+
+    getGtinsCount: builder.query({
+      query: () => ({
+        url: `/v1/barcode-types/counts`,
+        method: "GET",
+      }),
+      providesTags: ["GtinsCount"],
     }),
   }),
 });
@@ -70,4 +83,5 @@ export const {
   useDeleteUserProductMutation,
   useGetUserProductByIdQuery,
   useDeleteUserProductImageMutation,
+  useGetGtinsCountQuery,
 } = userProducts;
