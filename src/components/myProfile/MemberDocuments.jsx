@@ -21,6 +21,7 @@ import {
   FaIdCard,
   FaPlus,
   FaFilePdf,
+  FaSync,
 } from "react-icons/fa";
 import { useGetUserByIdQuery } from "../../store/apis/endpoints/user";
 import { useSelector } from "react-redux";
@@ -31,7 +32,12 @@ import DeleteDocument from "./DeleteDocument";
 function MemberDocuments() {
   const [search, setSearch] = useState("");
   const { user: memberUser } = useSelector((state) => state.member);
-  const { data: docsData, isLoading } = useGetUserByIdQuery(
+  const {
+    data: docsData,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useGetUserByIdQuery(
     {
       id: memberUser?.id,
       params: { fields: "docs" },
@@ -270,7 +276,20 @@ function MemberDocuments() {
   return (
     <div className="w-full max-w-[1400px] mx-auto p-6 space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-[#1B2B65]">Documents</h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-2xl font-bold text-[#1B2B65]">Documents</h1>
+          <Tooltip content="Refresh Documents">
+            <Button
+              isIconOnly
+              variant="light"
+              onPress={() => refetch()}
+              isLoading={isLoading}
+              className="text-default-400"
+            >
+              <FaSync />
+            </Button>
+          </Tooltip>
+        </div>
         <Button
           className="bg-[#1B2B65] text-white rounded-full px-6 hover:bg-[#2a3d7c] transition-all"
           endContent={<FaPlus size={20} />}
@@ -296,7 +315,7 @@ function MemberDocuments() {
           </TableHeader>
           <TableBody
             items={allDocuments}
-            isLoading={isLoading}
+            isLoading={isLoading || isFetching}
             loadingContent={<Spinner />}
             emptyContent="No documents found"
           >

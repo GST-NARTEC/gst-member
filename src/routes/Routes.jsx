@@ -14,6 +14,7 @@ import DigitalLink from "../pages/myProducts/digitalLink/DigitalLink";
 import Barcodes from "../pages/myBarcodes/BuyBarcodes/Barcodes";
 import Payment from "../pages/myBarcodes/BuyBarcodes/Payment";
 import HelpAndSupport from "../pages/helpDisk/HelpAndSupport";
+import MyOrders from "../pages/myOrders/MyOrders";
 
 export default function AppRoutes() {
   return (
@@ -43,6 +44,7 @@ export default function AppRoutes() {
         <Route path="/member-portal/billing" element={<Billing />} />
         <Route path="/member-portal/my-products/digital-link/:id" element={<DigitalLink />} />
         <Route path="/member-portal/help-support" element={<HelpAndSupport />} />
+        <Route path="/member-portal/my-orders" element={<MyOrders />} />
       </Route>
     </Routes>
   );

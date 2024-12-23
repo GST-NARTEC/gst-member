@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Table,
@@ -23,14 +23,18 @@ import DeleteDigitalLink from "./DeleteDigitalLink";
 import toast from "react-hot-toast";
 import { useDebounce } from "../../../hooks/useDebounce";
 // react icons
-import { FaSearch, FaEdit, FaTrash, FaLeaf } from "react-icons/fa";
+import { FaSearch, FaEdit, FaTrash, FaLeaf, FaDownload } from "react-icons/fa";
 
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../../store/slices/memberSlice";
-import { useGetDigitalLinksQuery, useGetDigitalLinksSECQuery } from "../../../store/apis/endpoints/digitalLink";
+import {
+  useGetDigitalLinksQuery,
+  useGetDigitalLinksSECQuery,
+} from "../../../store/apis/endpoints/digitalLink";
 
 import AddDigitalLinkSEC from "./AddDigitalLinkSEC";
 import DigitalLinkSECTable from "./DigitalLinkSECTable";
+import bwipjs from "bwip-js";
 
 const digitalLinks = [
   {
@@ -163,7 +167,10 @@ function DigitalLink() {
   ];
 
   const handleCardClick = (index) => {
-    if (digitalLinks[index].title === "Saudi Electricity Company" && !hasSecAccess) {
+    if (
+      digitalLinks[index].title === "Saudi Electricity Company" &&
+      !hasSecAccess
+    ) {
       return;
     }
     setSelectedCard(index);
@@ -216,6 +223,70 @@ function DigitalLink() {
     );
   }, [selectedCard, search]);
 
+  useEffect(() => {
+    if (!gtin) return;
+
+    try {
+      bwipjs.toCanvas("ean13-canvas", {
+        bcid: "ean13",
+        text: gtin,
+        scale: 3,
+        height: 10,
+        includetext: true,
+        textxalign: "center",
+      });
+    } catch (err) {
+      console.error("Error generating EAN-13:", err);
+    }
+
+    try {
+      const dataMatrixText = [gtin, productName, brandName]
+        .filter(Boolean)
+        .join(" | ");
+
+      bwipjs.toCanvas("datamatrix-canvas", {
+        bcid: "datamatrix",
+        text: dataMatrixText,
+        scale: 3,
+        includetext: false,
+        textxalign: "center",
+      });
+    } catch (err) {
+      console.error("Error generating DataMatrix:", err);
+    }
+  }, [gtin, productName, brandName]);
+
+  const downloadCanvas = (canvasId, fileName) => {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+
+    // Create a larger canvas for better quality
+    const scaleFactor = 3;
+    const tempCanvas = document.createElement("canvas");
+    const tempCtx = tempCanvas.getContext("2d");
+    tempCanvas.width = canvas.width * scaleFactor;
+    tempCanvas.height = canvas.height * scaleFactor;
+
+    // Fill white background
+    tempCtx.fillStyle = "white";
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+    // Draw scaled image
+    tempCtx.drawImage(canvas, 0, 0, tempCanvas.width, tempCanvas.height);
+
+    // Convert to blob and download
+    tempCanvas.toBlob((blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${fileName}-${gtin || "barcode"}.png`; // Using gtin from props
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, "image/png");
+  };
+
   return (
     <MainLayout>
       <div className="p-8">
@@ -230,8 +301,8 @@ function DigitalLink() {
         </Button>
 
         <div className="mb-8 bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-          <div className="flex justify-between items-start">
-            <div>
+          <div className="flex justify-between items-center gap-4">
+            <div className="flex-1">
               <h1 className="text-2xl font-bold text-primary mb-4">
                 Digital Links
               </h1>
@@ -248,6 +319,43 @@ function DigitalLink() {
                   <span className="font-semibold text-gray-700">GTIN:</span>
                   <span className="text-gray-600">{gtin}</span>
                 </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="flex flex-col items-center gap-2">
+                <div className="bg-white p-2">
+                  <canvas id="ean13-canvas" className="max-w-[200px]"></canvas>
+                </div>
+                <Button
+                  size="sm"
+                  color="primary"
+                  variant="flat"
+                  onClick={() => downloadCanvas("ean13-canvas", "ean13")}
+                  startContent={<FaDownload />}
+                >
+                  Download Barcode
+                </Button>
+              </div>
+
+              <div className="flex flex-col items-center gap-2">
+                <div className="bg-white p-2">
+                  <canvas
+                    id="datamatrix-canvas"
+                    className="w-[120px] h-[120px]"
+                  ></canvas>
+                </div>
+                <Button
+                  size="sm"
+                  color="primary"
+                  variant="flat"
+                  onClick={() =>
+                    downloadCanvas("datamatrix-canvas", "datamatrix")
+                  }
+                  startContent={<FaDownload />}
+                >
+                  Download Matrix
+                </Button>
               </div>
             </div>
           </div>
@@ -268,8 +376,13 @@ function DigitalLink() {
                   : "hover:scale-105"
               }`}
               onClick={() => {
-                if (link.title === "Saudi Electricity Company" && !hasSecAccess) {
-                  toast.error("This feature is only available for SEC products");
+                if (
+                  link.title === "Saudi Electricity Company" &&
+                  !hasSecAccess
+                ) {
+                  toast.error(
+                    "This feature is only available for SEC products"
+                  );
                   return;
                 }
                 handleCardClick(index);
@@ -284,11 +397,12 @@ function DigitalLink() {
                 <div>
                   <h3 className="font-semibold text-primary">{link.title}</h3>
                   <p className="text-sm text-gray-500">{link.description}</p>
-                  {link.title === "Saudi Electricity Company" && !hasSecAccess && (
-                    <span className="text-xs text-danger mt-1 block">
-                      Only available for SEC products
-                    </span>
-                  )}
+                  {link.title === "Saudi Electricity Company" &&
+                    !hasSecAccess && (
+                      <span className="text-xs text-danger mt-1 block">
+                        Only available for SEC products
+                      </span>
+                    )}
                 </div>
               </CardBody>
             </Card>

@@ -15,6 +15,7 @@ import {
   FaHandshake,
   FaSignOutAlt,
   FaBoxes,
+  FaShoppingCart,
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { Images } from "../../assets/Index";
@@ -56,11 +57,6 @@ function Sidebar({ isOpen, toggleSidebar, isLargeScreenCollapsed }) {
       label: "My Products",
     },
     {
-      // path: "/member-portal/gln",
-      icon: <FaMapMarkerAlt />,
-      label: "GLN (Location)",
-    },
-    {
       path: "/member-portal/my-brands",
       icon: <FaTrademark />,
       label: "My Brands",
@@ -71,9 +67,9 @@ function Sidebar({ isOpen, toggleSidebar, isLargeScreenCollapsed }) {
       label: "My Billing",
     },
     {
-      // path: "/member-portal/subscription",
-      icon: <FaReceipt />,
-      label: "My Subscription",
+      path: "/member-portal/my-orders",
+      icon: <FaShoppingCart />,
+      label: "My Orders",
     },
     {
       path: "/member-portal/help-support",
