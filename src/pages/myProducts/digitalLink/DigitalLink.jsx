@@ -83,7 +83,7 @@ const digitalLinks = [
 function DigitalLink() {
   const user = useSelector(selectCurrentUser);
   const location = useLocation();
-  const { gtin, productName, brandName, isSec } = location.state || {};
+  const { gtin, productName, brandName, barcodeType } = location.state || {};
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
@@ -106,6 +106,8 @@ function DigitalLink() {
     onOpen: onSecOpen,
     onClose: onSecClose,
   } = useDisclosure();
+
+  const hasSecAccess = barcodeType === "SEC";
 
   const {
     data: digitalLinksData,
@@ -161,7 +163,7 @@ function DigitalLink() {
   ];
 
   const handleCardClick = (index) => {
-    if (digitalLinks[index].title === "Saudi Electricity Company" && !isSec) {
+    if (digitalLinks[index].title === "Saudi Electricity Company" && !hasSecAccess) {
       return;
     }
     setSelectedCard(index);
@@ -256,18 +258,18 @@ function DigitalLink() {
             <Card
               key={index}
               isPressable={
-                !(link.title === "Saudi Electricity Company" && !isSec)
+                !(link.title === "Saudi Electricity Company" && !hasSecAccess)
               }
               className={`transition-transform ${
                 selectedCard === index ? "border-2 border-primary" : ""
               } ${
-                link.title === "Saudi Electricity Company" && !isSec
+                link.title === "Saudi Electricity Company" && !hasSecAccess
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:scale-105"
               }`}
               onClick={() => {
-                if (link.title === "Saudi Electricity Company" && !isSec) {
-                  toast.error("You don't have access to Saudi Electricity Company features");
+                if (link.title === "Saudi Electricity Company" && !hasSecAccess) {
+                  toast.error("This feature is only available for SEC products");
                   return;
                 }
                 handleCardClick(index);
@@ -282,9 +284,9 @@ function DigitalLink() {
                 <div>
                   <h3 className="font-semibold text-primary">{link.title}</h3>
                   <p className="text-sm text-gray-500">{link.description}</p>
-                  {link.title === "Saudi Electricity Company" && !isSec && (
+                  {link.title === "Saudi Electricity Company" && !hasSecAccess && (
                     <span className="text-xs text-danger mt-1 block">
-                      Access restricted
+                      Only available for SEC products
                     </span>
                   )}
                 </div>

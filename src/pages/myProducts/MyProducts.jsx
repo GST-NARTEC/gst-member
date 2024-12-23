@@ -37,7 +37,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "gtin",
   "brandName",
   "status",
-  "isSec",
+  "barcodeType",
   "images",
   "actions",
 ];
@@ -75,7 +75,7 @@ function MyProducts() {
     { name: "GTIN", uid: "gtin" },
     { name: "BRAND", uid: "brandName" },
     { name: "STATUS", uid: "status" },
-    { name: "SEC", uid: "isSec" },
+    { name: "BARCODE TYPE", uid: "barcodeType" },
     { name: "IMAGES", uid: "images" },
     { name: "ACTIONS", uid: "actions" },
   ];
@@ -108,25 +108,17 @@ function MyProducts() {
             className="w-12 h-12 object-cover rounded"
           />
         ) : null;
-      case "isSec":
+      case "barcodeType":
         return (
-          <Tooltip
-            content={
-              product.isSec
-                ? "Saudi Electricity Company Product"
-                : "Not a Saudi Electricity Company Product"
-            }
+          <Chip
+            color="primary"
+            size="sm"
+            classNames={{
+              base: "text-sm text-white",
+            }}
           >
-            <Chip
-              color={product.isSec ? "success" : "default"}
-              size="sm"
-              classNames={{
-                base: "text-sm !text-white",
-              }}
-            >
-              {product.isSec ? "SEC Enabled" : "SEC Disabled"}
-            </Chip>
-          </Tooltip>
+            {product.barcodeType}
+          </Chip>
         );
       case "actions":
         return (
@@ -155,7 +147,7 @@ function MyProducts() {
                         gtin: product.gtin,
                         productName: product.title,
                         brandName: product.brandName,
-                        isSec: product.isSec,
+                        barcodeType: product.barcodeType,
                       },
                     }
                   )

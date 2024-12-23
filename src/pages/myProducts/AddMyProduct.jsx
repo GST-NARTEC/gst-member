@@ -9,6 +9,7 @@ import {
   Switch,
   Autocomplete,
   AutocompleteItem,
+  Chip,
 } from "@nextui-org/react";
 import { FaArrowLeft, FaUpload, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -17,11 +18,15 @@ import UnitOfMeasure from "../../components/myProducts/UnitOfMesure";
 import CountryOfSale from "../../components/myProducts/CountryOfSale";
 import CountryOfOrigon from "../../components/myProducts/CountryOfOrigon";
 import MyBrands from "../../components/myProducts/MyBrands";
-import { useCreateUserProductMutation, useGetGtinsCountQuery } from "../../store/apis/endpoints/userProducts";
+import {
+  useCreateUserProductMutation,
+  useGetGtinsCountQuery,
+} from "../../store/apis/endpoints/userProducts";
 
 function AddMyProduct() {
   const navigate = useNavigate();
-  const { data: gtinsCount, isLoading: isLoadingGtinsCount } = useGetGtinsCountQuery();
+  const { data: gtinsCount, isLoading: isLoadingGtinsCount } =
+    useGetGtinsCountQuery();
   console.log(gtinsCount);
   const [formData, setFormData] = useState({
     title: "",
@@ -120,69 +125,102 @@ function AddMyProduct() {
           {/* Basic Information Card */}
           <Card>
             <CardBody className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input
-                  label="Title"
-                  placeholder="Enter product title"
-                  value={formData.title}
-                  isRequired
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, title: e.target.value }))
-                  }
-                />
-                <div className="flex items-center space-x-4">
-                  <span className="text-sm">Status:</span>
-                  <Switch
-                    checked={formData.status === "ACTIVE"}
+              <h2 className="text-xl font-semibold mb-6">Basic Information</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Left Column */}
+                <div className="space-y-6">
+                  <Input
+                    label="Title"
+                    placeholder="Enter product title"
+                    value={formData.title}
+                    isRequired
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        status: e.target.checked ? "ACTIVE" : "INACTIVE",
+                        title: e.target.value,
                       }))
                     }
                   />
-                  <span className="text-sm">{formData.status}</span>
-                </div>
-                <div className="md:col-span-2">
-                  <Autocomplete
-                    label="Barcode Type"
-                    placeholder="Select barcode type"
-                    defaultItems={barcodeTypes}
-                    selectedKey={formData.barcodeType}
-                    onSelectionChange={(value) =>
-                      setFormData((prev) => ({ ...prev, barcodeType: value }))
+                  <Textarea
+                    label="Description"
+                    placeholder="Enter product description"
+                    value={formData.description}
+                    // variant="bordered"
+                    // labelPlacement="outside"
+                    minRows={4}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        description: e.target.value,
+                      }))
                     }
-                    isLoading={isLoadingGtinsCount}
-                  >
-                    {(item) => (
-                      <AutocompleteItem
-                        key={item.value}
-                        textValue={item.label}
-                        isDisabled={item.disabled}
-                      >
-                        <div className="flex justify-between items-center">
-                          <span>{item.label}</span>
-                          <span className="text-small text-default-400">
-                            Available: {item.count}
-                          </span>
-                        </div>
-                      </AutocompleteItem>
-                    )}
-                  </Autocomplete>
+                  />
                 </div>
-                <Textarea
-                  label="Description"
-                  placeholder="Enter product description"
-                  value={formData.description}
-                  className="md:col-span-2"
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      description: e.target.value,
-                    }))
-                  }
-                />
+
+                {/* Right Column */}
+                <div className="space-y-6">
+                  <div>
+                    <Autocomplete
+                      label="Barcode Type"
+                      placeholder="Select barcode type"
+                      defaultItems={barcodeTypes}
+                      selectedKey={formData.barcodeType}
+                      onSelectionChange={(value) =>
+                        setFormData((prev) => ({ ...prev, barcodeType: value }))
+                      }
+                      isLoading={isLoadingGtinsCount}
+                      isRequired
+                    >
+                      {(item) => (
+                        <AutocompleteItem
+                          key={item.value}
+                          textValue={item.label}
+                          isDisabled={item.disabled}
+                        >
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <div className="text-sm">{item.label}</div>
+                              <div className="text-xs text-gray-400">
+                                {item.disabled
+                                  ? "Not available"
+                                  : "Available for use"}
+                              </div>
+                            </div>
+                            <Chip
+                              size="sm"
+                              color={item.count > 0 ? "success" : "danger"}
+                              variant="flat"
+                            >
+                              {item.count} available
+                            </Chip>
+                          </div>
+                        </AutocompleteItem>
+                      )}
+                    </Autocomplete>
+                  </div>
+
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-sm font-medium">
+                        Product Status
+                      </span>
+                      <Switch
+                        checked={formData.status === "ACTIVE"}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            status: e.target.checked ? "ACTIVE" : "INACTIVE",
+                          }))
+                        }
+                      />
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      {formData.status === "ACTIVE"
+                        ? "Your product is visible to customers"
+                        : "Your product is hidden from customers"}
+                    </p>
+                  </div>
+                </div>
               </div>
             </CardBody>
           </Card>
@@ -325,7 +363,14 @@ function AddMyProduct() {
           <Button color="danger" variant="light" onClick={() => navigate(-1)}>
             Cancel
           </Button>
-          <Button color="primary" onClick={handleSubmit} isLoading={isCreating}>
+          <Button
+            isDisabled={
+              !formData.title || !formData.barcodeType || !formData.sku
+            }
+            color="primary"
+            onClick={handleSubmit}
+            isLoading={isCreating}
+          >
             Save Product
           </Button>
         </div>
