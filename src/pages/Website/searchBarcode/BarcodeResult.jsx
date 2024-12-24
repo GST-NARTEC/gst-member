@@ -18,6 +18,7 @@ import {
 } from "../../../store/apis/externalApis/externalDataSlice";
 import { formatImageUrl } from "../../../utils/formatImageUrl";
 import BarcodeLookup from "./BarcodeLookup";
+import GstResult from "./GstResult";
 
 function BarcodeResult() {
   const { barcode } = useParams();
@@ -304,6 +305,7 @@ function BarcodeResult() {
 
             {data && (
               <div className="mt-8">
+                {source === "gst" && <GstResult data={data} />}
                 {source === "gs1" && renderGS1Data(data)}
                 {source === "gs1Company" && renderGS1CompanyData(data)}
                 {source === "barcodeLookup" && <BarcodeLookup data={data} />}

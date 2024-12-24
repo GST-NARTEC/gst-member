@@ -50,10 +50,13 @@ export const Header = () => {
         {/* Top bar */}
         <div className="hidden lg:flex justify-between items-center py-2 text-sm border-b border-gray-100">
           <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1">
+            <button
+              className="flex items-center gap-1"
+              onClick={() => window.open("https://www.gstsa1.org", "_blank")}
+            >
               <Globe className="w-4 h-4" />
               Global Standard for Technology
-            </span>
+            </button>
           </div>
           <div className="flex items-center gap-4">
             <Link
@@ -92,7 +95,7 @@ export const Header = () => {
             >
               GST
             </span>
-            <img src={Images.Upcs} alt="Upcs Logo" className="h-10 ml-4" />
+            {/* <img src={Images.Upcs} alt="Upcs Logo" className="h-10 ml-4" /> */}
           </motion.div>
 
           <nav className="hidden lg:flex items-center gap-8 z-50">

@@ -254,6 +254,19 @@ function DigitalLink() {
     } catch (err) {
       console.error("Error generating DataMatrix:", err);
     }
+
+    try {
+      const qrText = [gtin, productName, brandName].filter(Boolean).join(" | ");
+
+      bwipjs.toCanvas("qrcode-canvas", {
+        bcid: "qrcode",
+        text: qrText,
+        scale: 3,
+        includetext: false,
+      });
+    } catch (err) {
+      console.error("Error generating QR Code:", err);
+    }
   }, [gtin, productName, brandName]);
 
   const downloadCanvas = (canvasId, fileName) => {
@@ -355,6 +368,24 @@ function DigitalLink() {
                   startContent={<FaDownload />}
                 >
                   Download Matrix
+                </Button>
+              </div>
+
+              <div className="flex flex-col items-center gap-2">
+                <div className="bg-white p-2">
+                  <canvas
+                    id="qrcode-canvas"
+                    className="w-[120px] h-[120px]"
+                  ></canvas>
+                </div>
+                <Button
+                  size="sm"
+                  color="primary"
+                  variant="flat"
+                  onClick={() => downloadCanvas("qrcode-canvas", "qrcode")}
+                  startContent={<FaDownload />}
+                >
+                  Download QR
                 </Button>
               </div>
             </div>

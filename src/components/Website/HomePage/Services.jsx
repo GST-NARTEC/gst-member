@@ -5,25 +5,24 @@ import { Images } from "../../../assets/Index";
 function Services() {
   const services = [
     {
-      title: "UPC Barcodes",
-      image: Images.UPCBarcode,
+      title: "UCC-13",
+      image: Images.UCC13,
     },
     {
-      title: "Amazon UPC Codes",
-      image: Images.AmazonUPC,
+      title: "SEC COMPLIANCE",
+      image: Images.SecCompliance,
     },
     {
-      title: "Printed Labels",
-      image:
-        "https://upcs.com/wp-content/uploads/2023/07/barcode-label-clipart.svg",
+      title: "1D 2D Barcodes",
+      image: Images.Barcode1D2D,
     },
     {
-      title: "EAN Codes",
-      image: Images.EANBarcode,
+      title: "GTIN-14 (GS1-128 or ITF-14) ",
+      image: Images.GTIN14,
     },
     {
-      title: "ISBN Codes for Books",
-      image: Images.ISBNBarcode,
+      title: "Global Location Numbers (GLN) ",
+      image: Images.GlobalLocation,
     },
   ];
 
@@ -31,11 +30,10 @@ function Services() {
     <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold text-center mb-4">
-          Services Offered
+        Barcode Solutions Provided
         </h2>
         <p className="text-gray-600 text-center mb-16 max-w-2xl mx-auto">
-          Get everything you need for your product identification and tracking
-          needs
+        Everything You Need for Product Identification and Tracking in Retail and Supply Chain
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-20">
@@ -51,8 +49,8 @@ function Services() {
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div className="p-6">
-                <h3 className="text-xl text-center font-semibold text-blue-700 hover:text-blue-800">
+              <div className="p-3">
+                <h3 className="text-base text-center font-semibold text-blue-700 hover:text-blue-800">
                   {service.title}
                 </h3>
               </div>
@@ -132,13 +130,14 @@ function Services() {
                 Can I Print Barcode Labels?
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                Yes, we offer a print & ship service for USA customers. After we
-                issue your barcodes to you, you can either print them yourself
-                at home, or order our print service on our Printed Barcode
-                Labels page. With this service you can customize your barcode
-                and optional text, and we will print and ship it to your
-                address. Orders arrive within 3-5 business days and typically
-                ship same day.
+                Yes, we offer a print and delivery service tailored for
+                customers in Saudi Arabia. After your barcodes are issued, you
+                have the option to print them yourself or use our professional
+                printing service via the Printed Barcode Labels page. With this
+                service, you can customize your barcode and any additional text.
+                We will print and deliver the labels directly to your address.
+                Orders typically ship the same day and arrive within 3–5
+                business days.
               </p>
             </div>
           </div>
@@ -203,7 +202,6 @@ function Services() {
             </div>
           </div>
         </div>
-
       </div>
     </section>
   );

@@ -3,7 +3,22 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 export const fetchBarcodeData = createAsyncThunk(
   "externalData/fetchBarcodeData",
   async (barcode) => {
-    // Step 1: Try GS1 API
+    // Step 1: Try GST API
+    try {
+      const gstResponse = await fetch(
+        `https://api.gstsa1.org/api/v1/user-products/search?gtin=${barcode}`
+      );
+      const gstData = await gstResponse.json();
+
+      if (gstData.success && gstData.data?.product) {
+        return { source: "gst", data: gstData.data.product };
+      }
+    } catch (error) {
+      console.log("GST API Error:", error);
+      // Continue to next API instead of throwing
+    }
+
+    // Step 2: Try GS1 API
     try {
       const gs1Response = await fetch(
         `https://gs1ksa.org:3093/api/foreignGtin/getGtinProductDetails?barcode=${barcode}`
@@ -26,7 +41,7 @@ export const fetchBarcodeData = createAsyncThunk(
       // Continue to next API instead of throwing
     }
 
-    // Step 2: Try Barcodelookup API
+    // Step 3: Try Barcodelookup API
     try {
       const barcodeLookupApiKey = import.meta.env.VITE_BARCODE_LOOKUP_API_KEY;
       const barcodeLookupResponse = await fetch(
@@ -42,7 +57,7 @@ export const fetchBarcodeData = createAsyncThunk(
       // Continue to next API instead of throwing
     }
 
-    // Step 3: Try Barcode Report API
+    // Step 4: Try Barcode Report API
     try {
       const barcodeReportApiKey = import.meta.env.VITE_BARCODE_REPORT_API_KEY;
       const barcodeReportResponse = await fetch(

@@ -78,14 +78,21 @@ export const Footer = () => {
               </span>
             </div>
             <div className="flex gap-6">
-              <a href="#" className="hover:text-white">
+              <a
+                href="https://gstsa1.org/template1/privacy-policy"
+                className="hover:text-white"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Privacy Policy
               </a>
-              <a href="#" className="hover:text-white">
+              <a
+                href="https://gstsa1.org/template1/terms-of-service"
+                className="hover:text-white"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Terms of Service
-              </a>
-              <a href="#" className="hover:text-white">
-                Cookie Settings
               </a>
             </div>
           </div>

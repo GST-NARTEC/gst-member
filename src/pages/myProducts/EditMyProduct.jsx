@@ -121,6 +121,27 @@ function EditMyProduct() {
     } catch (err) {
       console.error("Error generating DataMatrix:", err);
     }
+
+    // Generate QR Code
+    try {
+      const qrText = [
+        formData.gtin,
+        formData.title,
+        formData.brandName,
+        formData.sku,
+      ]
+        .filter(Boolean)
+        .join(" | ");
+
+      bwipjs.toCanvas("qrcode-canvas", {
+        bcid: "qrcode",
+        text: qrText,
+        scale: 3,
+        includetext: false,
+      });
+    } catch (err) {
+      console.error("Error generating QR Code:", err);
+    }
   }, [formData.gtin, formData.sku, formData.title, formData.brandName]);
 
   const handleImageChange = (e, index) => {
@@ -322,29 +343,60 @@ function EditMyProduct() {
                   </div>
                 </div>
 
-                {/* DataMatrix Section */}
-                <div className="bg-white p-3 rounded-lg border border-gray-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
+                {/* 2D Barcodes Row */}
+                <div className="grid grid-cols-2 gap-4">
+                  {/* DataMatrix Section */}
+                  <div className="bg-white p-3 rounded-lg border border-gray-200">
+                    <div className="mb-2">
                       <h3 className="text-base font-medium">Data Matrix</h3>
                       <p className="text-xs text-gray-600">2D Matrix Barcode</p>
                     </div>
-                    <Button
-                      size="sm"
-                      variant="flat"
-                      onClick={() =>
-                        downloadCanvas("datamatrix-canvas", "datamatrix")
-                      }
-                      startContent={<FaDownload />}
-                    >
-                      Download
-                    </Button>
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="flex justify-center bg-white p-2 rounded">
+                        <canvas
+                          id="datamatrix-canvas"
+                          className="w-[120px] h-[120px]"
+                        ></canvas>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        onClick={() =>
+                          downloadCanvas("datamatrix-canvas", "datamatrix")
+                        }
+                        startContent={<FaDownload />}
+                        className="w-full"
+                      >
+                        Download
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex justify-center bg-white p-2 rounded">
-                    <canvas
-                      id="datamatrix-canvas"
-                      className="w-[120px] h-[120px]"
-                    ></canvas>
+
+                  {/* QR Code Section */}
+                  <div className="bg-white p-3 rounded-lg border border-gray-200">
+                    <div className="mb-2">
+                      <h3 className="text-base font-medium">QR Code</h3>
+                      <p className="text-xs text-gray-600">2D QR Code</p>
+                    </div>
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="flex justify-center bg-white p-2 rounded">
+                        <canvas
+                          id="qrcode-canvas"
+                          className="w-[120px] h-[120px]"
+                        ></canvas>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        onClick={() =>
+                          downloadCanvas("qrcode-canvas", "qrcode")
+                        }
+                        startContent={<FaDownload />}
+                        className="w-full"
+                      >
+                        Download
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
