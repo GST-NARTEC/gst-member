@@ -7,37 +7,37 @@ export const Footer = () => {
     {
       title: "Products",
       links: [
-        { name: "GS1 Barcodes", href: "#" },
-        { name: "Amazon UPC Codes", href: "#" },
-        { name: "EAN Codes", href: "#" },
-        { name: "ISBN for Books", href: "#" },
+        { name: "GS1 Barcodes", href: "https://gstsa1.org" },
+        { name: "Amazon UPC Codes", href: "https://gstsa1.org" },
+        { name: "EAN Codes", href: "https://gstsa1.org" },
+        { name: "ISBN for Books", href: "https://gstsa1.org" },
       ],
     },
     {
       title: "Solutions",
       links: [
-        { name: "Retail Integration", href: "#" },
-        { name: "E-commerce", href: "#" },
-        { name: "Inventory Management", href: "#" },
-        { name: "Global Trade", href: "#" },
+        { name: "Retail Integration", href: "https://gstsa1.org" },
+        { name: "E-commerce", href: "https://gstsa1.org" },
+        { name: "Inventory Management", href: "https://gstsa1.org" },
+        { name: "Global Trade", href: "https://gstsa1.org" },
       ],
     },
     {
       title: "Company",
       links: [
-        { name: "About GST", href: "#" },
-        { name: "Contact Us", href: "#" },
-        { name: "Careers", href: "#" },
-        { name: "Partners", href: "#" },
+        { name: "About GST", href: "https://gstsa1.org" },
+        { name: "Contact Us", href: "https://gstsa1.org" },
+        { name: "Careers", href: "https://gstsa1.org" },
+        { name: "Partners", href: "https://gstsa1.org" },
       ],
     },
     {
       title: "Resources",
       links: [
-        { name: "Documentation", href: "#" },
-        { name: "Support Center", href: "#" },
-        { name: "API Reference", href: "#" },
-        { name: "Success Stories", href: "#" },
+        { name: "Documentation", href: "https://gstsa1.org" },
+        { name: "Support Center", href: "https://gstsa1.org" },
+        { name: "API Reference", href: "https://gstsa1.org" },
+        { name: "Success Stories", href: "https://gstsa1.org" },
       ],
     },
   ];
@@ -55,6 +55,8 @@ export const Footer = () => {
                     <a
                       href={link.href}
                       className="hover:text-white transition-colors"
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
                       {link.name}
                     </a>

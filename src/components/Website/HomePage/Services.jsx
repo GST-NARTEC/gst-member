@@ -5,7 +5,7 @@ import { Images } from "../../../assets/Index";
 function Services() {
   const services = [
     {
-      title: "UCC-13",
+      title: "GS1/UPC/EAN13",
       image: Images.UCC13,
     },
     {
@@ -14,7 +14,7 @@ function Services() {
     },
     {
       title: "1D 2D Barcodes",
-      image: Images.Barcode1D2D,
+      image: Images.OneD2DBarcode,
     },
     {
       title: "GTIN-14 (GS1-128 or ITF-14) ",
