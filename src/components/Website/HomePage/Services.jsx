@@ -30,10 +30,11 @@ function Services() {
     <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold text-center mb-4">
-        Barcode Solutions Provided
+          Barcode Solutions Provided
         </h2>
         <p className="text-gray-600 text-center mb-16 max-w-2xl mx-auto">
-        Everything You Need for Product Identification and Tracking in Retail and Supply Chain
+          Everything You Need for Product Identification and Tracking in Retail
+          and Supply Chain
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-20">
@@ -138,36 +139,6 @@ function Services() {
                 We will print and deliver the labels directly to your address.
                 Orders typically ship the same day and arrive within 3–5
                 business days.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-100">
-              <h3 className="text-2xl font-bold mb-6 text-gray-800">
-                Who are we?
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                UPCs.com is one of the oldest and largest sellers of UPC Codes
-                online and we take pride in helping businesses worldwide secure
-                UPC Barcodes for their products. To date, we've helped well over
-                150,000 businesses sell more than 10 million products worldwide.
-                We make the ordering process easy and provide technical customer
-                support for any issues that may arise.
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-100">
-              <h3 className="text-2xl font-bold mb-6 text-gray-800">
-                Why buy Universal Product Codes at UPCs.com?
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                The GS1 issues all prefixes for UPCs, and to register a prefix
-                costs a minimum of $250 and costs $150 a year to renew the
-                codes. Because we've owned prefixes before the UCC/GS1
-                Settlement and because we purchase prefixes in bulk, we're able
-                to offer UPC codes for far cheaper than the GS1 and are not
-                required to pay any renewal fees.
               </p>
             </div>
           </div>

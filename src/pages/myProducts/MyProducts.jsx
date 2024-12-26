@@ -30,6 +30,7 @@ import { FaTrash, FaEdit, FaEllipsisV, FaLink } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import DeleteMyProduct from "./DeleteMyProduct";
 import { useGetUserTotalSECQuantityQuery } from "../../store/apis/endpoints/user";
+import { FileSpreadsheet, FileDown } from "lucide-react";
 
 const INITIAL_VISIBLE_COLUMNS = [
   "title",
@@ -175,21 +176,47 @@ function MyProducts() {
   const topContent = useMemo(
     () => (
       <div className="flex justify-between gap-4 items-center">
-        <Input
-          isClearable
-          placeholder="Search products..."
-          value={searchQuery}
-          onClear={() => setSearchQuery("")}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full sm:max-w-[44%]"
-        />
-        <Button
-          size="sm"
-          onClick={() => navigate("/member-portal/my-products/add")}
-          color="primary"
-        >
-          Add New Product
-        </Button>
+        <div className="flex gap-2 items-center flex-1 sm:max-w-[44%]">
+          <Input
+            isClearable
+            placeholder="Search products..."
+            value={searchQuery}
+            onClear={() => setSearchQuery("")}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full"
+          />
+        </div>
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant="flat"
+            color="success"
+            startContent={<FileSpreadsheet size={20} />}
+            onClick={() => {
+              /* Add your Excel export logic here */
+            }}
+          >
+            Excel Export
+          </Button>
+          <Button
+            size="sm"
+            variant="flat"
+            color="danger"
+            startContent={<FileDown size={20} />}
+            onClick={() => {
+              /* Add your PDF export logic here */
+            }}
+          >
+            PDF Export
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => navigate("/member-portal/my-products/add")}
+            color="primary"
+          >
+            Add New Product
+          </Button>
+        </div>
       </div>
     ),
     [searchQuery]

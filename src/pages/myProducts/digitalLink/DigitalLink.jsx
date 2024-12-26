@@ -336,14 +336,18 @@ function DigitalLink() {
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="flex flex-col items-center gap-2">
+              <div className="flex flex-col items-center ">
                 <div className="bg-white p-2">
-                  <canvas id="ean13-canvas" className="max-w-[200px]"></canvas>
+                  <canvas
+                    id="ean13-canvas"
+                    className="w-[220px] h-[100px] mt-4"
+                  ></canvas>
                 </div>
                 <Button
                   size="sm"
                   color="primary"
                   variant="flat"
+                  className="mt-3"
                   onClick={() => downloadCanvas("ean13-canvas", "ean13")}
                   startContent={<FaDownload />}
                 >
