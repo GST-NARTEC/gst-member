@@ -23,6 +23,7 @@ import {
 import {
   useGetUserProductsQuery,
   useDeleteUserProductMutation,
+  useLazyGetExportExcelQuery,
 } from "../../store/apis/endpoints/userProducts";
 import { useDebounce } from "../../hooks/useDebounce";
 import MainLayout from "../../layout/PortalLayouts/MainLayout";
@@ -60,6 +61,32 @@ function MyProducts() {
   });
 
   const [deleteProduct] = useDeleteUserProductMutation();
+  const [exportExcel, { isFetching: isExporting }] =
+    useLazyGetExportExcelQuery();
+
+  const handleExcelExport = async () => {
+    try {
+      const response = await exportExcel().unwrap();
+
+      // Create a URL for the blob
+      const url = window.URL.createObjectURL(response.data);
+
+      // Create a temporary link element
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "products.xlsx");
+
+      // Append to body, click, and clean up
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+
+      // Release the URL
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Export failed:", error);
+    }
+  };
 
   const handleEdit = (productId) => {
     navigate(`/member-portal/my-products/edit/${productId}`);
@@ -192,11 +219,10 @@ function MyProducts() {
             variant="flat"
             color="success"
             startContent={<FileSpreadsheet size={20} />}
-            onClick={() => {
-              /* Add your Excel export logic here */
-            }}
+            onClick={handleExcelExport}
+            isDisabled={isExporting}
           >
-            Excel Export
+            {isExporting ? "Exporting..." : "Excel Export"}
           </Button>
           <Button
             size="sm"
@@ -219,7 +245,7 @@ function MyProducts() {
         </div>
       </div>
     ),
-    [searchQuery]
+    [searchQuery, isExporting]
   );
 
   const bottomContent = useMemo(

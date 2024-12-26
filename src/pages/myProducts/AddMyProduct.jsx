@@ -22,6 +22,8 @@ import {
   useCreateUserProductMutation,
   useGetGtinsCountQuery,
 } from "../../store/apis/endpoints/userProducts";
+import PackagingType from "../../components/myProducts/PackagingType";
+import ProductType from "../../components/myProducts/ProductType";
 
 function AddMyProduct() {
   const navigate = useNavigate();
@@ -36,12 +38,13 @@ function AddMyProduct() {
     sku: "",
     gpc: "",
     hsCode: "",
-    packingUnit: "",
     unitOfMeasure: "",
     brandName: "",
     countryOfOrigin: "",
     countryOfSale: "",
     barcodeType: "",
+    packagingType: "",
+    productType: "",
   });
 
   const [createUserProduct, { isLoading: isCreating }] =
@@ -83,12 +86,13 @@ function AddMyProduct() {
       productData.append("sku", formData.sku);
       productData.append("gpc", formData.gpc);
       productData.append("hsCode", formData.hsCode);
-      productData.append("packingUnit", formData.packingUnit);
       productData.append("unitOfMeasure", formData.unitOfMeasure);
       productData.append("brandName", formData.brandName);
       productData.append("countryOfOrigin", formData.countryOfOrigin);
       productData.append("countryOfSale", formData.countryOfSale);
       productData.append("barcodeType", formData.barcodeType);
+      productData.append("packagingType", formData.packagingType);
+      productData.append("productType", formData.productType);
 
       // Append images, filtering out null values
       formData.images.forEach((image, index) => {
@@ -255,17 +259,17 @@ function AddMyProduct() {
                     setFormData((prev) => ({ ...prev, hsCode: e.target.value }))
                   }
                 />
-                <Input
-                  label="Packing Unit"
-                  placeholder="Enter packing unit"
-                  value={formData.packingUnit}
-                  onChange={(e) =>
+
+                <PackagingType
+                  value={formData.packagingType}
+                  onChange={(value) =>
                     setFormData((prev) => ({
                       ...prev,
-                      packingUnit: e.target.value,
+                      packagingType: value,
                     }))
                   }
                 />
+
                 <UnitOfMeasure
                   value={formData.unitOfMeasure}
                   onChange={(value) =>
@@ -299,6 +303,16 @@ function AddMyProduct() {
                     setFormData((prev) => ({
                       ...prev,
                       countryOfSale: value,
+                    }))
+                  }
+                />
+
+                <ProductType
+                  value={formData.productType}
+                  onChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      productType: value,
                     }))
                   }
                 />

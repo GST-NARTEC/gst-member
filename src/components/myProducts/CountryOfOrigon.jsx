@@ -1,16 +1,16 @@
 import React from "react";
 import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
-import { useGetCountriesQuery } from "../../store/apis/endpoints/location";
+import { useGetCountryOfOriginSaleQuery } from "../../store/apis/endpoints/userProducts";
 
 function CountryOfOrigon({ value, onChange }) {
   const { data: countriesResponse, isLoading: isLoadingCountries } =
-    useGetCountriesQuery();
+    useGetCountryOfOriginSaleQuery();
 
-  const countries = countriesResponse?.data?.countries?.map(country => ({
-    label: country.nameEn,
-    value: country.nameEn,
-    description: country.nameAr
-  })) || [];
+  const countries =
+    countriesResponse?.data?.map((country) => ({
+      label: country.name,
+      value: country.name,
+    })) || [];
 
   return (
     <Autocomplete
@@ -25,9 +25,6 @@ function CountryOfOrigon({ value, onChange }) {
         <AutocompleteItem key={item.value} textValue={item.label}>
           <div className="flex flex-col">
             <span>{item.label}</span>
-            <span className="text-small text-default-400">
-              {item.description}
-            </span>
           </div>
         </AutocompleteItem>
       )}

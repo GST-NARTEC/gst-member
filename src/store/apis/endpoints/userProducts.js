@@ -73,6 +73,42 @@ const userProducts = apiSlice.injectEndpoints({
       }),
       providesTags: ["GtinsCount"],
     }),
+
+    getCountryOfOriginSale: builder.query({
+      query: () => ({
+        url: "/v1/country-of-origin-sale/all",
+        method: "GET",
+      }),
+      providesTags: ["CountryOfOriginSale"],
+    }),
+
+    getPackagingTypes: builder.query({
+      query: () => ({
+        url: "/v1/packaging-type/all",
+        method: "GET",
+      }),
+      providesTags: ["PackagingTypes"],
+    }),
+
+    getProductTypes: builder.query({
+      query: () => ({
+        url: "/v1/product-type/all",
+        method: "GET",
+      }),
+      providesTags: ["ProductTypes"],
+    }),
+
+    getExportExcel: builder.query({
+      query: () => ({
+        url: "/v1/user-products/export-excel",
+        method: "GET",
+        responseHandler: async (response) => {
+          const blob = await response.blob();
+          return { data: blob };
+        },
+      }),
+      providesTags: ["ExportExcel"],
+    }),
   }),
 });
 
@@ -84,4 +120,9 @@ export const {
   useGetUserProductByIdQuery,
   useDeleteUserProductImageMutation,
   useGetGtinsCountQuery,
+  useGetCountryOfOriginSaleQuery,
+  useGetPackagingTypesQuery,
+  useGetProductTypesQuery,
+  useGetExportExcelQuery,
+  useLazyGetExportExcelQuery,
 } = userProducts;

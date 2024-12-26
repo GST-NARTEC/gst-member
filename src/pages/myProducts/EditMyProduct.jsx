@@ -22,6 +22,8 @@ import UnitOfMeasure from "../../components/myProducts/UnitOfMesure";
 import CountryOfSale from "../../components/myProducts/CountryOfSale";
 import CountryOfOrigon from "../../components/myProducts/CountryOfOrigon";
 import MyBrands from "../../components/myProducts/MyBrands";
+import PackagingType from "../../components/myProducts/PackagingType";
+import ProductType from "../../components/myProducts/ProductType";
 import {
   useGetUserProductByIdQuery,
   useUpdateUserProductMutation,
@@ -47,11 +49,12 @@ function EditMyProduct() {
     gtin: "",
     gpc: "",
     hsCode: "",
-    packingUnit: "",
     unitOfMeasure: "",
     brandName: "",
     countryOfOrigin: "",
     countryOfSale: "",
+    packagingType: "",
+    productType: "",
   });
 
   // Pre-fill form data when product data is loaded
@@ -73,11 +76,12 @@ function EditMyProduct() {
         gtin: product.gtin || "",
         gpc: product.gpc || "",
         hsCode: product.hsCode || "",
-        packingUnit: product.packingUnit || "",
         unitOfMeasure: product.unitOfMeasure || "",
         brandName: product.brandName || "",
         countryOfOrigin: product.countryOfOrigin || "",
         countryOfSale: product.countryOfSale || "",
+        packagingType: product.packagingType || "",
+        productType: product.productType || "",
       });
     }
   }, [productData]);
@@ -197,11 +201,12 @@ function EditMyProduct() {
       productData.append("gtin", formData.gtin);
       productData.append("gpc", formData.gpc);
       productData.append("hsCode", formData.hsCode);
-      productData.append("packingUnit", formData.packingUnit);
       productData.append("unitOfMeasure", formData.unitOfMeasure);
       productData.append("brandName", formData.brandName);
       productData.append("countryOfOrigin", formData.countryOfOrigin);
       productData.append("countryOfSale", formData.countryOfSale);
+      productData.append("packagingType", formData.packagingType);
+      productData.append("productType", formData.productType);
 
       // Append only new images
       formData.images.forEach((image) => {
@@ -487,14 +492,12 @@ function EditMyProduct() {
                     setFormData((prev) => ({ ...prev, hsCode: e.target.value }))
                   }
                 />
-                <Input
-                  label="Packing Unit"
-                  placeholder="Enter packing unit"
-                  value={formData.packingUnit}
-                  onChange={(e) =>
+                <PackagingType
+                  value={formData.packagingType}
+                  onChange={(value) =>
                     setFormData((prev) => ({
                       ...prev,
-                      packingUnit: e.target.value,
+                      packagingType: value,
                     }))
                   }
                 />
@@ -531,6 +534,15 @@ function EditMyProduct() {
                     setFormData((prev) => ({
                       ...prev,
                       countryOfSale: value,
+                    }))
+                  }
+                />
+                <ProductType
+                  value={formData.productType}
+                  onChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      productType: value,
                     }))
                   }
                 />
