@@ -54,7 +54,7 @@ const digitalLinks = [
   },
   {
     icon: Images.ControllSerial,
-    title: "Controlled Serials",
+    title: "Aggregation/Serialization",
     description: "Track and manage serial numbers",
   },
   {
@@ -81,6 +81,21 @@ const digitalLinks = [
     icon: Images.SustainabilityInfo,
     title: "Sustainability Info",
     description: "Environmental impact and sustainability details",
+  },
+  {
+    icon: Images.ControllSerial,
+    title: "Traceability",
+    description: "Product tracking and supply chain visibility",
+  },
+  {
+    icon: Images.ControllSerial,
+    title: "UDI",
+    description: "Unique Device Identification for medical devices",
+  },
+  {
+    icon: Images.ControllSerial,
+    title: "Compliance",
+    description: "Regulatory compliance and certification information",
   },
 ];
 

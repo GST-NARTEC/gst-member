@@ -109,6 +109,17 @@ const userProducts = apiSlice.injectEndpoints({
       }),
       providesTags: ["ExportExcel"],
     }),
+    getExportPdf: builder.query({
+      query: () => ({
+        url: "/v1/user-products/export-pdf",
+        method: "GET",
+        responseHandler: async (response) => {
+          const blob = await response.blob();
+          return { data: blob };
+        },
+      }),
+      providesTags: ["ExportPdf"],
+    }),
   }),
 });
 
@@ -125,4 +136,6 @@ export const {
   useGetProductTypesQuery,
   useGetExportExcelQuery,
   useLazyGetExportExcelQuery,
+  useGetExportPdfQuery,
+  useLazyGetExportPdfQuery,
 } = userProducts;

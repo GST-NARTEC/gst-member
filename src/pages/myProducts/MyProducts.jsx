@@ -24,6 +24,8 @@ import {
   useGetUserProductsQuery,
   useDeleteUserProductMutation,
   useLazyGetExportExcelQuery,
+  useGetExportPdfQuery,
+  useLazyGetExportPdfQuery,
 } from "../../store/apis/endpoints/userProducts";
 import { useDebounce } from "../../hooks/useDebounce";
 import MainLayout from "../../layout/PortalLayouts/MainLayout";
@@ -63,6 +65,8 @@ function MyProducts() {
   const [deleteProduct] = useDeleteUserProductMutation();
   const [exportExcel, { isFetching: isExporting }] =
     useLazyGetExportExcelQuery();
+  const [exportPdf, { isFetching: isPdfExporting }] =
+    useLazyGetExportPdfQuery();
 
   const handleExcelExport = async () => {
     try {
@@ -85,6 +89,30 @@ function MyProducts() {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Export failed:", error);
+    }
+  };
+
+  const handlePdfExport = async () => {
+    try {
+      const response = await exportPdf().unwrap();
+
+      // Create a URL for the blob
+      const url = window.URL.createObjectURL(response.data);
+
+      // Create a temporary link element
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "products.pdf");
+
+      // Append to body, click, and clean up
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+
+      // Release the URL
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("PDF Export failed:", error);
     }
   };
 
@@ -229,11 +257,10 @@ function MyProducts() {
             variant="flat"
             color="danger"
             startContent={<FileDown size={20} />}
-            onClick={() => {
-              /* Add your PDF export logic here */
-            }}
+            onClick={handlePdfExport}
+            isDisabled={isPdfExporting}
           >
-            PDF Export
+            {isPdfExporting ? "Exporting..." : "PDF Export"}
           </Button>
           <Button
             size="sm"
@@ -245,7 +272,7 @@ function MyProducts() {
         </div>
       </div>
     ),
-    [searchQuery, isExporting]
+    [searchQuery, isExporting, isPdfExporting]
   );
 
   const bottomContent = useMemo(
