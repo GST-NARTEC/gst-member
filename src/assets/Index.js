@@ -39,6 +39,11 @@ import HighQuality from "./images/High-Quality.png";
 import PerfectForRetail from "./images/Perfect_for_Retail.png";
 import TransparentPricing from "./images/Transparent_Pricing.png";
 import OneD2DBarcode from "./images/1D2DBarcode.png";
+import Aggregation from "./images/AggregationSerialization.png";
+import UDI from "./images/unique-device-identifier.png";
+import Traceability from "./images/Traceability.png";
+import Compliance from "./images/Compliance.png";
+
 
 export const Images = {
   Logo,
@@ -82,4 +87,8 @@ export const Images = {
   PerfectForRetail,
   TransparentPricing,
   OneD2DBarcode,
+  Aggregation,
+  UDI,
+  Traceability,
+  Compliance,
 };

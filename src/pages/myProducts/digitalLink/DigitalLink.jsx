@@ -35,6 +35,7 @@ import {
 import AddDigitalLinkSEC from "./AddDigitalLinkSEC";
 import DigitalLinkSECTable from "./DigitalLinkSECTable";
 import bwipjs from "bwip-js";
+import AggregationTable from "../../../components/myProducts/digitalLink/Aggregation/AggregationTable";
 
 const digitalLinks = [
   {
@@ -53,7 +54,7 @@ const digitalLinks = [
     description: "Detailed product specifications",
   },
   {
-    icon: Images.ControllSerial,
+    icon: Images.Aggregation,
     title: "Aggregation/Serialization",
     description: "Track and manage serial numbers",
   },
@@ -83,17 +84,17 @@ const digitalLinks = [
     description: "Environmental impact and sustainability details",
   },
   {
-    icon: Images.ControllSerial,
+    icon: Images.Traceability,
     title: "Traceability",
     description: "Product tracking and supply chain visibility",
   },
   {
-    icon: Images.ControllSerial,
+    icon: Images.UDI,
     title: "UDI",
     description: "Unique Device Identification for medical devices",
   },
   {
-    icon: Images.ControllSerial,
+    icon: Images.Compliance,
     title: "Compliance",
     description: "Regulatory compliance and certification information",
   },
@@ -128,6 +129,12 @@ function DigitalLink() {
 
   const hasSecAccess = barcodeType === "SEC";
 
+  // Only fetch digital links data if we're not showing SEC or Aggregation tables
+  const shouldFetchDigitalLinks =
+    selectedCard !== null &&
+    digitalLinks[selectedCard].title !== "Saudi Electricity Company" &&
+    digitalLinks[selectedCard].title !== "Aggregation/Serialization";
+
   const {
     data: digitalLinksData,
     isLoading,
@@ -142,10 +149,11 @@ function DigitalLink() {
       search: debouncedSearch,
     },
     {
-      skip: !gtin || selectedCard === null,
+      skip: !gtin || !shouldFetchDigitalLinks,
     }
   );
 
+  // Only fetch SEC data if SEC card is selected
   const {
     data: secData,
     isLoading: isSecLoading,
@@ -469,17 +477,12 @@ function DigitalLink() {
               setPage={setPage}
               search={search}
               setSearch={setSearch}
-              onEdit={(item) => {
-                setSelectedDigitalLink(item);
-                onEditOpen();
-              }}
-              onDelete={(item) => {
-                setSelectedDigitalLink(item);
-                onDeleteOpen();
-              }}
               onAdd={onSecOpen}
             />
-          ) : (
+          ) : selectedCard !== null &&
+            digitalLinks[selectedCard].title === "Aggregation/Serialization" ? (
+            <AggregationTable gtin={gtin} />
+          ) : selectedCard !== null ? (
             <Table
               topContent={topContent}
               bottomContent={
@@ -549,7 +552,7 @@ function DigitalLink() {
                 )}
               </TableBody>
             </Table>
-          )}
+          ) : null}
         </div>
       </div>
 

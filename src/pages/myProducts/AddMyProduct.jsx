@@ -29,7 +29,6 @@ function AddMyProduct() {
   const navigate = useNavigate();
   const { data: gtinsCount, isLoading: isLoadingGtinsCount } =
     useGetGtinsCountQuery();
-  console.log(gtinsCount);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
