@@ -3,9 +3,9 @@ import { apiSlice } from "../apiSlice";
 export const aggregationApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAggregations: builder.query({
-      query: ({ page = 1, limit = 10, search = "" }) => ({
-        url: "/v1/aggregations",
-        params: { page, limit, search },
+      query: ({ page = 1, limit = 10, search = "", gtin = "" }) => ({
+        url: `/v1/aggregations`,
+        params: { page, limit, search, gtin },
       }),
       providesTags: ["Aggregations"],
     }),

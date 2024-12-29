@@ -53,8 +53,8 @@ export const digitalLinkApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["SEC"],
     }),
     getDigitalLinksSEC: builder.query({
-      query: ({ page = 1, limit = 10, search = "" }) => ({
-        url: `/v1/sec`,
+      query: ({ page = 1, limit = 10, search = "", gtin }) => ({
+        url: `/v1/sec/${gtin}`,
         method: "GET",
         params: { page, limit, search },
       }),

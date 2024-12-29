@@ -36,6 +36,7 @@ import AddDigitalLinkSEC from "./AddDigitalLinkSEC";
 import DigitalLinkSECTable from "./DigitalLinkSECTable";
 import bwipjs from "bwip-js";
 import AggregationTable from "../../../components/myProducts/digitalLink/Aggregation/AggregationTable";
+import UDITable from "../../../components/myProducts/digitalLink/UDI/UDITable";
 
 const digitalLinks = [
   {
@@ -133,7 +134,8 @@ function DigitalLink() {
   const shouldFetchDigitalLinks =
     selectedCard !== null &&
     digitalLinks[selectedCard].title !== "Saudi Electricity Company" &&
-    digitalLinks[selectedCard].title !== "Aggregation/Serialization";
+    digitalLinks[selectedCard].title !== "Aggregation/Serialization" &&
+    digitalLinks[selectedCard].title !== "UDI";
 
   const {
     data: digitalLinksData,
@@ -163,6 +165,7 @@ function DigitalLink() {
       page,
       limit: rowsPerPage,
       search: debouncedSearch,
+      gtin,
     },
     {
       skip:
@@ -482,6 +485,9 @@ function DigitalLink() {
           ) : selectedCard !== null &&
             digitalLinks[selectedCard].title === "Aggregation/Serialization" ? (
             <AggregationTable gtin={gtin} />
+          ) : selectedCard !== null &&
+            digitalLinks[selectedCard].title === "UDI" ? (
+            <UDITable gtin={gtin} />
           ) : selectedCard !== null ? (
             <Table
               topContent={topContent}

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -10,52 +10,45 @@ import {
   Pagination,
   Input,
   Spinner,
+  Tooltip,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Select,
+  SelectItem,
 } from "@nextui-org/react";
 import { FaSearch, FaEdit, FaTrash, FaPrint } from "react-icons/fa";
-import { useGetAggregationsQuery } from "../../../../store/apis/endpoints/aggregation";
-import DeleteAggregation from "./DeleteAggregation";
-import AddAggregation from "./AddAggregation";
-import EditAggregation from "./EditAggregation";
+import { useGetUdisQuery } from "../../../../store/apis/endpoints/udi";
+import DeleteUDI from "./DeleteUDI";
+import AddUDI from "./AddUDI";
 import { useDebounce } from "../../../../hooks/useDebounce";
-import AggregationPrint from "../../../print/AggregationPrint";
+import UDIPrint from "../../../print/UDIPrint";
 
-function AggregationTable({ gtin }) {
+function UDITable({ gtin }) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState(new Set([]));
   const [showPrint, setShowPrint] = useState(false);
+  const [currentLabelType, setCurrentLabelType] = useState(null);
+  const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+  const [selectedLabelType, setSelectedLabelType] = useState(new Set([]));
 
   const debouncedSearch = useDebounce(search, 500);
 
-  const { data: apiResponse, isLoading } = useGetAggregationsQuery({
+  const { data: apiResponse, isLoading } = useGetUdisQuery({
     page,
     limit: 10,
     search: debouncedSearch,
     gtin,
   });
 
-  const aggregations = apiResponse?.data?.aggregations || [];
+  const udis = apiResponse?.data?.udis || [];
   const pagination = apiResponse?.data?.pagination;
-
-  useEffect(() => {
-    if (selectedKeys === "all") {
-      console.log("All selected rows:", aggregations);
-    } else {
-      const selectedRows = aggregations?.filter((item) =>
-        selectedKeys.has(item.id.toString())
-      );
-      console.log("Selected rows:", selectedRows);
-    }
-  }, [selectedKeys, aggregations]);
-
-  const handleEdit = (item) => {
-    setSelectedItem(item);
-    setIsEditModalOpen(true);
-  };
 
   const handleDelete = (item) => {
     setSelectedItem(item);
@@ -64,29 +57,44 @@ function AggregationTable({ gtin }) {
 
   const handleCloseModals = () => {
     setSelectedItem(null);
-    setIsEditModalOpen(false);
     setIsDeleteModalOpen(false);
     setIsAddModalOpen(false);
+    setIsPrintModalOpen(false);
+    setSelectedLabelType(new Set([]));
   };
 
   const getSelectedItems = () => {
-    if (!aggregations) return [];
+    if (!udis) return [];
 
     if (selectedKeys === "all") {
-      return [...aggregations];
+      return [...udis];
     }
 
     const selectedKeysArray = Array.from(new Set(selectedKeys));
     return selectedKeysArray
-      .map((key) => aggregations.find((item) => item.id.toString() === key))
+      .map((key) => udis.find((item) => item.id.toString() === key))
       .filter(Boolean);
+  };
+
+  const handlePrint = () => {
+    const labelType = Array.from(selectedLabelType)[0];
+    if (!labelType) return;
+
+    setCurrentLabelType(labelType);
+    setShowPrint(false);
+    setTimeout(() => {
+      setShowPrint(true);
+      setTimeout(() => {
+        setShowPrint(false);
+        handleCloseModals();
+      }, 1000);
+    }, 100);
   };
 
   const columns = [
     { name: "SERIAL NO", uid: "serialNo" },
     { name: "GTIN", uid: "gtin" },
     { name: "BATCH NO", uid: "batchNo" },
-    { name: "MFG DATE", uid: "manufacturingDate" },
     { name: "EXP DATE", uid: "expiryDate" },
     { name: "ACTIONS", uid: "actions" },
   ];
@@ -95,60 +103,52 @@ function AggregationTable({ gtin }) {
     return pagination?.pages || 0;
   }, [pagination]);
 
-  const handlePrint = () => {
-    if (!selectedKeys || (selectedKeys !== "all" && selectedKeys.size === 0)) {
-      return;
-    }
-
-    const itemsToPrint = getSelectedItems();
-    if (itemsToPrint.length > 0) {
-      setShowPrint(false);
-      setTimeout(() => {
-        setShowPrint(true);
-        setTimeout(() => setShowPrint(false), 1000);
-      }, 100);
-    }
-  };
+  const hasSelectedItems = selectedKeys === "all" || selectedKeys.size > 0;
 
   const topContent = useMemo(() => {
     return (
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-primary">
-          Controlled Serials
-          </h1>
+          <h1 className="text-2xl font-bold text-primary">UDI Records</h1>
         </div>
         <div className="flex gap-3 items-center">
           <Input
             isClearable
             className="w-full sm:max-w-xs"
-            placeholder="Search aggregations..."
+            placeholder="Search UDIs..."
             startContent={<FaSearch className="text-default-300" />}
             value={search}
             onClear={() => setSearch("")}
             onChange={(e) => setSearch(e.target.value)}
           />
-          {(selectedKeys === "all" || selectedKeys.size > 0) && (
+          <Tooltip
+            content={
+              hasSelectedItems
+                ? "Print Labels"
+                : "Select UDIs to enable printing"
+            }
+          >
             <Button
               color="primary"
-              startContent={<FaPrint className="text-white" />}
-              onClick={handlePrint}
+              startContent={<FaPrint className="text-white text-2xl" />}
+              isDisabled={!hasSelectedItems}
+              onClick={() => setIsPrintModalOpen(true)}
             >
               Print
             </Button>
-          )}
+          </Tooltip>
           <Button
             color="primary"
             className="px-8"
             startContent={<span>+</span>}
             onClick={() => setIsAddModalOpen(true)}
           >
-          Generate Serial
+            Generate UDI
           </Button>
         </div>
       </div>
     );
-  }, [search, selectedKeys]);
+  }, [search, selectedKeys, hasSelectedItems]);
 
   const bottomContent = useMemo(() => {
     return (
@@ -191,7 +191,7 @@ function AggregationTable({ gtin }) {
         selectionMode="multiple"
         topContent={topContent}
         bottomContent={bottomContent}
-        aria-label="Aggregation table"
+        aria-label="UDI table"
         selectedKeys={selectedKeys}
         onSelectionChange={setSelectedKeys}
       >
@@ -201,10 +201,10 @@ function AggregationTable({ gtin }) {
           )}
         </TableHeader>
         <TableBody
-          items={aggregations}
+          items={udis}
           isLoading={isLoading}
           loadingContent={<Spinner />}
-          emptyContent={<div>No aggregation records found</div>}
+          emptyContent={<div>No UDI records found</div>}
         >
           {(item) => (
             <TableRow key={item.id}>
@@ -216,21 +216,12 @@ function AggregationTable({ gtin }) {
                         isIconOnly
                         size="sm"
                         variant="light"
-                        onClick={() => handleEdit(item)}
-                      >
-                        <FaEdit className="text-primary" />
-                      </Button>
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
                         onClick={() => handleDelete(item)}
                       >
                         <FaTrash className="text-danger" />
                       </Button>
                     </div>
-                  ) : columnKey === "manufacturingDate" ||
-                    columnKey === "expiryDate" ? (
+                  ) : columnKey === "expiryDate" ? (
                     new Date(item[columnKey]).toLocaleDateString()
                   ) : (
                     item[columnKey]
@@ -242,21 +233,63 @@ function AggregationTable({ gtin }) {
         </TableBody>
       </Table>
 
-      {showPrint && <AggregationPrint selectedItems={getSelectedItems()} />}
+      {showPrint && (
+        <UDIPrint
+          selectedItems={getSelectedItems()}
+          labelType={currentLabelType}
+        />
+      )}
 
-      <AddAggregation
-        isOpen={isAddModalOpen}
+      <Modal
+        isOpen={isPrintModalOpen}
         onClose={handleCloseModals}
-        gtin={gtin}
-      />
+        placement="center"
+        backdrop="blur"
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Print Labels
+              </ModalHeader>
+              <ModalBody>
+                <Select
+                  label="Select Label Type"
+                  placeholder="Choose a label type"
+                  selectedKeys={selectedLabelType}
+                  onSelectionChange={setSelectedLabelType}
+                >
+                  <SelectItem key="unit" value="unit">
+                    Unit Label
+                  </SelectItem>
+                  <SelectItem key="carton" value="carton">
+                    Carton Label
+                  </SelectItem>
+                  <SelectItem key="bigbox" value="bigbox">
+                    Big Box Label
+                  </SelectItem>
+                </Select>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Cancel
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={handlePrint}
+                  isDisabled={selectedLabelType.size === 0}
+                >
+                  Print
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
 
-      <EditAggregation
-        isOpen={isEditModalOpen}
-        onClose={handleCloseModals}
-        selectedItem={selectedItem}
-      />
+      <AddUDI isOpen={isAddModalOpen} onClose={handleCloseModals} gtin={gtin} />
 
-      <DeleteAggregation
+      <DeleteUDI
         isOpen={isDeleteModalOpen}
         onClose={handleCloseModals}
         selectedItem={selectedItem}
@@ -265,4 +298,4 @@ function AggregationTable({ gtin }) {
   );
 }
 
-export default AggregationTable;
+export default UDITable;
