@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import bwipjs from "bwip-js";
+import { Images } from "../../../assets/Index";
 
-function BigBoxLabelPrint({ selectedItems }) {
+function BigBoxLabelPrint({ selectedItems, brandName, productName }) {
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -48,45 +49,63 @@ function BigBoxLabelPrint({ selectedItems }) {
               box-sizing: border-box;
               display: flex;
               flex-direction: column;
-              align-items: center;
+              gap: 0.2in;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 0.2in;
+            }
+            .brand-name {
+              font-weight: bold;
+              font-size: 14px;
+              margin-bottom: 0.05in;
+            }
+            .product-name {
+              font-size: 12px;
+            }
+            .main-content {
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
               gap: 0.2in;
             }
             .datamatrix-container {
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
-              margin-bottom: 0.1in;
+              flex: 0 0 auto;
             }
             .datamatrix-container canvas {
-              width: 2in !important;
-              height: 2in !important;
-            }
-            .details {
-              display: grid;
-              grid-gap: 0.1in;
-              width: 100%;
-              max-width: 3in;
-            }
-            .details-row {
-              display: grid;
-              grid-template-columns: 0.8in 1fr;
-              align-items: center;
-            }
-            .label {
-              font-weight: bold;
-              font-size: 12px;
-            }
-            .value {
-              font-family: monospace;
-              font-size: 12px;
+              width: 1.5in !important;
+              height: 1.5in !important;
             }
             .hri-text {
               font-family: monospace;
               font-size: 10px;
               text-align: left;
-              margin-top: 0.1in;
-              line-height: 1.2;
+              line-height: 1.4;
+              flex: 1;
+            }
+            .details {
+              margin-top: 0.2in;
+            }
+            .details-row {
+              display: flex;
+              align-items: center;
+              gap: 0.1in;
+              margin-bottom: 0.1in;
+            }
+            .icon {
+              width: 0.3in;
+              height: 0.3in;
+              object-fit: contain;
+            }
+            .label {
+              font-weight: bold;
+              font-size: 12px;
+              width: 0.8in;
+            }
+            .value {
+              font-family: monospace;
+              font-size: 12px;
+              flex: 1;
             }
           </style>
         </head>
@@ -109,17 +128,25 @@ function BigBoxLabelPrint({ selectedItems }) {
         const containerDiv = document.createElement("div");
         containerDiv.className = "content-container";
 
+        // Header section with brand and product name
+        const headerDiv = document.createElement("div");
+        headerDiv.className = "header";
+        headerDiv.innerHTML = `
+          <div class="brand-name">${brandName || ""}</div>
+          <div class="product-name">${productName || ""}</div>
+        `;
+        containerDiv.appendChild(headerDiv);
+
+        // Main content section
+        const mainContentDiv = document.createElement("div");
+        mainContentDiv.className = "main-content";
+
         // DataMatrix section
         const dataMatrixContainer = document.createElement("div");
         dataMatrixContainer.className = "datamatrix-container";
         const canvas = document.createElement("canvas");
 
         try {
-          // Following GS1 DataMatrix structure
-          // (01) - GTIN
-          // (10) - Batch/Lot Number
-          // (21) - Serial Number
-          // (17) - Expiration Date
           const dataMatrixText = `(01)${item?.gtin || ""}(10)${
             item?.batchNo || ""
           }(21)${item?.serialNo || ""}(17)${formatDate(item?.expiryDate)}`;
@@ -132,15 +159,6 @@ function BigBoxLabelPrint({ selectedItems }) {
           });
 
           dataMatrixContainer.appendChild(canvas);
-
-          // HRI text section
-          const hriText = document.createElement("div");
-          hriText.className = "hri-text";
-          hriText.innerHTML = `(01) ${item?.gtin || ""}<br>
-                              (17) ${formatDate(item?.expiryDate)}<br>
-                              (10) ${item?.batchNo || ""}<br>
-                              (21) ${item?.serialNo || ""}`;
-          dataMatrixContainer.appendChild(hriText);
         } catch (err) {
           console.error("Error generating DataMatrix:", err);
           const errorText = document.createElement("div");
@@ -148,7 +166,19 @@ function BigBoxLabelPrint({ selectedItems }) {
           dataMatrixContainer.appendChild(errorText);
         }
 
-        // Details section
+        // HRI text section
+        const hriText = document.createElement("div");
+        hriText.className = "hri-text";
+        hriText.innerHTML = `(01) ${item?.gtin || ""}<br>
+                            (17) ${formatDate(item?.expiryDate)}<br>
+                            (10) ${item?.batchNo || ""}<br>
+                            (21) ${item?.serialNo || ""}`;
+
+        mainContentDiv.appendChild(dataMatrixContainer);
+        mainContentDiv.appendChild(hriText);
+        containerDiv.appendChild(mainContentDiv);
+
+        // Details section with icons
         const detailsDiv = document.createElement("div");
         detailsDiv.className = "details";
 
@@ -158,24 +188,27 @@ function BigBoxLabelPrint({ selectedItems }) {
 
         detailsDiv.innerHTML = `
           <div class="details-row">
+            <img src="${Images.REF}" class="icon" alt="GTIN" />
             <span class="label">GTIN:</span>
             <span class="value">${item?.gtin || ""}</span>
           </div>
           <div class="details-row">
+            <img src="${Images.BatchNumber}" class="icon" alt="Batch" />
             <span class="label">Batch No:</span>
             <span class="value">${item?.batchNo || ""}</span>
           </div>
           <div class="details-row">
+            <img src="${Images.SN}" class="icon" alt="Serial" />
             <span class="label">Serial No:</span>
             <span class="value">${item?.serialNo || ""}</span>
           </div>
           <div class="details-row">
+            <img src="${Images.ExpiryDate}" class="icon" alt="Expiry" />
             <span class="label">Exp Date:</span>
             <span class="value">${expiryDate}</span>
           </div>
         `;
 
-        containerDiv.appendChild(dataMatrixContainer);
         containerDiv.appendChild(detailsDiv);
         pageDiv.appendChild(containerDiv);
         contentContainer.appendChild(pageDiv);
@@ -188,7 +221,7 @@ function BigBoxLabelPrint({ selectedItems }) {
     };
 
     generateDataMatrix();
-  }, [selectedItems]);
+  }, [selectedItems, brandName, productName]);
 
   return null;
 }

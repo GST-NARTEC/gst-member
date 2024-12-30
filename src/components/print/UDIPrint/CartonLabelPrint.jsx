@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import bwipjs from "bwip-js";
 
-function CartonLabelPrint({ selectedItems }) {
+function CartonLabelPrint({ selectedItems, brandName, productName }) {
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -68,6 +68,19 @@ function CartonLabelPrint({ selectedItems }) {
               flex-direction: column;
               gap: 0.12in;
               padding-top: 0.05in;
+            }
+            .header {
+              margin-bottom: 0.1in;
+              text-align: left;
+              line-height: 1.2;
+            }
+            .brand-name {
+              font-weight: bold;
+              font-size: 14px;
+              margin-bottom: 0.02in;
+            }
+            .product-name {
+              font-size: 12px;
             }
             .details-row {
               display: grid;
@@ -139,6 +152,12 @@ function CartonLabelPrint({ selectedItems }) {
         const serialNo = item?.serialNo || "";
 
         detailsDiv.innerHTML = `
+          <div class="header">
+            <div class="brand-name">${item?.brandName || brandName || ""}</div>
+            <div class="product-name">${
+              item?.productName || productName || ""
+            }</div>
+          </div>
           <div class="details-row">
             <span class="label">GTIN</span>
             <span class="value">${item?.gtin || ""}</span>

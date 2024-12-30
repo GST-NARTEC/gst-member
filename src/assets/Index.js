@@ -43,7 +43,10 @@ import Aggregation from "./images/AggregationSerialization.png";
 import UDI from "./images/unique-device-identifier.png";
 import Traceability from "./images/Traceability.png";
 import Compliance from "./images/Compliance.png";
-
+import BatchNumber from "./images/batchNumberLogo.png";
+import ExpiryDate from "./images/expiryDateLogo.png";
+import REF from "./images/RefLogo.png";
+import SN from "./images/serialNumberLogo.png";
 
 export const Images = {
   Logo,
@@ -91,4 +94,8 @@ export const Images = {
   UDI,
   Traceability,
   Compliance,
+  BatchNumber,
+  ExpiryDate,
+  REF,
+  SN,
 };

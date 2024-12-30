@@ -26,7 +26,7 @@ import AddUDI from "./AddUDI";
 import { useDebounce } from "../../../../hooks/useDebounce";
 import UDIPrint from "../../../print/UDIPrint";
 
-function UDITable({ gtin }) {
+function UDITable({ gtin, brandName, productName }) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
@@ -237,6 +237,8 @@ function UDITable({ gtin }) {
         <UDIPrint
           selectedItems={getSelectedItems()}
           labelType={currentLabelType}
+          brandName={brandName}
+          productName={productName}
         />
       )}
 

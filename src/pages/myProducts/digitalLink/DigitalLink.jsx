@@ -487,7 +487,11 @@ function DigitalLink() {
             <AggregationTable gtin={gtin} />
           ) : selectedCard !== null &&
             digitalLinks[selectedCard].title === "UDI" ? (
-            <UDITable gtin={gtin} />
+            <UDITable
+              gtin={gtin}
+              brandName={brandName}
+              productName={productName}
+            />
           ) : selectedCard !== null ? (
             <Table
               topContent={topContent}
