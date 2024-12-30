@@ -102,7 +102,7 @@ function AddAggregation({ isOpen, onClose, gtin }) {
               <div className="space-y-4">
                 <Input
                   label="Manufacturing Date"
-                  type="datetime-local"
+                  type="date"
                   placeholder="Select manufacturing date"
                   value={formData.manufacturingDate}
                   onChange={(e) =>
@@ -115,7 +115,7 @@ function AddAggregation({ isOpen, onClose, gtin }) {
                 />
                 <Input
                   label="Expiry Date"
-                  type="datetime-local"
+                  type="date"
                   placeholder="Select expiry date"
                   value={formData.expiryDate}
                   onChange={(e) => handleChange("expiryDate", e.target.value)}

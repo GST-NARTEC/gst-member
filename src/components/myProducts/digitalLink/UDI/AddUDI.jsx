@@ -60,7 +60,7 @@ function AddUDI({ isOpen, onClose, gtin }) {
               errorMessage={errors.batchNo?.message}
             />
             <Input
-              type="datetime-local"
+              type="date"
               label="Expiry Date"
               {...register("expiryDate", {
                 required: "Expiry date is required",

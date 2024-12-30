@@ -94,7 +94,7 @@ function EditAggregation({ isOpen, onClose, selectedItem }) {
               />
               <Input
                 label="Manufacturing Date"
-                type="datetime-local"
+                type="date"
                 placeholder="Select manufacturing date"
                 value={formData.manufacturingDate}
                 onChange={(e) =>
@@ -107,7 +107,7 @@ function EditAggregation({ isOpen, onClose, selectedItem }) {
               />
               <Input
                 label="Expiry Date"
-                type="datetime-local"
+                type="date"
                 placeholder="Select expiry date"
                 value={formData.expiryDate}
                 onChange={(e) => handleChange("expiryDate", e.target.value)}
