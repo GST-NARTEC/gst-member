@@ -23,6 +23,7 @@ function AddUDI({ isOpen, onClose, gtin }) {
       gtin: gtin,
       batchNo: "",
       expiryDate: "",
+      qty: 1,
     },
   });
 
@@ -30,7 +31,11 @@ function AddUDI({ isOpen, onClose, gtin }) {
 
   const onSubmit = async (data) => {
     try {
-      await createUdi(data).unwrap();
+      const udiData = {
+        ...data,
+        qty: parseInt(data.qty, 10),
+      };
+      await createUdi(udiData).unwrap();
       toast.success("UDI created successfully");
       reset();
       onClose();
@@ -58,6 +63,16 @@ function AddUDI({ isOpen, onClose, gtin }) {
               label="Batch Number"
               {...register("batchNo", { required: "Batch number is required" })}
               errorMessage={errors.batchNo?.message}
+            />
+            <Input
+              type="number"
+              label="Quantity"
+              min={1}
+              {...register("qty", {
+                required: "Quantity is required",
+                min: { value: 1, message: "Quantity must be at least 1" },
+              })}
+              errorMessage={errors.qty?.message}
             />
             <Input
               type="date"
