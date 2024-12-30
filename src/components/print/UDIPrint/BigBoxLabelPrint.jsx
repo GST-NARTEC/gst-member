@@ -121,6 +121,36 @@ function BigBoxLabelPrint({ selectedItems, brandName, productName }) {
       const contentContainer =
         printWindow.document.getElementById("printContent");
 
+      // Convert images to base64 strings before using them
+      const getBase64Image = (imgSrc) => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.crossOrigin = "anonymous"; // Handle CORS issues
+          img.onload = function () {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            const dataURL = canvas.toDataURL("image/png");
+            resolve(dataURL);
+          };
+          img.onerror = function () {
+            console.error("Failed to load image:", imgSrc);
+            resolve(""); // Return empty string if image fails to load
+          };
+          img.src = imgSrc;
+        });
+      };
+
+      // Convert all icons to base64 before creating the print content
+      const iconBase64Map = {
+        ref: await getBase64Image(Images.REF),
+        batch: await getBase64Image(Images.BatchNumber),
+        serial: await getBase64Image(Images.SN),
+        expiry: await getBase64Image(Images.ExpiryDate),
+      };
+
       for (const item of uniqueItems) {
         const pageDiv = document.createElement("div");
         pageDiv.className = "print-page";
@@ -188,22 +218,22 @@ function BigBoxLabelPrint({ selectedItems, brandName, productName }) {
 
         detailsDiv.innerHTML = `
           <div class="details-row">
-            <img src="${Images.REF}" class="icon" alt="GTIN" />
+            <img src="${iconBase64Map.ref}" class="icon" alt="GTIN" />
             <span class="label">GTIN:</span>
             <span class="value">${item?.gtin || ""}</span>
           </div>
           <div class="details-row">
-            <img src="${Images.BatchNumber}" class="icon" alt="Batch" />
+            <img src="${iconBase64Map.batch}" class="icon" alt="Batch" />
             <span class="label">Batch No:</span>
             <span class="value">${item?.batchNo || ""}</span>
           </div>
           <div class="details-row">
-            <img src="${Images.SN}" class="icon" alt="Serial" />
+            <img src="${iconBase64Map.serial}" class="icon" alt="Serial" />
             <span class="label">Serial No:</span>
             <span class="value">${item?.serialNo || ""}</span>
           </div>
           <div class="details-row">
-            <img src="${Images.ExpiryDate}" class="icon" alt="Expiry" />
+            <img src="${iconBase64Map.expiry}" class="icon" alt="Expiry" />
             <span class="label">Exp Date:</span>
             <span class="value">${expiryDate}</span>
           </div>
