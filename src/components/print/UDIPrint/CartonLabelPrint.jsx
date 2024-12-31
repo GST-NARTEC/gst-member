@@ -56,7 +56,6 @@ function CartonLabelPrint({ selectedItems, brandName, productName }) {
             .label-container { 
               display: grid;
               grid-template-columns: 1.7in 1.1in;
-              border: 1px solid black; 
               padding: 0.1in;
               width: 3in;
               height: 2in; 
@@ -104,12 +103,12 @@ function CartonLabelPrint({ selectedItems, brandName, productName }) {
               flex-direction: column;
               align-items: center;
               justify-content: center;
-              padding-top: 0.05in;
+              padding-top: 0.5in;
             }
             .datamatrix-code {
               width: 1in;
               height: 1in;
-              margin-bottom: 0.05in;
+              
             }
             .datamatrix-code canvas {
               width: 100% !important;

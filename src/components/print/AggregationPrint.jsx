@@ -16,62 +16,65 @@ function AggregationPrint({ selectedItems }) {
           <title>Aggregation Print</title>
           <style>
             @page { 
-              size: 4in 6in; 
+              size: 4.5in 2in; 
               margin: 0; 
             }
             body { 
-              font-family: Arial, sans-serif;
-              font-size: 14px; 
+              font-size: 12px; 
               line-height: 1.4; 
               margin: 0;
               padding: 0;
               background: white;
             }
-            .print-page { 
+            .barcode-page { 
               page-break-after: always; 
-              height: 6in; 
-              width: 4in; 
+              display: flex; 
+              align-items: center; 
+              justify-content: center; 
+              height: 2in; 
+              width: 4.5in; 
               margin: 0;
-              padding: 0.25in;
-              box-sizing: border-box;
+              padding: 0;
               background: white;
             }
-            .print-page:last-child {
+            .barcode-page:last-child {
               page-break-after: avoid;
             }
-            .content-container { 
+            .barcode-container { 
+              display: flex; 
+              align-items: center; 
+              justify-content: space-between; 
               border: 1px solid black; 
-              height: 100%;
-              width: 100%;
-              padding: 0.25in;
-              box-sizing: border-box;
-              display: flex;
-              flex-direction: column;
-              gap: 0.25in;
+              padding: 10px; 
+              width: 95%; 
+              height: 95%; 
+              box-sizing: border-box; 
+              background: white;
             }
-            .qr-container {
+            .qr-code { 
+              margin-left: 20px;
               display: flex;
+              align-items: center;
               justify-content: center;
-              margin-bottom: 0.25in;
             }
-            .qr-code {
-              width: 1.5in;
-              height: 1.5in;
+            .qr-code canvas {
+              width: 90px;
+              height: 90px;
             }
-            .details {
-              font-size: 16px;
-              line-height: 1.6;
+            .details { 
+              text-align: left;
+              flex: 1;
             }
-            .details-row {
-              display: flex;
-              justify-content: space-between;
-              margin-bottom: 0.15in;
+            .details div { 
+              margin-bottom: 5px; 
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
             }
-            .label {
-              font-weight: bold;
-            }
-            .value {
-              text-align: right;
+            .details strong { 
+              display: inline-block; 
+              width: 100px; 
+              font-weight: 600;
             }
           </style>
         </head>
@@ -84,20 +87,35 @@ function AggregationPrint({ selectedItems }) {
     printWindow.document.close();
 
     const generatePrintContent = async () => {
-      const contentContainer = printWindow.document.getElementById("printContent");
+      const contentContainer =
+        printWindow.document.getElementById("printContent");
 
       for (const item of uniqueItems) {
         const pageDiv = document.createElement("div");
-        pageDiv.className = "print-page";
+        pageDiv.className = "barcode-page";
 
         const containerDiv = document.createElement("div");
-        containerDiv.className = "content-container";
+        containerDiv.className = "barcode-container";
+
+        // Details section
+        const detailsDiv = document.createElement("div");
+        detailsDiv.className = "details";
+        detailsDiv.innerHTML = `
+          <div><strong>GTIN</strong> ${item.gtin}</div>
+          <div><strong>EXPIRY</strong> ${new Date(
+            item.expiryDate
+          ).toLocaleDateString()}</div>
+          <div><strong>BATCH#</strong> ${item.batchNo}</div>
+          <div><strong>MFG DATE</strong> ${new Date(
+            item.manufacturingDate
+          ).toLocaleDateString()}</div>
+          <div><strong>SERIAL#</strong> ${item.serialNo}</div>
+        `;
 
         // QR Code container
         const qrContainer = document.createElement("div");
-        qrContainer.className = "qr-container";
+        qrContainer.className = "qr-code";
         const qrCanvas = document.createElement("canvas");
-        qrCanvas.className = "qr-code";
 
         try {
           // Generate QR code with the aggregation data
@@ -105,42 +123,19 @@ function AggregationPrint({ selectedItems }) {
           await bwipjs.toCanvas(qrCanvas, {
             bcid: "qrcode",
             text: qrText,
-            scale: 4,
+            scale: 2.2,
             includetext: false,
           });
           qrContainer.appendChild(qrCanvas);
         } catch (err) {
           console.error("Error generating QR code:", err);
+          const errorText = document.createElement("div");
+          errorText.textContent = "Error generating QR code";
+          qrContainer.appendChild(errorText);
         }
 
-        // Details section
-        const detailsDiv = document.createElement("div");
-        detailsDiv.className = "details";
-        detailsDiv.innerHTML = `
-          <div class="details-row">
-            <span class="label">GTIN:</span>
-            <span class="value">${item.gtin}</span>
-          </div>
-          <div class="details-row">
-            <span class="label">EXPIRY:</span>
-            <span class="value">${new Date(item.expiryDate).toLocaleDateString()}</span>
-          </div>
-          <div class="details-row">
-            <span class="label">BATCH#:</span>
-            <span class="value">${item.batchNo}</span>
-          </div>
-          <div class="details-row">
-            <span class="label">MFG DATE:</span>
-            <span class="value">${new Date(item.manufacturingDate).toLocaleDateString()}</span>
-          </div>
-          <div class="details-row">
-            <span class="label">SERIAL#:</span>
-            <span class="value">${item.serialNo}</span>
-          </div>
-        `;
-
-        containerDiv.appendChild(qrContainer);
         containerDiv.appendChild(detailsDiv);
+        containerDiv.appendChild(qrContainer);
         pageDiv.appendChild(containerDiv);
         contentContainer.appendChild(pageDiv);
       }
