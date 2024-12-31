@@ -186,12 +186,11 @@ function CartonLabelPrint({ selectedItems, brandName, productName }) {
         try {
           // Following GS1 DataMatrix structure
           // (01) - GTIN
-          // (10) - Batch/Lot Number
+          // (7) - Date
           // (21) - Serial Number
-          // (17) - Expiration Date
-          const dataMatrixText = `(01)${item?.gtin || ""}(10)${
-            item?.batchNo || ""
-          }(21)${serialNo}(17)${formatDate(item?.expiryDate)}`;
+          const dataMatrixText = `(01)${item?.gtin || ""}(7)${formatDate(
+            item?.expiryDate
+          ).substring(2)}(21)${item?.serialNo || ""}`;
 
           await bwipjs.toCanvas(canvas, {
             bcid: "datamatrix",

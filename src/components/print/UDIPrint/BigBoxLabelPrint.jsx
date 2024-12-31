@@ -50,6 +50,7 @@ function BigBoxLabelPrint({ selectedItems, brandName, productName }) {
               display: flex;
               flex-direction: column;
               gap: 0.2in;
+              border: 1px solid black;
             }
             .header {
               text-align: center;
@@ -63,44 +64,60 @@ function BigBoxLabelPrint({ selectedItems, brandName, productName }) {
             .product-name {
               font-size: 12px;
             }
+            .barcode-container {
+              text-align: center;
+              margin-bottom: 0.2in;
+            }
+            .barcode-container canvas {
+              width: 3in !important;
+              height: 0.8in !important;
+            }
             .main-content {
               display: flex;
               justify-content: space-between;
               align-items: flex-start;
               gap: 0.2in;
+              margin-top: 0.3in;
+            }
+            .info-container {
+              flex: 1;
+              order: 1;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
             }
             .datamatrix-container {
               flex: 0 0 auto;
+              order: 2;
+              width: 1.2in;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-top: 0.2in;
             }
             .datamatrix-container canvas {
-              width: 1.5in !important;
-              height: 1.5in !important;
-            }
-            .hri-text {
-              font-family: monospace;
-              font-size: 10px;
-              text-align: left;
-              line-height: 1.4;
-              flex: 1;
+              width: 1.2in !important;
+              height: 1.2in !important;
             }
             .details {
-              margin-top: 0.2in;
+              margin-top: 0;
             }
             .details-row {
               display: flex;
               align-items: center;
-              gap: 0.1in;
+              gap: 0.05in;
               margin-bottom: 0.1in;
+              height: 0.3in;
             }
             .icon {
-              width: 0.3in;
-              height: 0.3in;
+              width: 0.25in;
+              height: 0.25in;
               object-fit: contain;
             }
             .label {
               font-weight: bold;
               font-size: 12px;
-              width: 0.8in;
+              width: 0.7in;
             }
             .value {
               font-family: monospace;
@@ -117,7 +134,7 @@ function BigBoxLabelPrint({ selectedItems, brandName, productName }) {
     printWindow.document.write(html);
     printWindow.document.close();
 
-    const generateDataMatrix = async () => {
+    const generateBarcodes = async () => {
       const contentContainer =
         printWindow.document.getElementById("printContent");
 
@@ -125,7 +142,7 @@ function BigBoxLabelPrint({ selectedItems, brandName, productName }) {
       const getBase64Image = (imgSrc) => {
         return new Promise((resolve) => {
           const img = new Image();
-          img.crossOrigin = "anonymous"; // Handle CORS issues
+          img.crossOrigin = "anonymous";
           img.onload = function () {
             const canvas = document.createElement("canvas");
             canvas.width = img.width;
@@ -137,13 +154,12 @@ function BigBoxLabelPrint({ selectedItems, brandName, productName }) {
           };
           img.onerror = function () {
             console.error("Failed to load image:", imgSrc);
-            resolve(""); // Return empty string if image fails to load
+            resolve("");
           };
           img.src = imgSrc;
         });
       };
 
-      // Convert all icons to base64 before creating the print content
       const iconBase64Map = {
         ref: await getBase64Image(Images.REF),
         batch: await getBase64Image(Images.BatchNumber),
@@ -158,7 +174,7 @@ function BigBoxLabelPrint({ selectedItems, brandName, productName }) {
         const containerDiv = document.createElement("div");
         containerDiv.className = "content-container";
 
-        // Header section with brand and product name
+        // Header section
         const headerDiv = document.createElement("div");
         headerDiv.className = "header";
         headerDiv.innerHTML = `
@@ -167,46 +183,41 @@ function BigBoxLabelPrint({ selectedItems, brandName, productName }) {
         `;
         containerDiv.appendChild(headerDiv);
 
+        // Barcode section at the top
+        const barcodeContainer = document.createElement("div");
+        barcodeContainer.className = "barcode-container";
+        const barcodeCanvas = document.createElement("canvas");
+
+        try {
+          await bwipjs.toCanvas(barcodeCanvas, {
+            bcid: "code128",
+            text: `(01)${item?.gtin || ""}(7)${formatDate(
+              item?.expiryDate
+            ).substring(2)}(21)${item?.serialNo || ""}`,
+            scale: 3,
+            height: 15,
+            includetext: true,
+            textxalign: "center",
+            textyoffset: 5,
+            textsize: 13,
+            textfont: "Arial",
+          });
+          barcodeContainer.appendChild(barcodeCanvas);
+        } catch (err) {
+          console.error("Error generating Barcode:", err);
+          const errorText = document.createElement("div");
+          errorText.textContent = "Error generating barcode";
+          barcodeContainer.appendChild(errorText);
+        }
+        containerDiv.appendChild(barcodeContainer);
+
         // Main content section
         const mainContentDiv = document.createElement("div");
         mainContentDiv.className = "main-content";
 
-        // DataMatrix section
-        const dataMatrixContainer = document.createElement("div");
-        dataMatrixContainer.className = "datamatrix-container";
-        const canvas = document.createElement("canvas");
-
-        try {
-          const dataMatrixText = `(01)${item?.gtin || ""}(10)${
-            item?.batchNo || ""
-          }(21)${item?.serialNo || ""}(17)${formatDate(item?.expiryDate)}`;
-
-          await bwipjs.toCanvas(canvas, {
-            bcid: "datamatrix",
-            text: dataMatrixText,
-            scale: 4,
-            includetext: false,
-          });
-
-          dataMatrixContainer.appendChild(canvas);
-        } catch (err) {
-          console.error("Error generating DataMatrix:", err);
-          const errorText = document.createElement("div");
-          errorText.textContent = "Error generating barcode";
-          dataMatrixContainer.appendChild(errorText);
-        }
-
-        // HRI text section
-        const hriText = document.createElement("div");
-        hriText.className = "hri-text";
-        hriText.innerHTML = `(01) ${item?.gtin || ""}<br>
-                            (17) ${formatDate(item?.expiryDate)}<br>
-                            (10) ${item?.batchNo || ""}<br>
-                            (21) ${item?.serialNo || ""}`;
-
-        mainContentDiv.appendChild(dataMatrixContainer);
-        mainContentDiv.appendChild(hriText);
-        containerDiv.appendChild(mainContentDiv);
+        // Info container (left side)
+        const infoContainer = document.createElement("div");
+        infoContainer.className = "info-container";
 
         // Details section with icons
         const detailsDiv = document.createElement("div");
@@ -238,8 +249,36 @@ function BigBoxLabelPrint({ selectedItems, brandName, productName }) {
             <span class="value">${expiryDate}</span>
           </div>
         `;
+        infoContainer.appendChild(detailsDiv);
 
-        containerDiv.appendChild(detailsDiv);
+        // DataMatrix section (right side)
+        const dataMatrixContainer = document.createElement("div");
+        dataMatrixContainer.className = "datamatrix-container";
+        const dataMatrixCanvas = document.createElement("canvas");
+
+        try {
+          const dataMatrixText = `(01)${item?.gtin || ""}(10)${
+            item?.batchNo || ""
+          }(21)${item?.serialNo || ""}(17)${formatDate(item?.expiryDate)}`;
+
+          await bwipjs.toCanvas(dataMatrixCanvas, {
+            bcid: "datamatrix",
+            text: dataMatrixText,
+            scale: 3,
+            includetext: false,
+          });
+
+          dataMatrixContainer.appendChild(dataMatrixCanvas);
+        } catch (err) {
+          console.error("Error generating DataMatrix:", err);
+          const errorText = document.createElement("div");
+          errorText.textContent = "Error generating DataMatrix";
+          dataMatrixContainer.appendChild(errorText);
+        }
+
+        mainContentDiv.appendChild(infoContainer);
+        mainContentDiv.appendChild(dataMatrixContainer);
+        containerDiv.appendChild(mainContentDiv);
         pageDiv.appendChild(containerDiv);
         contentContainer.appendChild(pageDiv);
       }
@@ -250,7 +289,7 @@ function BigBoxLabelPrint({ selectedItems, brandName, productName }) {
       }, 500);
     };
 
-    generateDataMatrix();
+    generateBarcodes();
   }, [selectedItems, brandName, productName]);
 
   return null;
