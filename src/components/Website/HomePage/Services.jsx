@@ -74,11 +74,11 @@ function Services() {
                 future. UPCs are 12 digits long and are converted to barcodes
                 which can be easily scanned to manage product inventory.
               </p>
-              <Link
-                to="/upc-guide"
+              <button
+                onClick={() => navigate("/register/barcodes")}
                 className="inline-flex items-center mt-4 text-blue-600 hover:text-blue-700 font-medium"
               >
-                Read more on UPCs Guide
+                Get you Global standards Barcode Today
                 <svg
                   className="w-4 h-4 ml-1"
                   fill="none"
@@ -92,7 +92,7 @@ function Services() {
                     d="M9 5l7 7-7 7"
                   />
                 </svg>
-              </Link>
+              </button>
             </div>
 
             <div className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-100">
