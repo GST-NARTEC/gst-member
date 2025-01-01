@@ -168,9 +168,16 @@ function AddMyProduct() {
                       placeholder="Select barcode type"
                       defaultItems={barcodeTypes}
                       selectedKey={formData.barcodeType}
-                      onSelectionChange={(value) =>
-                        setFormData((prev) => ({ ...prev, barcodeType: value }))
-                      }
+                      onSelectionChange={(value) => {
+                        if (value === "GLN") {
+                          navigate("/member-portal/gln-location");
+                          return;
+                        }
+                        setFormData((prev) => ({
+                          ...prev,
+                          barcodeType: value,
+                        }));
+                      }}
                       isLoading={isLoadingGtinsCount}
                       isRequired
                     >

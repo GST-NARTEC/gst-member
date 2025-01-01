@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RadioGroup, Radio, Input, Checkbox, Button } from "@nextui-org/react";
 import { BsBank2, BsCreditCard2Front } from "react-icons/bs";
-import { FaCcVisa, FaCcMastercard } from "react-icons/fa";
-import { SiStencyl } from "react-icons/si";
-import { GiTakeMyMoney } from "react-icons/gi";
+import { FaCcVisa, FaCcMastercard, FaApple } from "react-icons/fa";
 import PaymentSuccessModal from "../../../components/auth/registration/PaymentSuccessModal";
 import ReactConfetti from "react-confetti";
 import { calculatePrice } from "../../../utils/priceCalculations";
@@ -186,19 +184,19 @@ function Payment() {
 
                 <div
                   className={`p-3 md:p-4 border rounded-lg transition-all ${
-                    paymentMethod === "debit"
+                    paymentMethod === "mada"
                       ? "border-blue-500 bg-blue-50"
                       : "border-gray-200"
                   }`}
                 >
                   <Radio
                     isDisabled={true}
-                    value="debit"
+                    value="mada"
                     className="flex items-center gap-2"
                   >
                     <div className="flex items-center gap-2 w-full">
                       <BsCreditCard2Front className="text-xl" />
-                      <span>Credit/Debit card</span>
+                      <span>Mada Debit Card</span>
                       <span className="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
                         Coming Soon
                       </span>
@@ -208,41 +206,19 @@ function Payment() {
 
                 <div
                   className={`p-3 md:p-4 border rounded-lg transition-all ${
-                    paymentMethod === "stc"
+                    paymentMethod === "apple"
                       ? "border-blue-500 bg-blue-50"
                       : "border-gray-200"
                   }`}
                 >
                   <Radio
                     isDisabled={true}
-                    value="stc"
+                    value="apple"
                     className="flex items-center gap-2"
                   >
                     <div className="flex items-center gap-2 w-full">
-                      <SiStencyl className="text-xl" />
-                      <span>STC Pay</span>
-                      <span className="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                        Coming Soon
-                      </span>
-                    </div>
-                  </Radio>
-                </div>
-
-                <div
-                  className={`p-3 md:p-4 border rounded-lg transition-all ${
-                    paymentMethod === "tabby"
-                      ? "border-blue-500 bg-blue-50"
-                      : "border-gray-200"
-                  }`}
-                >
-                  <Radio
-                    isDisabled={true}
-                    value="tabby"
-                    className="flex items-center gap-2"
-                  >
-                    <div className="flex items-center gap-2 w-full">
-                      <GiTakeMyMoney className="text-xl" />
-                      <span>Tabby</span>
+                      <FaApple className="text-xl" />
+                      <span>Apple Pay</span>
                       <span className="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
                         Coming Soon
                       </span>
@@ -314,31 +290,36 @@ function Payment() {
                   (sum, addon) => sum + addon.price * addon.quantity,
                   0
                 );
-                
+
                 return (
-                  <div key={item.id} className="flex justify-between py-2 border-b">
+                  <div
+                    key={item.id}
+                    className="flex justify-between py-2 border-b"
+                  >
                     <div className="flex-1">
                       <h4 className="text-sm font-medium">{item.title}</h4>
                       <div className="text-xs text-gray-500 mt-1">
                         Quantity: {item.quantity}
                       </div>
-                      {item.selectedAddons && item.selectedAddons.length > 0 && (
-                        <div className="mt-2 pl-3 border-l-2 border-gray-200">
-                          {item.selectedAddons.map((addon, idx) => (
-                            <div
-                              key={idx}
-                              className="text-xs text-gray-500 flex justify-between"
-                            >
-                              <span>
-                                {addon.name} × {addon.quantity}
-                              </span>
-                              <span>
-                                {currencySymbol} {(addon.price * addon.quantity).toFixed(2)}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                      {item.selectedAddons &&
+                        item.selectedAddons.length > 0 && (
+                          <div className="mt-2 pl-3 border-l-2 border-gray-200">
+                            {item.selectedAddons.map((addon, idx) => (
+                              <div
+                                key={idx}
+                                className="text-xs text-gray-500 flex justify-between"
+                              >
+                                <span>
+                                  {addon.name} × {addon.quantity}
+                                </span>
+                                <span>
+                                  {currencySymbol}{" "}
+                                  {(addon.price * addon.quantity).toFixed(2)}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                     </div>
                     <div className="text-right">
                       {/* <div className="text-sm">

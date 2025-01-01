@@ -57,6 +57,11 @@ function Sidebar({ isOpen, toggleSidebar, isLargeScreenCollapsed }) {
       label: "My Products",
     },
     {
+      path: "/member-portal/gln-location",
+      icon: <FaMapMarkerAlt />,
+      label: "GLN Location",
+    },
+    {
       path: "/member-portal/my-brands",
       icon: <FaTrademark />,
       label: "My Brands",

@@ -15,6 +15,9 @@ import Barcodes from "../pages/myBarcodes/BuyBarcodes/Barcodes";
 import Payment from "../pages/myBarcodes/BuyBarcodes/Payment";
 import HelpAndSupport from "../pages/helpDisk/HelpAndSupport";
 import MyOrders from "../pages/myOrders/MyOrders";
+import GLNLocation from "../pages/glnLocation/GLNLocation";
+import AddGLNLocation from "../pages/glnLocation/AddGLNLocation";
+import EditGLNLocation from "../pages/glnLocation/EditGLNLocation";
 
 export default function AppRoutes() {
   return (
@@ -27,14 +30,33 @@ export default function AppRoutes() {
         <Route path="/member-portal/my-profile" element={<MyProfile />} />
         <Route path="/member-portal/my-barcodes" element={<MyBarcodes />} />
         <Route path="/member-portal/my-barcodes/buy" element={<Barcodes />} />
-        <Route path="/member-portal/my-barcodes/buy/payment" element={<Payment />} />
 
+        <Route
+          path="/member-portal/my-barcodes/buy/payment"
+          element={<Payment />}
+        />
+
+        {/* gln location */}
+        <Route path="/member-portal/gln-location" element={<GLNLocation />} />
+        <Route
+          path="/member-portal/gln-location/add"
+          element={<AddGLNLocation />}
+        />
+        <Route
+          path="/member-portal/gln-location/edit/:id"
+          element={<EditGLNLocation />}
+        />
+
+        {/* products */}
         <Route path="/member-portal/my-products" element={<MyProducts />} />
         <Route
           path="/member-portal/my-products/add"
           element={<AddMyProduct />}
         />
-        <Route path="/member-portal/my-products/edit/:id" element={<EditMyProduct />} />
+        <Route
+          path="/member-portal/my-products/edit/:id"
+          element={<EditMyProduct />}
+        />
 
         <Route path="/member-portal/my-brands" element={<MyBrands />} />
         <Route
@@ -42,8 +64,14 @@ export default function AppRoutes() {
           element={<GSTTermsAndCondition />}
         />
         <Route path="/member-portal/billing" element={<Billing />} />
-        <Route path="/member-portal/my-products/digital-link/:id" element={<DigitalLink />} />
-        <Route path="/member-portal/help-support" element={<HelpAndSupport />} />
+        <Route
+          path="/member-portal/my-products/digital-link/:id"
+          element={<DigitalLink />}
+        />
+        <Route
+          path="/member-portal/help-support"
+          element={<HelpAndSupport />}
+        />
         <Route path="/member-portal/my-orders" element={<MyOrders />} />
       </Route>
     </Routes>

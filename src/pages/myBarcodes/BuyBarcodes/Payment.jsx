@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RadioGroup, Radio, Input, Checkbox, Button } from "@nextui-org/react";
 import { BsBank2, BsCreditCard2Front } from "react-icons/bs";
-import { FaCcVisa, FaCcMastercard } from "react-icons/fa";
-import { SiStencyl } from "react-icons/si";
-import { GiTakeMyMoney } from "react-icons/gi";
+import { FaCcVisa, FaCcMastercard, FaApple } from "react-icons/fa";
 import ReactConfetti from "react-confetti";
 import { calculatePrice } from "../../../utils/priceCalculations";
 import MainLayout from "../../../layout/PortalLayouts/MainLayout";
@@ -165,19 +163,19 @@ function Payment() {
 
                   <div
                     className={`p-3 md:p-4 border rounded-lg transition-all ${
-                      paymentMethod === "debit"
+                      paymentMethod === "mada"
                         ? "border-blue-500 bg-blue-50"
                         : "border-gray-200"
                     }`}
                   >
                     <Radio
                       isDisabled={true}
-                      value="debit"
+                      value="mada"
                       className="flex items-center gap-2"
                     >
                       <div className="flex items-center gap-2 w-full">
                         <BsCreditCard2Front className="text-xl" />
-                        <span>Credit/Debit card</span>
+                        <span>Mada Debit Card</span>
                         <span className="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
                           Coming Soon
                         </span>
@@ -187,41 +185,19 @@ function Payment() {
 
                   <div
                     className={`p-3 md:p-4 border rounded-lg transition-all ${
-                      paymentMethod === "stc"
+                      paymentMethod === "apple"
                         ? "border-blue-500 bg-blue-50"
                         : "border-gray-200"
                     }`}
                   >
                     <Radio
                       isDisabled={true}
-                      value="stc"
+                      value="apple"
                       className="flex items-center gap-2"
                     >
                       <div className="flex items-center gap-2 w-full">
-                        <SiStencyl className="text-xl" />
-                        <span>STC Pay</span>
-                        <span className="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                          Coming Soon
-                        </span>
-                      </div>
-                    </Radio>
-                  </div>
-
-                  <div
-                    className={`p-3 md:p-4 border rounded-lg transition-all ${
-                      paymentMethod === "tabby"
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-200"
-                    }`}
-                  >
-                    <Radio
-                      isDisabled={true}
-                      value="tabby"
-                      className="flex items-center gap-2"
-                    >
-                      <div className="flex items-center gap-2 w-full">
-                        <GiTakeMyMoney className="text-xl" />
-                        <span>Tabby</span>
+                        <FaApple className="text-xl" />
+                        <span>Apple Pay</span>
                         <span className="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
                           Coming Soon
                         </span>
