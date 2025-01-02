@@ -14,17 +14,21 @@ const LoadingAnimation = () => (
   <div className="relative">
     {/* Outer rotating ring */}
     <div className="w-20 h-20 border-4 border-blue-400/30 rounded-full animate-[spin_3s_linear_infinite]" />
-    
+
     {/* Inner rotating ring */}
-    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+    <div
+      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
                     w-14 h-14 border-4 border-t-blue-500 border-r-transparent 
                     border-b-blue-300 border-l-transparent rounded-full 
-                    animate-[spin_1.5s_linear_infinite]" />
-    
+                    animate-[spin_1.5s_linear_infinite]"
+    />
+
     {/* Center pulsing dot */}
-    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+    <div
+      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
                     w-4 h-4 bg-blue-500 rounded-full 
-                    animate-[pulse_1s_ease-in-out_infinite]" />
+                    animate-[pulse_1s_ease-in-out_infinite]"
+    />
   </div>
 );
 
@@ -98,18 +102,24 @@ const LoginPage = () => {
   // Loading spinner view
   if (isAutoLogging || isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-navy-600 to-navy-700 
-                      flex flex-col items-center justify-center">
+      <div
+        className="min-h-screen bg-gradient-to-br from-blue-900 via-navy-600 to-navy-700 
+                      flex flex-col items-center justify-center"
+      >
         {/* <div className="bg-white/10 backdrop-blur-lg p-4 rounded-2xl shadow-2xl mb-12">
           <img src={Images.Logo} alt="Company Logo" className="h-auto w-32" />
         </div> */}
 
-        <div className="bg-white/10 backdrop-blur-lg p-12 rounded-2xl shadow-2xl 
-                      flex flex-col items-center space-y-6">
+        <div
+          className="bg-white/10 backdrop-blur-lg p-12 rounded-2xl shadow-2xl 
+                      flex flex-col items-center space-y-6"
+        >
           <LoadingAnimation />
           <div className="flex flex-col items-center space-y-2">
             <p className="text-white/90 font-medium text-lg">Logging you in</p>
-            <p className="text-white/60 text-sm animate-pulse">Please wait a moment...</p>
+            <p className="text-white/60 text-sm animate-pulse">
+              Please wait a moment...
+            </p>
           </div>
         </div>
       </div>
@@ -124,7 +134,10 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-navy-600 to-navy-700">
       {/* Logo */}
-      <div className="absolute top-8 left-8">
+      <div
+        onClick={() => navigate("/")}
+        className="absolute top-8 left-8 cursor-pointer"
+      >
         <div className="bg-white/90 p-3 rounded-xl shadow-lg">
           <img src={Images.Logo} alt="Company Logo" className="h-auto w-24" />
         </div>
@@ -211,12 +224,12 @@ const LoginPage = () => {
                     Remember me
                   </label>
                 </div>
-                <a
-                  href="#"
+                <button
+                  onClick={() => navigate("/member-portal/forget-password")}
                   className="text-sm font-medium text-blue-600 hover:text-blue-500 transition-colors"
                 >
                   Forgot password?
-                </a>
+                </button>
               </div>
 
               {/* Submit Button */}

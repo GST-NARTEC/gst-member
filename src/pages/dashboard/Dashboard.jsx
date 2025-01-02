@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import MainLayout from "../../layout/PortalLayouts/MainLayout";
 import {
   FaBoxes,
@@ -6,15 +6,20 @@ import {
   FaTags,
   FaBuilding,
   FaInfoCircle,
+  FaSync,
 } from "react-icons/fa";
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
   Chip,
+  Button,
+  Tooltip,
 } from "@nextui-org/react";
 import ProductBarChart from "../../components/dashboard/ProductBarChart";
 import BarcodePieChart from "../../components/dashboard/BarcodePieChart";
+import { useGetDashboardStatsQuery } from "../../store/apis/endpoints/dashboardStats";
+import DashboardLoader from "../../components/Loader/DashboardLoader";
 
 function StatCard({
   title,
@@ -115,43 +120,84 @@ function StatCard({
 }
 
 function Dashboard() {
-  // Static data (to be made dynamic later)
-  const dashboardStats = {
-    orders: {
-      total: 195,
-      activated: 150,
-      pending: 45,
-    },
-    barcodes: {
-      total: 1750,
-      available: 1000,
-      consumed: 750,
-    },
-    products: {
-      total: 80,
-      types: {
-        "5GLN": 25,
-        "3GTIN": 40,
-        "SEC-5": 15,
+  const {
+    data: apiData,
+    isLoading,
+    refetch,
+    isFetching,
+  } = useGetDashboardStatsQuery();
+
+  const dashboardStats = useMemo(() => {
+    if (!apiData?.data) return null;
+
+    const { orders, brands, products, barcodeTypes } = apiData.data;
+
+    // Calculate total barcodes and availability
+    const barcodeTotals = Object.values(barcodeTypes).reduce(
+      (acc, type) => {
+        acc.total += type.total;
+        acc.available += type.sold; // sold means available for use
+        acc.consumed += type.used;
+        return acc;
       },
-      barcodeTypes: [
-        { label: "5GLN", color: "bg-blue-100 text-blue-800" },
-        { label: "3GTIN", color: "bg-purple-100 text-purple-800" },
-        { label: "SEC-5", color: "bg-green-100 text-green-800" },
-        { label: "DUNS", color: "bg-orange-100 text-orange-800" },
-        { label: "SSCC", color: "bg-pink-100 text-pink-800" },
-      ],
-    },
-    totalBrands: 12,
+      { total: 0, available: 0, consumed: 0 }
+    );
+
+    // Create barcode type chips for products card
+    const barcodeTypeChips = Object.keys(barcodeTypes).map((type) => ({
+      label: type,
+      color: getBarcodeTypeColor(type),
+    }));
+
+    return {
+      orders: {
+        total: orders.total,
+        activated: orders.activated,
+        pending: orders.pending,
+      },
+      barcodes: barcodeTotals,
+      products: {
+        total: products.total,
+        types: products.byType,
+        barcodeTypes: barcodeTypeChips,
+      },
+      totalBrands: brands.total,
+    };
+  }, [apiData]);
+
+  const handleRefresh = async () => {
+    await refetch();
   };
+
+  if (isLoading || !dashboardStats || isFetching) {
+    return (
+      <MainLayout>
+        <DashboardLoader />
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
       <div className="p-6">
-        <h1 className="text-2xl font-bold mb-8 text-gray-800">
-          Dashboard Overview
-        </h1>
-       
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-bold text-gray-800">
+            Dashboard Overview
+          </h1>
+          <Tooltip content="Refresh Dashboard">
+            <Button
+              isIconOnly
+              variant="light"
+              isLoading={isFetching}
+              onClick={handleRefresh}
+              className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+            >
+              <FaSync
+                className={`text-xl ${isFetching ? "animate-spin" : ""}`}
+              />
+            </Button>
+          </Tooltip>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Orders Card */}
@@ -207,15 +253,36 @@ function Dashboard() {
 
         <div className="my-16 flex flex-col lg:flex-row gap-6">
           <div className="w-full lg:w-[70%]">
-            <ProductBarChart />
+            <ProductBarChart
+              data={apiData?.data?.barcodeTypes}
+              isLoading={isLoading}
+            />
           </div>
           <div className="w-full lg:w-[30%]">
-            <BarcodePieChart />
+            <BarcodePieChart
+              data={apiData?.data?.barcodeTypes}
+              isLoading={isLoading}
+            />
           </div>
         </div>
       </div>
     </MainLayout>
   );
+}
+
+// Helper function to get color for barcode types
+function getBarcodeTypeColor(type) {
+  const colorMap = {
+    OTA: "bg-blue-100 text-blue-800",
+    SASO: "bg-purple-100 text-purple-800",
+    SFDA: "bg-green-100 text-green-800",
+    UDI: "bg-orange-100 text-orange-800",
+    SEC: "bg-pink-100 text-pink-800",
+    SSCC: "bg-cyan-100 text-cyan-800",
+    GLN: "bg-yellow-100 text-yellow-800",
+    GTIN: "bg-emerald-100 text-emerald-800",
+  };
+  return colorMap[type] || "bg-gray-100 text-gray-800";
 }
 
 export default Dashboard;

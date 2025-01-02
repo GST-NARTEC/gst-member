@@ -1,5 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "../pages/auth/login/Login";
+import ForgetPassword from "../pages/auth/Login/ForgetPassword";
+import OtpVerify from "../pages/auth/Login/OtpVerify";
+import ResetPassword from "../pages/auth/Login/ResetPassword";
 import Dashboard from "../pages/dashboard/Dashboard";
 import ProtectedRoute from "../components/security/ProtectedRoute";
 import MyProfile from "../pages/myProfile/MyProfile";
@@ -23,6 +26,12 @@ export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/member-portal/login" element={<Login />} />
+      <Route
+        path="/member-portal/forget-password"
+        element={<ForgetPassword />}
+      />
+      <Route path="/member-portal/verify-otp" element={<OtpVerify />} />
+      <Route path="/member-portal/reset-password" element={<ResetPassword />} />
 
       {/* Protected Member Portal Routes */}
       <Route element={<ProtectedRoute />}>

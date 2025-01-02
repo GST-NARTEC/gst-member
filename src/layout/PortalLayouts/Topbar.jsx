@@ -16,6 +16,7 @@ import {
   FaSignOutAlt,
   FaHistory,
 } from "react-icons/fa";
+import { TbWorldWww } from "react-icons/tb";
 import { useDispatch } from "react-redux";
 import { logout } from "../../store/slices/memberSlice";
 import { clearCart } from "../../store/slices/cartSlice";
@@ -34,7 +35,7 @@ function Topbar({ toggleLargeScreenSidebar, isLargeScreenCollapsed }) {
   };
 
   return (
-    <div className="h-16 bg-white border-b flex items-center justify-between px-6">
+    <div className="h-16 bg-white border-b flex items-center px-6">
       <button
         onClick={toggleLargeScreenSidebar}
         className="hidden lg:flex items-center justify-center p-2 hover:bg-gray-100 rounded-lg"
@@ -45,7 +46,28 @@ function Topbar({ toggleLargeScreenSidebar, isLargeScreenCollapsed }) {
         />
       </button>
 
-      <div className="flex items-center gap-4">
+      <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-6">
+        <a
+          href="https://gstsa1.org"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1 text-gray-600 hover:text-gray-800"
+        >
+          <TbWorldWww className="text-lg" />
+          <span className="text-sm">GSTSA1</span>
+        </a>
+        <a
+          href="https://buybarcodeupc.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1 text-gray-600 hover:text-gray-800"
+        >
+          <TbWorldWww className="text-lg" />
+          <span className="text-sm">Buy Barcodes</span>
+        </a>
+      </div>
+
+      <div className="ml-auto">
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
             <Avatar

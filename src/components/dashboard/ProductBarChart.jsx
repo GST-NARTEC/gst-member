@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   BarChart,
   Bar,
@@ -10,40 +10,42 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
+import { Skeleton } from "@nextui-org/react";
 
-function ProductBarChart() {
-  const chartData = [
-    {
-      name: "5GLN",
-      products: 25,
-      color: "#3B82F6", // blue-500
-    },
-    {
-      name: "3GTIN",
-      products: 40,
-      color: "#8B5CF6", // purple-500
-    },
-    {
-      name: "SEC-5",
-      products: 15,
-      color: "#22C55E", // green-500
-    },
-    {
-      name: "DUNS",
-      products: 20,
-      color: "#F97316", // orange-500
-    },
-    {
-      name: "SSCC",
-      products: 18,
-      color: "#EC4899", // pink-500
-    },
-    {
-      name: "GIAI",
-      products: 30,
-      color: "#06B6D4", // cyan-500
-    },
-  ];
+function ProductBarChartSkeleton() {
+  return (
+    <div className="w-full bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+      <div className="flex justify-between items-center mb-6">
+        <Skeleton className="w-48 h-6" />
+        <Skeleton className="w-32 h-4" />
+      </div>
+      <div className="h-[400px] space-y-4">
+        <div className="flex justify-between items-end h-full">
+          {[...Array(8)].map((_, index) => (
+            <div
+              key={index}
+              className="w-[8%] h-full flex flex-col justify-end gap-2"
+            >
+              <Skeleton className={`w-full h-[${Math.random() * 60 + 20}%]`} />
+              <Skeleton className="w-full h-4" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProductBarChart({ data, isLoading }) {
+  const chartData = useMemo(() => {
+    if (!data) return [];
+
+    return Object.entries(data).map(([name, stats]) => ({
+      name,
+      products: stats.used, // used barcodes represent products
+      color: getBarcodeTypeColor(name),
+    }));
+  }, [data]);
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -58,6 +60,25 @@ function ProductBarChart() {
     }
     return null;
   };
+
+  if (isLoading) {
+    return <ProductBarChartSkeleton />;
+  }
+
+  if (!data || chartData.length === 0) {
+    return (
+      <div className="w-full bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-xl font-bold text-gray-800">
+            Products by Barcode Type
+          </h3>
+        </div>
+        <div className="h-[400px] flex items-center justify-center text-gray-500">
+          No data available
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full bg-white p-6 rounded-xl shadow-sm border border-gray-100">
@@ -107,6 +128,21 @@ function ProductBarChart() {
       </div>
     </div>
   );
+}
+
+// Helper function to get color for barcode types
+function getBarcodeTypeColor(type) {
+  const colorMap = {
+    OTA: "#3B82F6", // blue
+    SASO: "#8B5CF6", // purple
+    SFDA: "#22C55E", // green
+    UDI: "#F97316", // orange
+    SEC: "#EC4899", // pink
+    SSCC: "#06B6D4", // cyan
+    GLN: "#EAB308", // yellow
+    GTIN: "#10B981", // emerald
+  };
+  return colorMap[type] || "#6B7280"; // gray as fallback
 }
 
 export default ProductBarChart;

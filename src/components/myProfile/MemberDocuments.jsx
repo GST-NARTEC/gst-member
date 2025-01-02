@@ -274,7 +274,7 @@ function MemberDocuments() {
   };
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto p-6 space-y-8">
+    <div className="w-full  mx-auto p-6 space-y-8">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <h1 className="text-2xl font-bold text-[#1B2B65]">Documents</h1>
