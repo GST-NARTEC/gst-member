@@ -1,12 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Images } from "../../../assets/Index";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button, InputOtp } from "@nextui-org/react";
 import toast from "react-hot-toast";
+import { useVerifyResetPasswordOtpMutation } from "../../../store/apis/endpoints/user";
 
 function OtpVerify() {
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+  const [verifyResetPasswordOtp, { isLoading, error, isError }] =
+    useVerifyResetPasswordOtpMutation();
+
+  useEffect(() => {
+    if (!location.state?.token || !location.state?.email) {
+      toast.error("Invalid session. Please try again");
+      navigate("/member-portal/forget-password");
+    }
+  }, [location.state, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,9 +25,25 @@ function OtpVerify() {
       toast.error("Please enter a valid OTP");
       return;
     }
-    console.log("OTP submitted:", otp);
-    toast.success("OTP verified successfully");
-    navigate("/member-portal/reset-password");
+
+    try {
+      const response = await verifyResetPasswordOtp({
+        otp,
+        token: location.state.token,
+      });
+
+      if (response.data?.data?.token) {
+        navigate("/member-portal/reset-password", {
+          state: {
+            token: response.data.data.token,
+            email: location.state.email,
+          },
+        });
+        toast.success(response.data?.message || "OTP verified successfully");
+      }
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to verify OTP");
+    }
   };
 
   return (
@@ -53,8 +80,8 @@ function OtpVerify() {
                 <InputOtp
                   length={4}
                   value={otp}
-                  isInvalid={otp.length !== 4}
-                  errorMessage="Invalid OTP code"
+                  isInvalid={isError}
+                  errorMessage={error?.data?.message || "Invalid OTP code"}
                   size="lg"
                   onValueChange={setOtp}
                   classNames={{
@@ -65,6 +92,7 @@ function OtpVerify() {
 
               {/* Submit Button */}
               <Button
+                isLoading={isLoading}
                 type="submit"
                 className="w-full py-4 px-4 mt-4 border border-transparent rounded-lg
                              text-sm font-medium text-white bg-blue-600 hover:bg-blue-700
@@ -82,7 +110,7 @@ function OtpVerify() {
                     type="button"
                     className="text-blue-600 hover:text-blue-500 font-medium"
                     onClick={() => {
-                      toast.success("New OTP has been sent to your email");
+                      navigate("/member-portal/forget-password");
                     }}
                   >
                     Resend OTP

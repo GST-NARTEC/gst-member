@@ -4,17 +4,29 @@ import { IoMail } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@nextui-org/react";
 import toast from "react-hot-toast";
+import { useInitiatePasswordResetMutation } from "../../../store/apis/endpoints/user";
 
 function ForgetPassword() {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
+  const [initiatePasswordReset, { isLoading }] =
+    useInitiatePasswordResetMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("OTP verification email:", email);
-    toast.success("OTP has been sent to your email");
-    // Here you would typically integrate with your OTP sending API
-    navigate("/member-portal/verify-otp");
+    try {
+      const response = await initiatePasswordReset({ email });
+      if (response.data?.token) {
+        navigate("/member-portal/verify-otp", {
+          state: { token: response.data.token, email },
+        });
+        toast.success(
+          response.data?.message || "OTP has been sent to your email"
+        );
+      }
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to send OTP");
+    }
   };
 
   return (
@@ -68,6 +80,7 @@ function ForgetPassword() {
               {/* Submit Button */}
               <Button
                 type="submit"
+                isLoading={isLoading}
                 className="w-full py-4 px-4 mt-4 border border-transparent rounded-lg
                              text-sm font-medium text-white bg-blue-600 hover:bg-blue-700
                              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500

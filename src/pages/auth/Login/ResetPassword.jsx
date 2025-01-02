@@ -1,27 +1,61 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Images } from "../../../assets/Index";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@nextui-org/react";
 import { FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { useResetPasswordMutation } from "../../../store/apis/endpoints/user";
 
 function ResetPassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [resetPassword, { isLoading }] = useResetPasswordMutation();
+  const [passwordMatch, setPasswordMatch] = useState(true);
+
+  useEffect(() => {
+    if (!location.state?.token || !location.state?.email) {
+      toast.error("Invalid session. Please try again");
+      navigate("/member-portal/forget-password");
+    }
+  }, [location.state, navigate]);
 
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
-  } = useForm();
+    formState: { errors, dirtyFields, touchedFields },
+  } = useForm({
+    mode: "onChange",
+    reValidateMode: "onChange",
+    criteriaMode: "all",
+  });
 
-  const onSubmit = (data) => {
-    console.log("Form data:", data);
-    toast.success("Password reset successfully");
-    navigate("/member-portal/login");
+  const password = watch("password");
+  const confirmPassword = watch("confirmPassword");
+
+  useEffect(() => {
+    if (confirmPassword) {
+      setPasswordMatch(password === confirmPassword);
+    }
+  }, [password, confirmPassword]);
+
+  const onSubmit = async (data) => {
+    try {
+      const response = await resetPassword({
+        token: location.state.token,
+        newPassword: data.password,
+      });
+
+      if (response.data?.success) {
+        toast.success(response.data?.message || "Password reset successfully");
+        navigate("/member-portal/login");
+      }
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to reset password");
+    }
   };
 
   return (
@@ -66,11 +100,23 @@ function ResetPassword() {
                       value: 8,
                       message: "Password must be at least 8 characters",
                     },
+                    onChange: (e) => {
+                      if (
+                        e.target.value.length < 8 &&
+                        e.target.value.length > 0
+                      ) {
+                        return "Password must be at least 8 characters";
+                      }
+                    },
                   })}
-                  className="block w-full pl-11 pr-11 py-3.5 border border-gray-200 rounded-lg
+                  className={`block w-full pl-11 pr-11 py-3.5 border ${
+                    errors.password && touchedFields.password
+                      ? "border-red-500"
+                      : "border-gray-200"
+                  } rounded-lg
                            text-gray-900 placeholder-gray-400
                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                           transition duration-200"
+                           transition duration-200`}
                   placeholder="Enter new password"
                 />
                 <button
@@ -85,7 +131,7 @@ function ResetPassword() {
                   )}
                 </button>
               </div>
-              {errors.password && (
+              {errors.password && touchedFields.password && (
                 <p className="text-red-500 text-sm">
                   {errors.password.message}
                 </p>
@@ -106,10 +152,14 @@ function ResetPassword() {
                       }
                     },
                   })}
-                  className="block w-full pl-11 pr-11 py-3.5 border border-gray-200 rounded-lg
+                  className={`block w-full pl-11 pr-11 py-3.5 border ${
+                    !passwordMatch && confirmPassword
+                      ? "border-red-500"
+                      : "border-gray-200"
+                  } rounded-lg
                            text-gray-900 placeholder-gray-400
                            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-                           transition duration-200"
+                           transition duration-200`}
                   placeholder="Confirm new password"
                 />
                 <button
@@ -124,6 +174,7 @@ function ResetPassword() {
                   )}
                 </button>
               </div>
+
               {errors.confirmPassword && (
                 <p className="text-red-500 text-sm">
                   {errors.confirmPassword.message}
@@ -133,6 +184,8 @@ function ResetPassword() {
               {/* Submit Button */}
               <Button
                 type="submit"
+                isLoading={isLoading}
+                isDisabled={!passwordMatch || !password || !confirmPassword}
                 className="w-full py-4 px-4 mt-4 border border-transparent rounded-lg
                              text-sm font-medium text-white bg-blue-600 hover:bg-blue-700
                              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500

@@ -67,6 +67,30 @@ const user = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["userDetails", "users"],
     }),
+
+    initiatePasswordReset: builder.mutation({
+      query: (data) => ({
+        url: "/user/v1/initiate-password-reset",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    verifyResetPasswordOtp: builder.mutation({
+      query: (data) => ({
+        url: "/user/v1/verify-reset-password-otp",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    resetPassword: builder.mutation({
+      query: (data) => ({
+        url: "/user/v1/reset-password",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -79,4 +103,7 @@ export const {
   useGetUserByIdQuery,
   useUpdateUserMutation,
   useGetUserTotalSECQuantityQuery,
+  useInitiatePasswordResetMutation,
+  useVerifyResetPasswordOtpMutation,
+  useResetPasswordMutation,
 } = user;

@@ -24,6 +24,7 @@ import {
   FaPlus,
   FaFilePdf,
   FaFileExcel,
+  FaFile,
 } from "react-icons/fa";
 import { format } from "date-fns";
 import {
@@ -58,6 +59,7 @@ function GLNLocation() {
     { name: "GLN BARCODE", uid: "gtin" },
     { name: "PHYSICAL LOCATION", uid: "physicalLocation" },
     { name: "STATUS", uid: "isActive" },
+    { name: "CERTIFICATE", uid: "certificate" },
     { name: "ACTIONS", uid: "actions" },
   ];
 
@@ -92,6 +94,18 @@ function GLNLocation() {
           <Chip color={item.isActive ? "success" : "danger"} variant="flat">
             {item.isActive ? "Active" : "Inactive"}
           </Chip>
+        );
+      case "certificate":
+        return item.certificate ? (
+          <Button
+            isIconOnly
+            variant="light"
+            onClick={() => window.open(item.certificate, "_blank")}
+          >
+            <FaFile className="text-primary" />
+          </Button>
+        ) : (
+          <span className="text-gray-400">-</span>
         );
       case "actions":
         return (
