@@ -413,10 +413,10 @@ function AddGLNLocation() {
                                 strokeLinejoin="round"
                               />
                             </svg>
-                            <p className="mt-1 text-xs">Upload Photo</p>
-                            <p className="text-xs text-gray-500">
-                              Max size: 10MB
+                            <p className="mt-1 text-xs">
+                              Upload Your National Address
                             </p>
+                            
                           </div>
                         </label>
                       )}
