@@ -43,6 +43,7 @@ function EditGLNLocation() {
     isActive: true,
     image: null,
     barcodeType: "GLN",
+    gtin: "",
   });
 
   useEffect(() => {
@@ -61,6 +62,7 @@ function EditGLNLocation() {
         isActive: gln.isActive,
         image: null,
         barcodeType: gln.barcodeType || "GLN",
+        gtin: gln.gtin || "",
       });
 
       if (gln.image && gln.image !== "null") {
@@ -252,7 +254,19 @@ function EditGLNLocation() {
 
         <Card className="max-w-5xl mx-auto p-5">
           <CardBody className="gap-6">
-            <h1 className="text-2xl font-bold mb-6">Edit GLN Location</h1>
+            <div className="flex justify-between items-center">
+              <h1 className="text-2xl font-bold mb-6">Edit GLN Location</h1>
+
+              {formData.gtin && (
+                <div className="mb-4">
+                  <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary-50 text-primary-700">
+                    <span className="text-sm font-medium">
+                      GLN: {formData.gtin}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
 
             <div className="grid gap-6">
               {/* GLN Identify Type */}

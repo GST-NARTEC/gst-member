@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Images } from "../../../assets/Index";
 import { IoMail } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +9,7 @@ import { useInitiatePasswordResetMutation } from "../../../store/apis/endpoints/
 function ForgetPassword() {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
-  const [initiatePasswordReset, { isLoading }] =
+  const [initiatePasswordReset, { isLoading, error, isError, isSuccess }] =
     useInitiatePasswordResetMutation();
 
   const handleSubmit = async (e) => {
@@ -20,14 +20,21 @@ function ForgetPassword() {
         navigate("/member-portal/verify-otp", {
           state: { token: response.data.token, email },
         });
-        toast.success(
-          response.data?.message || "OTP has been sent to your email"
-        );
       }
     } catch (error) {
       toast.error(error?.data?.message || "Failed to send OTP");
     }
   };
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(error?.data?.message || "Failed to send OTP");
+    } else if (isSuccess) {
+      toast.success(
+        response.data?.message || "OTP has been sent to your email"
+      );
+    }
+  }, [isError, isSuccess, error]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-navy-600 to-navy-700">
