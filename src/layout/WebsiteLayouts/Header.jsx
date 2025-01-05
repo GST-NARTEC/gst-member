@@ -42,11 +42,11 @@ export const Header = () => {
       href: "https://gstsa1.org/template3/contact-us",
       isExternal: true,
     },
-    {
-      name: "User Guide",
-      href: "https://gstsa1.org/user-guide-manual",
-      isExternal: true,
-    },
+    // {
+    //   name: "User Guide",
+    //   href: "https://gstsa1.org/user-guide-manual",
+    //   isExternal: true,
+    // },
   ];
 
   return (
