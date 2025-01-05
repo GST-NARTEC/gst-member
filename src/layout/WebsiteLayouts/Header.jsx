@@ -32,15 +32,20 @@ export const Header = () => {
         { name: "Inventory Management", href: "#" },
       ],
     },
-    { 
-      name: "Resources", 
+    {
+      name: "Resources",
       href: "https://gstsa1.org/template1/our-clients",
-      isExternal: true 
+      isExternal: true,
     },
-    { 
-      name: "Contact", 
+    {
+      name: "Contact",
       href: "https://gstsa1.org/template3/contact-us",
-      isExternal: true 
+      isExternal: true,
+    },
+    {
+      name: "User Guide",
+      href: "https://gstsa1.org/user-guide-manual",
+      isExternal: true,
     },
   ];
 
@@ -121,7 +126,7 @@ export const Header = () => {
                 )}
                 {item.submenu && (
                   <div className="absolute top-full z-10 left-0 w-48 bg-white shadow-lg rounded-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                    {item.submenu.map((subitem) => (
+                    {item.submenu.map((subitem) =>
                       item.name === "Products" ? (
                         <a
                           key={subitem.name}
@@ -141,7 +146,7 @@ export const Header = () => {
                           {subitem.name}
                         </a>
                       )
-                    ))}
+                    )}
                   </div>
                 )}
               </div>
