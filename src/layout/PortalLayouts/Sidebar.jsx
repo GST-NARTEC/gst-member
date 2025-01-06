@@ -39,37 +39,37 @@ function Sidebar({ isOpen, toggleSidebar, isLargeScreenCollapsed }) {
     {
       path: "/member-portal/dashboard",
       icon: <FaChartLine />,
-      label: "Dashboard",
+      label: "Products KPI",
     },
     {
       path: "/member-portal/my-profile",
       icon: <FaUser />,
-      label: "My Profile",
+      label: "My Account",
     },
     {
       path: "/member-portal/my-barcodes",
       icon: <FaBarcode />,
-      label: "My Barcodes",
+      label: "Purchased Barcodes",
     },
     {
       path: "/member-portal/my-products",
       icon: <FaBoxes />,
-      label: "My Products",
+      label: "Products",
     },
     {
       path: "/member-portal/gln-location",
       icon: <FaMapMarkerAlt />,
-      label: "GLN Location",
+      label: "Barcode for Location",
     },
     {
       path: "/member-portal/my-brands",
       icon: <FaTrademark />,
-      label: "My Brands",
+      label: "Brand Master",
     },
     {
       path: "/member-portal/billing",
       icon: <FaFileInvoiceDollar />,
-      label: "My Billing",
+      label: "Documents",
     },
     {
       path: "/member-portal/my-orders",
@@ -79,12 +79,12 @@ function Sidebar({ isOpen, toggleSidebar, isLargeScreenCollapsed }) {
     {
       path: "/member-portal/help-support",
       icon: <FaQuestionCircle />,
-      label: "Help Desk",
+      label: "My Assistant",
     },
     {
       path: "/member-portal/gst-terms",
       icon: <FaFileContract />,
-      label: "GST Terms & Conditions",
+      label: "Terms and Conditions",
     },
     // {
     //   // path: "/member-portal/data-policy",
@@ -99,7 +99,7 @@ function Sidebar({ isOpen, toggleSidebar, isLargeScreenCollapsed }) {
     {
       // path: "/logout",
       icon: <FaSignOutAlt />,
-      label: "Log-out",
+      label: "Log-Out",
       onClick: handleLogout,
       className: "mt-auto text-red-400 hover:text-red-300",
     },
