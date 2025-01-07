@@ -10,8 +10,9 @@ import {
   Autocomplete,
   AutocompleteItem,
   Chip,
+  Tooltip,
 } from "@nextui-org/react";
-import { FaArrowLeft, FaUpload, FaTrash } from "react-icons/fa";
+import { FaArrowLeft, FaUpload, FaTrash, FaMagic } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import MainLayout from "../../layout/PortalLayouts/MainLayout";
 import UnitOfMeasure from "../../components/myProducts/UnitOfMesure";
@@ -24,6 +25,7 @@ import {
 } from "../../store/apis/endpoints/userProducts";
 import PackagingType from "../../components/myProducts/PackagingType";
 import ProductType from "../../components/myProducts/ProductType";
+import ImageGenerationAi from "./ImageGenerationAi";
 
 function AddMyProduct() {
   const navigate = useNavigate();
@@ -108,6 +110,25 @@ function AddMyProduct() {
       console.error("Failed to create product:", error);
       // You might want to add error handling/notification here
     }
+  };
+
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+
+  const handleAiImageSelect = (imageUrl) => {
+    const emptyIndex = formData.images.findIndex((img) => img === null);
+    if (emptyIndex !== -1) {
+      fetch(imageUrl)
+        .then((res) => res.blob())
+        .then((blob) => {
+          const file = new File([blob], "ai-generated.png", {
+            type: "image/png",
+          });
+          const newImages = [...formData.images];
+          newImages[emptyIndex] = file;
+          setFormData((prev) => ({ ...prev, images: newImages }));
+        });
+    }
+    setIsAiModalOpen(false);
   };
 
   return (
@@ -329,7 +350,19 @@ function AddMyProduct() {
           {/* Product Images Card */}
           <Card>
             <CardBody className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Product Images</h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold">Product Images</h2>
+                <Tooltip content="Generate images with AI">
+                  <Button
+                    color="secondary"
+                    variant="flat"
+                    startContent={<FaMagic />}
+                    onClick={() => setIsAiModalOpen(true)}
+                  >
+                    AI Generate
+                  </Button>
+                </Tooltip>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {formData.images.map((image, index) => (
                   <Card key={index} className="w-full aspect-square">
@@ -395,6 +428,11 @@ function AddMyProduct() {
           </Button>
         </div>
       </div>
+      <ImageGenerationAi
+        isOpen={isAiModalOpen}
+        onClose={() => setIsAiModalOpen(false)}
+        onSelectImage={handleAiImageSelect}
+      />
     </MainLayout>
   );
 }
