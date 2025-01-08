@@ -6,6 +6,7 @@ import { FaCcVisa, FaCcMastercard, FaApple } from "react-icons/fa";
 import PaymentSuccessModal from "../../../components/auth/registration/PaymentSuccessModal";
 import ReactConfetti from "react-confetti";
 import { calculatePrice } from "../../../utils/priceCalculations";
+import AmazonPay from "./AmazonPay";
 
 import { useCheckoutMutation } from "../../../store/apis/endpoints/checkout";
 import toast from "react-hot-toast";
@@ -165,7 +166,7 @@ function Payment() {
                   }`}
                 >
                   <Radio
-                    isDisabled={true}
+                    // isDisabled={true}
                     value="card"
                     className="flex items-center gap-2"
                   >
@@ -228,35 +229,7 @@ function Payment() {
               </div>
             </RadioGroup>
 
-            {/* Card Details Section - adjust padding */}
-            {(paymentMethod === "card" || paymentMethod === "debit") && (
-              <div className="mt-4 md:mt-6 p-4 md:p-6 bg-gray-50 rounded-lg">
-                <h3 className="text-lg mb-4">Credit card / debit card</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm mb-1">Card number</label>
-                    <Input
-                      placeholder="1234 1234 1234 1234"
-                      className="max-w-md"
-                    />
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="flex-1">
-                      <label className="block text-sm mb-1">
-                        Expiration date
-                      </label>
-                      <Input placeholder="MM / YY" className="max-w-[200px]" />
-                    </div>
-                    <div className="flex-1">
-                      <label className="block text-sm mb-1">
-                        Security code
-                      </label>
-                      <Input placeholder="CVC" className="max-w-[100px]" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+           
 
             <div className="mt-6">
               <Checkbox
@@ -372,14 +345,18 @@ function Payment() {
           >
             Back
           </Button>
-          <Button
-            onClick={handlePaymentComplete}
+          {paymentMethod === "bank" ? (
+            <Button
+              onClick={handlePaymentComplete}
             className="w-full sm:w-auto px-4 md:px-6 py-2 md:py-3 bg-navy-600 text-white rounded-lg hover:bg-navy-700"
             isDisabled={!acceptTerms || isCheckoutLoading}
             isLoading={isCheckoutLoading}
           >
-            {isCheckoutLoading ? "Processing..." : "Submit"}
-          </Button>
+              {isCheckoutLoading ? "Processing..." : "Submit"}
+            </Button>
+          ) : (
+            <AmazonPay />
+          )}
         </div>
       </div>
 
