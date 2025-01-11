@@ -3,6 +3,7 @@ import { useAmazonPayMutation } from "../../../store/apis/endpoints/amazonPay";
 import { useSelector } from "react-redux";
 import { selectCartTotals } from "../../../store/slices/cartSlice";
 import { selectPersonalInfo } from "../../../store/slices/personalInfoSlice";
+import { Button } from "@nextui-org/react";
 
 const AmazonPay = () => {
   const [amazonPay, { isLoading }] = useAmazonPayMutation();
@@ -47,9 +48,13 @@ const AmazonPay = () => {
     <div className="payment-form">
       <form onSubmit={handlePayment}>
         {/* Add your payment form fields here */}
-        <button type="submit" disabled={isLoading}>
+        <Button
+          type="submit"
+          isLoading={isLoading}
+          className="w-full sm:w-auto px-4 md:px-6 py-2 md:py-3 bg-navy-600 text-white rounded-lg hover:bg-navy-700"
+        >
           {isLoading ? "Processing..." : "Pay Now"}
-        </button>
+        </Button>
       </form>
     </div>
   );

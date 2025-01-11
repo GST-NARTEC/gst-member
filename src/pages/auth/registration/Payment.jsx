@@ -29,8 +29,6 @@ function Payment() {
 
   const [paymentMethod, setPaymentMethod] = useState("bank");
 
-  console.log(paymentMethod)
-
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);

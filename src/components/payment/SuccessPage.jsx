@@ -151,7 +151,11 @@ function PaymentResponse() {
           </h2>
           <div className="space-y-4 mb-8">
             <p className="text-gray-600 text-lg">
-              Your payment has been processed successfully.
+              Your payment has been processed successfully. We've sent your
+              member portal credentials to your registered email address.
+            </p>
+            <p className="text-gray-500 text-sm">
+              Please check your inbox to access your account details.
             </p>
             {transactionId && (
               <div className="bg-gray-50 p-4 rounded-xl backdrop-blur-sm border border-gray-100">
@@ -170,14 +174,38 @@ function PaymentResponse() {
               </div>
             )}
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleReturn}
-            className="bg-gradient-to-r from-green-500 to-green-400 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform"
-          >
-            Return to Home
-          </motion.button>
+          <div className="flex flex-col gap-3">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate("/member-portal/login")}
+              className="bg-gradient-to-r from-navy-700 to-navy-600 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform w-full"
+            >
+              Go to Login
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleReturn}
+              className="bg-gradient-to-r from-green-500 to-green-400 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform"
+            >
+              Return to Home
+            </motion.button>
+            <div className="flex items-center gap-2 justify-center text-sm mt-2">
+              <span className="text-gray-600">Didn't receive the email?</span>
+              <button
+                className="text-navy-700 hover:text-navy-800 font-medium"
+                onClick={() =>
+                  window.open(
+                    "https://gstsa1.org/template3/contact-us",
+                    "_blank"
+                  )
+                }
+              >
+                Contact support
+              </button>
+            </div>
+          </div>
         </motion.div>
       )}
 
