@@ -48,6 +48,7 @@ function Barcodes() {
     "https://www.sagedata.com/images/2007/Code_128_Barcode_Graphic.jpg";
 
   const addItemToCart = (product) => {
+    console.log(product)
     dispatch(addToCart(product));
   };
 

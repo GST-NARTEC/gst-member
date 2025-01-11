@@ -16,7 +16,7 @@ export default function WebsiteRoutes() {
         <Route path="membership-form" element={<MembershipForm />} />
         <Route path="payment" element={<Payment />} />
       </Route>
-      <Route path="/success" element={<SuccessPage />} />
+      <Route path="/payment/success" element={<SuccessPage />} />
       <Route path="/search/:barcode?" element={<BarcodeResult />} />
     </Routes>
   );
