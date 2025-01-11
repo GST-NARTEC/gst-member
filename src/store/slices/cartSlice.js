@@ -17,11 +17,16 @@ const cartSlice = createSlice({
       state.items = action.payload;
     },
     addToCart: (state, action) => {
+      if (!Array.isArray(state.items)) {
+        state.items = [];
+      }
+
       const existingItem = state.items.find(
         (item) => item.id === action.payload.id
       );
+
       if (existingItem) {
-        existingItem.quantity += 1;
+        existingItem.quantity = (existingItem.quantity || 1) + 1;
         const { totalPrice, unitPrice } = calculatePrice(existingItem.quantity);
         existingItem.totalPrice = totalPrice;
         existingItem.unitPrice = unitPrice;
@@ -32,15 +37,21 @@ const cartSlice = createSlice({
           quantity: 1,
           totalPrice,
           unitPrice,
+          selectedAddons: [],
         });
       }
     },
     updateQuantity: (state, action) => {
+      if (!Array.isArray(state.items)) {
+        state.items = [];
+        return;
+      }
+
       const { productId, change } = action.payload;
       state.items = state.items
         .map((item) => {
           if (item.id === productId) {
-            const newQuantity = item.quantity + change;
+            const newQuantity = (item.quantity || 1) + change;
             if (newQuantity > 0) {
               const { totalPrice, unitPrice } = calculatePrice(newQuantity);
               return {
@@ -57,38 +68,37 @@ const cartSlice = createSlice({
         .filter(Boolean);
     },
     updateCartItemAddons: (state, action) => {
+      if (!Array.isArray(state.items)) {
+        state.items = [];
+        return;
+      }
+
       const { index, selectedAddons } = action.payload;
       if (state.items[index]) {
         state.items[index].selectedAddons = selectedAddons;
       }
     },
     removeFromCart: (state, action) => {
+      if (!Array.isArray(state.items)) {
+        state.items = [];
+        return;
+      }
       state.items = state.items.filter((item) => item.id !== action.payload);
     },
     setCartTotals: (state, action) => {
-      const subtotal = state.items.reduce((sum, item) => {
-        const { totalPrice } = calculatePrice(item.quantity);
-        const addonsTotal = (item.selectedAddons || []).reduce(
-          (sum, addon) => sum + addon.price * addon.quantity,
-          0
-        );
-        return sum + totalPrice + addonsTotal;
-      }, 0);
+      if (!Array.isArray(state.items)) {
+        state.items = [];
+      }
 
-      const vat = state.vatDetails.type === "PERCENTAGE"
-        ? subtotal * (state.vatDetails.value / 100)
-        : state.vatDetails.value || 0;
-
-      const total = subtotal + vat;
-
-      state.subtotal = subtotal;
-      state.vat = vat;
-      state.total = total;
+      const { subtotal, vat, total } = action.payload;
+      state.subtotal = subtotal || 0;
+      state.vat = vat || 0;
+      state.total = total || 0;
     },
     setVatDetails: (state, action) => {
-      state.vatDetails = action.payload;
+      state.vatDetails = action.payload || {};
     },
-    clearCart: (state) => {
+    clearCart: () => {
       return initialState;
     },
   },
@@ -106,12 +116,12 @@ export const {
 } = cartSlice.actions;
 
 export const selectCart = (state) => state.cart;
-export const selectCartItems = (state) => state.cart.items;
+export const selectCartItems = (state) => state.cart?.items || [];
 export const selectCartTotals = (state) => ({
-  subtotal: state.cart.subtotal,
-  vat: state.cart.vat,
-  total: state.cart.total,
+  subtotal: state.cart?.subtotal || 0,
+  vat: state.cart?.vat || 0,
+  total: state.cart?.total || 0,
 });
-export const selectVatDetails = (state) => state.cart.vatDetails;
+export const selectVatDetails = (state) => state.cart?.vatDetails || {};
 
 export default cartSlice.reducer;

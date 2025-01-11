@@ -10,21 +10,28 @@ import {
   Card,
   CardBody,
   Image,
+  Tooltip,
 } from "@nextui-org/react";
 import { FaMagic } from "react-icons/fa";
 import { FiDownload } from "react-icons/fi";
 import { useGenerateImageMutation } from "../../store/apis/endpoints/imageGenerateAi";
 
-function ImageGenerationAi({ isOpen, onClose }) {
+function ImageGenerationAi({
+  isOpen,
+  onClose,
+  productDescription,
+  onSelectImage,
+}) {
   const [prompt, setPrompt] = useState("");
   const [generatedImages, setGeneratedImages] = useState([]);
   const [generateImage, { isLoading }] = useGenerateImageMutation();
 
-  const handleGenerate = async () => {
-    if (!prompt.trim()) return;
+  const handleGenerate = async (customPrompt = null) => {
+    const finalPrompt = customPrompt || prompt.trim();
+    if (!finalPrompt) return;
 
     try {
-      const response = await generateImage({ prompt }).unwrap();
+      const response = await generateImage({ prompt: finalPrompt }).unwrap();
       if (response.success && response.images) {
         setGeneratedImages(response.images);
       }
@@ -50,6 +57,12 @@ function ImageGenerationAi({ isOpen, onClose }) {
     }
   };
 
+  const handleImageSelect = (imageUrl) => {
+    if (onSelectImage) {
+      onSelectImage(imageUrl);
+    }
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -64,31 +77,46 @@ function ImageGenerationAi({ isOpen, onClose }) {
           AI Image Generation
         </ModalHeader>
         <ModalBody>
-          <div className="flex gap-4 items-center">
-            <Input
-              //   label="Image Description"
-              placeholder="Describe the product image you want to generate..."
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              className="flex-grow"
-              size="lg"
-            />
-            <Button
-              color="primary"
-              onClick={handleGenerate}
-              className="min-w-[120px]"
-              startContent={
-                <FaMagic className={`text-lg`} />
-              }
-            >
-              {isLoading ? "Generating..." : "Generate"}
-            </Button>
+          <div className="space-y-4">
+            {productDescription && (
+              <div className="flex gap-4 items-center">
+                <Tooltip content={productDescription}>
+                  <Button
+                    color="secondary"
+                    variant="flat"
+                    className="flex-1"
+                    onClick={() => handleGenerate(productDescription)}
+                    startContent={<FaMagic />}
+                  >
+                    Generate from Product Description
+                  </Button>
+                </Tooltip>
+              </div>
+            )}
+
+            <div className="flex gap-4 items-center">
+              <Input
+                placeholder="Or enter a custom description..."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                className="flex-grow"
+                size="lg"
+              />
+              <Button
+                color="primary"
+                onClick={() => handleGenerate()}
+                className="min-w-[120px]"
+                startContent={<FaMagic />}
+                isDisabled={isLoading}
+              >
+                {isLoading ? "Generating..." : "Generate"}
+              </Button>
+            </div>
           </div>
 
           <div className="grid grid-cols-4 gap-4 mt-6">
             {isLoading
-              ? // Loading skeleton cards
-                Array(4)
+              ? Array(4)
                   .fill(0)
                   .map((_, index) => (
                     <Card key={`skeleton-${index}`} className="w-full">
@@ -97,14 +125,14 @@ function ImageGenerationAi({ isOpen, onClose }) {
                       </CardBody>
                     </Card>
                   ))
-              : // Generated image cards
-                generatedImages.map((image, index) => (
+              : generatedImages.map((image, index) => (
                   <Card key={index} className="w-full group relative">
                     <CardBody className="p-0 relative">
                       <Image
                         src={image}
                         alt={`Generated image ${index + 1}`}
-                        className="w-full h-[200px] object-cover"
+                        className="w-full h-[200px] object-cover cursor-pointer"
+                        onClick={() => handleImageSelect(image)}
                       />
                       <div
                         className="absolute bottom-2 right-2 p-2 rounded-full bg-black/60 cursor-pointer hover:bg-black/80 transition-all transform hover:scale-110 group-hover:opacity-100 opacity-0 z-50"

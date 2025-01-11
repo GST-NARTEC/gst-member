@@ -13,12 +13,12 @@ import {
 } from "../../../store/slices/cartSlice";
 import { useNavigate } from "react-router-dom";
 import Addons from "./Addons";
-import { calculatePrice } from '../../../utils/priceCalculations';
+import { calculatePrice } from "../../../utils/priceCalculations";
 
 function Cart({ currencySymbol, vatDetails, defaultImage }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const cart = useSelector(selectCartItems);
+  const cartItems = useSelector(selectCartItems) || [];
   const [isAddonsOpen, setIsAddonsOpen] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState(null);
   const [selectedItemIndex, setSelectedItemIndex] = React.useState(null);
@@ -30,20 +30,20 @@ function Cart({ currencySymbol, vatDetails, defaultImage }) {
   };
 
   const getCartTotals = () => {
-    const subtotal = cart.reduce((sum, item) => {
+    const subtotal = cartItems.reduce((sum, item) => {
       const itemTotal = getItemTotal(item);
       return sum + itemTotal;
     }, 0);
 
     const vatAmount =
-      vatDetails.type === "PERCENTAGE"
-        ? subtotal * (vatDetails.value / 100)
-        : vatDetails.value;
+      vatDetails?.type === "PERCENTAGE"
+        ? subtotal * ((vatDetails?.value || 0) / 100)
+        : vatDetails?.value || 0;
 
     const total = subtotal + vatAmount;
 
     dispatch(setCartTotals({ subtotal, vat: vatAmount, total }));
-    return { subtotal, vatAmount, total, vatId: vatDetails.id };
+    return { subtotal, vatAmount, total, vatId: vatDetails?.id };
   };
 
   const handleCheckout = () => {
@@ -52,17 +52,18 @@ function Cart({ currencySymbol, vatDetails, defaultImage }) {
       setVatDetails({
         id: vatId,
         calculatedVat: vatAmount,
-        value: vatDetails.value,
-        type: vatDetails.type,
+        value: vatDetails?.value || 0,
+        type: vatDetails?.type || "PERCENTAGE",
       })
     );
     navigate("/register/membership-form");
   };
 
   const getItemTotal = (item) => {
-    const { totalPrice } = calculatePrice(item.quantity);
+    if (!item) return 0;
+    const { totalPrice } = calculatePrice(item.quantity || 0);
     const addonsTotal = (item.selectedAddons || []).reduce(
-      (sum, addon) => sum + addon.price * addon.quantity,
+      (sum, addon) => sum + (addon.price || 0) * (addon.quantity || 1),
       0
     );
     return totalPrice + addonsTotal;
@@ -88,13 +89,13 @@ function Cart({ currencySymbol, vatDetails, defaultImage }) {
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-xl font-semibold">Your Cart</h3>
         <span className="text-sm bg-gray-100 px-2 py-0.5 rounded-full">
-          {cart.length} items
+          {cartItems.length} items
         </span>
       </div>
 
       <div className="space-y-4 max-h-[calc(100vh-300px)] overflow-y-auto">
-        {cart.map((item, index) => {
-          const { unitPrice, totalPrice } = calculatePrice(item.quantity);
+        {cartItems.map((item, index) => {
+          const { unitPrice, totalPrice } = calculatePrice(item.quantity || 1);
           return (
             <div
               key={item.id}
@@ -104,7 +105,7 @@ function Cart({ currencySymbol, vatDetails, defaultImage }) {
                 <div className="w-24">
                   <Image
                     src={item.image || defaultImage}
-                    alt={item.name}
+                    alt={item.title}
                     className="w-24 h-20 object-contain mb-1"
                   />
                   <div className="flex items-center bg-gray-50 rounded-md border border-gray-200">
@@ -114,7 +115,9 @@ function Cart({ currencySymbol, vatDetails, defaultImage }) {
                     >
                       −
                     </button>
-                    <span className="px-2 py-0.5 text-sm">{item.quantity}</span>
+                    <span className="px-2 py-0.5 text-sm">
+                      {item.quantity || 1}
+                    </span>
                     <button
                       onClick={() => updateItemQuantity(item.id, 1)}
                       className="px-2 py-0.5 text-gray-500 hover:text-gray-700"
@@ -127,8 +130,10 @@ function Cart({ currencySymbol, vatDetails, defaultImage }) {
                 <div className="flex-grow flex flex-col justify-between">
                   <div className="flex justify-between items-start">
                     <div>
-                      <span className="text-gray-500 text-sm">{item.title}</span>
-                      {item.addons?.length > 0 && (
+                      <span className="text-gray-500 text-sm">
+                        {item.title}
+                      </span>
+                      {Array.isArray(item.addons) && item.addons.length > 0 && (
                         <button
                           onClick={() => handleAddonsClick(item, index)}
                           className="ml-2 text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1"
@@ -146,28 +151,28 @@ function Cart({ currencySymbol, vatDetails, defaultImage }) {
                     </button>
                   </div>
 
-                  {item.selectedAddons && item.selectedAddons.length > 0 && (
-                    <div className="mt-2">
-                      <div className="text-xs text-gray-500">
-                        {item.selectedAddons.map((addon, idx) => (
-                          <div key={idx} className="flex justify-between">
-                            <span>
-                              {addon.name} × {addon.quantity}
-                            </span>
-                            <span>
-                              {currencySymbol}{" "}
-                              {(addon.price * addon.quantity).toFixed(2)}
-                            </span>
-                          </div>
-                        ))}
+                  {Array.isArray(item.selectedAddons) &&
+                    item.selectedAddons.length > 0 && (
+                      <div className="mt-2">
+                        <div className="text-xs text-gray-500">
+                          {item.selectedAddons.map((addon, idx) => (
+                            <div key={idx} className="flex justify-between">
+                              <span>
+                                {addon.name} × {addon.quantity || 1}
+                              </span>
+                              <span>
+                                {currencySymbol}{" "}
+                                {(
+                                  (addon.price || 0) * (addon.quantity || 1)
+                                ).toFixed(2)}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
                   <div className="flex justify-end flex-col items-end">
-                    {/* <span className="text-sm">
-                      {currencySymbol} {unitPrice.toFixed(2)} × {item.quantity}
-                    </span> */}
                     <span className="text-sm font-bold">
                       {currencySymbol} {getItemTotal(item).toFixed(2)}
                     </span>
@@ -179,7 +184,7 @@ function Cart({ currencySymbol, vatDetails, defaultImage }) {
         })}
       </div>
 
-      {cart.length > 0 && (
+      {cartItems.length > 0 && (
         <div className="mt-4 pt-4 border-t border-gray-200 sticky bottom-0 bg-white">
           <div className="space-y-2">
             <div className="flex justify-between items-center">
@@ -191,7 +196,7 @@ function Cart({ currencySymbol, vatDetails, defaultImage }) {
             <div className="flex justify-between items-center">
               <span className="text-sm">
                 VAT (
-                {vatDetails.type === "PERCENTAGE"
+                {vatDetails?.type === "PERCENTAGE"
                   ? `${vatDetails.value}%`
                   : "Fixed"}
                 ):

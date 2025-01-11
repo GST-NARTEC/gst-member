@@ -1,87 +1,58 @@
-import React, { useState } from "react";
-import { Button } from "@nextui-org/react";
+import React from "react";
 import { useAmazonPayMutation } from "../../../store/apis/endpoints/amazonPay";
 import { useSelector } from "react-redux";
-import { selectPersonalInfo } from "../../../store/slices/personalInfoSlice";
-import { generateOrderId } from "../../../utils/generateUniqueId";
 import { selectCartTotals } from "../../../store/slices/cartSlice";
-import toast from "react-hot-toast";
+import { selectPersonalInfo } from "../../../store/slices/personalInfoSlice";
 
-function AmazonPay() {
-  const [paymentData, setPaymentData] = useState(null);
-  const [payWithAmazon, { isLoading }] = useAmazonPayMutation();
-  const personalInfo = useSelector(selectPersonalInfo);
+const AmazonPay = () => {
+  const [amazonPay, { isLoading }] = useAmazonPayMutation();
+
   const cartTotals = useSelector(selectCartTotals);
+  const personalInfo = useSelector(selectPersonalInfo);
 
-  const handlePayment = async () => {
+  const handlePayment = async (e) => {
+    e.preventDefault();
+
     try {
-      const orderId = generateOrderId();
-      const payload = {
-        orderId,
-        amount: cartTotals.total,
-        email: personalInfo.email,
-        currency: "SAR",
+      const paymentDetails = {
+        amount: cartTotals.total, // Use actual total from cart
+        currency: "SAR", // You might want to get this from a currency state/config
+        customerEmail: personalInfo.email,
+        customerName: personalInfo.companyNameEn, // Using company name as customer name
       };
 
-      // Store complete order details in localStorage
-      localStorage.setItem(
-        "pendingOrder",
-        JSON.stringify({
-          ...payload,
-          personalInfo,
-          cartTotals,
-          timestamp: new Date().toISOString(),
-        })
-      );
+      const response = await amazonPay(paymentDetails);
 
-      const response = await payWithAmazon(payload);
-      console.log("Payment Response:", response);
+      // Create and submit form to PayFort
+      const form = document.createElement("form");
+      form.setAttribute("method", "POST");
+      form.setAttribute("action", response.data.gatewayUrl);
 
-      if (response.data && response.data.data) {
-        setPaymentData(response.data.data);
+      Object.entries(response.data.paymentData).forEach(([key, value]) => {
+        const input = document.createElement("input");
+        input.setAttribute("type", "hidden");
+        input.setAttribute("name", key);
+        input.setAttribute("value", value);
+        form.appendChild(input);
+      });
 
-        // Create and submit form
-        const form = document.createElement("form");
-        form.method = "post";
-        form.action = response.data.data.url;
-
-        // Add all form fields from the response
-        Object.entries(response.data.data.params).forEach(([key, value]) => {
-          const input = document.createElement("input");
-          input.type = "hidden";
-          input.name = key;
-          input.value = value;
-          form.appendChild(input);
-        });
-
-        document.body.appendChild(form);
-        form.submit();
-      } else {
-        toast.error("Invalid payment response structure");
-        console.error("Invalid payment response structure:", response);
-      }
-    } catch (err) {
-      toast.error("Payment initialization failed");
-      console.error("Amazon Pay initialization failed:", err);
+      document.body.appendChild(form);
+      form.submit();
+    } catch (error) {
+      console.error("Payment error:", error);
     }
   };
 
   return (
-    <div
-      className="amazon-pay-container"
-      style={{ width: "100%", maxWidth: "800px", margin: "0 auto" }}
-    >
-      <Button
-        color="primary"
-        size="lg"
-        onClick={handlePayment}
-        isLoading={isLoading}
-        disabled={isLoading}
-      >
-        {isLoading ? "Processing..." : "Pay Now"}
-      </Button>
+    <div className="payment-form">
+      <form onSubmit={handlePayment}>
+        {/* Add your payment form fields here */}
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? "Processing..." : "Pay Now"}
+        </button>
+      </form>
     </div>
   );
-}
+};
 
 export default AmazonPay;
