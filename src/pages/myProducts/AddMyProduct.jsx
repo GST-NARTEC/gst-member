@@ -432,6 +432,7 @@ function AddMyProduct() {
         isOpen={isAiModalOpen}
         onClose={() => setIsAiModalOpen(false)}
         onSelectImage={handleAiImageSelect}
+        productDescription={formData.description}
       />
     </MainLayout>
   );
