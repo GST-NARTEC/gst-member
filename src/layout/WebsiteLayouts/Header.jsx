@@ -1,7 +1,7 @@
 // Header.jsx
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Menu, X, Globe, ChevronDown } from "lucide-react";
+import { Menu, X, Globe, ChevronDown, Phone } from "lucide-react";
 import { Images } from "../../assets/Index";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -64,6 +64,11 @@ export const Header = () => {
             </button>
           </div>
           <div className="flex items-center gap-4">
+            {/* mobile number */}
+            <button className="flex items-center gap-1">
+              <Phone className="w-4 h-4" />
+              +966 11 503 0591
+            </button>
             <Link
               to="/member-portal/login"
               className="text-primary hover:text-primary/80"
