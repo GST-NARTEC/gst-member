@@ -75,9 +75,23 @@ export const Footer = () => {
                 alt="GST Logo"
                 className="h-16 bg-white rounded-md"
               />
-              <span className="font-semibold text-white">
-                Global Standard for Technology
-              </span>
+              <div className="flex flex-col">
+                <span className="font-semibold text-white">
+                  Global Standard for Technology
+                </span>
+                <a
+                  href="tel:+966115030591"
+                  className="hover:text-white text-sm"
+                >
+                  Landline: +966 11 503 0591
+                </a>
+                <a
+                  href="tel:+966920051091"
+                  className="hover:text-white text-sm"
+                >
+                  Toll Free: +966 92 005 1091
+                </a>
+              </div>
             </div>
             <div className="flex gap-6">
               <a
