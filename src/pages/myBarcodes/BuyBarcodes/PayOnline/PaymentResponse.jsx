@@ -1,38 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaTimesCircle,
+  FaBarcode,
+  FaChartLine,
+} from "react-icons/fa";
 import { BiTime } from "react-icons/bi";
 import { ImSpinner8 } from "react-icons/im";
 import { motion } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
-import { useCheckoutMutation } from "../../store/apis/endpoints/checkout";
-import {
-  selectPersonalInfo,
-  resetForm,
-} from "../../store/slices/personalInfoSlice";
+import { useCreateOrderMutation } from "../../../../store/apis/endpoints/checkout";
+import OverlayLoader from "../../../../components/common/OverlayLoader";
+
 import {
   selectCartItems,
   selectVatDetails,
   clearCart,
-} from "../../store/slices/cartSlice";
+} from "../../../../store/slices/cartSlice";
 import toast from "react-hot-toast";
-import OverlayLoader from "../common/OverlayLoader";
 
 function PaymentResponse() {
   const [loading, setLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const params = new URLSearchParams(location.search);
 
+  const cartItems = useSelector(selectCartItems);
+  const vatDetails = useSelector(selectVatDetails);
+  const userId = useSelector((state) => state.member.user?.id);
+  const [checkout, { isLoading }] = useCreateOrderMutation();
+
+  const params = new URLSearchParams(location.search);
   const status = params.get("status");
   const transactionId = params.get("transactionId");
   const orderNumber = params.get("orderNumber");
-
-  const personalInfo = useSelector(selectPersonalInfo);
-  const cartItems = useSelector(selectCartItems);
-  const vatDetails = useSelector(selectVatDetails);
-  const [checkout, { isLoading }] = useCheckoutMutation();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -49,36 +51,25 @@ function PaymentResponse() {
           const formattedCartItems = cartItems.map((item) => ({
             productId: item.id,
             quantity: item.quantity,
-            addons:
-              item.selectedAddons?.map((addon) => ({
-                id: addon.id,
-                quantity: addon.quantity,
-              })) || [],
+            addons: (item.selectedAddons || []).map((addon) => ({
+              id: addon.id,
+              quantity: addon.quantity,
+            })),
           }));
 
           const checkoutPayload = {
-            email: personalInfo.email,
-            companyNameEn: personalInfo.companyNameEn,
-            companyNameAr: personalInfo.companyNameAr,
-            mobile: personalInfo.mobile,
-            landline: personalInfo.landline,
-            country: personalInfo.country,
-            region: personalInfo.region,
-            city: personalInfo.city,
-            companyLicenseNo: personalInfo.companyLicenseNo,
-            streetAddress: personalInfo.streetAddress,
-            zipCode: personalInfo.zipCode,
-            latitude: personalInfo.latitude,
-            longitude: personalInfo.longitude,
+            userId,
             cartItems: formattedCartItems,
             paymentType: "card",
             vat: vatDetails.value,
             orderNumber: orderNumber,
           };
 
-          await checkout(checkoutPayload);
-          dispatch(resetForm());
-          dispatch(clearCart());
+          const response = await checkout(checkoutPayload);
+          if (response.data) {
+            dispatch(clearCart());
+            toast.success("Payment processed successfully!");
+          }
         } catch (error) {
           console.error("Checkout failed:", error);
           toast.error(error?.data?.message || "Checkout failed");
@@ -92,6 +83,8 @@ function PaymentResponse() {
   const handleReturn = () => {
     navigate("/");
   };
+
+
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -145,21 +138,19 @@ function PaymentResponse() {
           animate="visible"
           className="text-center p-10 rounded-2xl shadow-2xl bg-white max-w-md w-full border border-gray-100"
         >
-          {/* <motion.div variants={iconVariants}> */}
-          <div className="flex items-center justify-center">
-            <FaCheckCircle className="text-green-500 text-7xl mx-auto mb-6" />
+          <div className="flex justify-center items-center h-20 pb-3">
+            <FaCheckCircle className="text-green-500 text-6xl" />
           </div>
-          {/* </motion.div> */}
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-400 bg-clip-text text-transparent mb-6">
-            Payment Successful! 🎉
+          <h2 className="text-3xl font-bold bg-gradient-to-r from-navy-600 to-navy-400 bg-clip-text text-transparent mb-6">
+            Purchase Complete! 🎉
           </h2>
           <div className="space-y-4 mb-8">
             <p className="text-gray-600 text-lg">
-              Your payment has been processed successfully. We've sent your
-              member portal credentials to your registered email address.
+              Your barcodes have been successfully purchased and are now
+              available in your dashboard.
             </p>
-            <p className="text-gray-500 text-sm">
-              Please check your inbox to access your account details.
+            <p className="text-gray-500">
+              You can start using your new barcodes right away!
             </p>
             {transactionId && (
               <div className="bg-gray-50 p-4 rounded-xl backdrop-blur-sm border border-gray-100">
@@ -169,39 +160,26 @@ function PaymentResponse() {
                 </p>
               </div>
             )}
-        
           </div>
           <div className="flex flex-col gap-3">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => navigate("/member-portal/login")}
-              className="bg-gradient-to-r from-navy-700 to-navy-600 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform w-full"
+              onClick={() => navigate("/member-portal/dashboard")}
+              className="bg-gradient-to-r from-navy-700 to-navy-600 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform w-full flex items-center justify-center gap-2"
             >
-              Go to Login
+              <FaChartLine className="text-lg" />
+              Go to Dashboard
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={handleReturn}
-              className="bg-gradient-to-r from-green-500 to-green-400 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform"
+              onClick={() => navigate("/member-portal/my-barcodes")}
+              className="bg-gradient-to-r from-green-500 to-green-400 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform flex items-center justify-center gap-2"
             >
-              Return to Home
+              <FaBarcode className="text-lg" />
+              View My Barcodes
             </motion.button>
-            <div className="flex items-center gap-2 justify-center text-sm mt-2">
-              <span className="text-gray-600">Didn't receive the email?</span>
-              <button
-                className="text-navy-700 hover:text-navy-800 font-medium"
-                onClick={() =>
-                  window.open(
-                    "https://gstsa1.org/template3/contact-us",
-                    "_blank"
-                  )
-                }
-              >
-                Contact support
-              </button>
-            </div>
           </div>
         </motion.div>
       )}
@@ -248,20 +226,30 @@ function PaymentResponse() {
           </h2>
           <div className="space-y-3 mb-8">
             <p className="text-gray-600 text-lg">
-              Sorry, there was an error processing your payment.
+              The payment transaction could not be completed.
             </p>
             <p className="text-gray-500">
-              Please try again or contact support if the problem persists.
+              Please try again or use a different payment method.
             </p>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleReturn}
-            className="bg-gradient-to-r from-red-500 to-red-400 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform"
-          >
-            Try Again
-          </motion.button>
+          <div className="flex flex-col gap-3">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate("/member-portal/my-barcodes/buy/payment")}
+              className="bg-gradient-to-r from-red-500 to-red-400 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform"
+            >
+              Try Again
+            </motion.button>
+            <button
+              className="text-navy-700 hover:text-navy-800 font-medium text-sm mt-2"
+              onClick={() =>
+                window.open("https://gstsa1.org/template3/contact-us", "_blank")
+              }
+            >
+              Need help? Contact support
+            </button>
+          </div>
         </motion.div>
       )}
     </div>

@@ -19,6 +19,8 @@ import {
 
 import { useCreateOrderMutation } from "../../../store/apis/endpoints/checkout";
 
+import PayCraditDebit from "./PayOnline/PayCraditDebit";
+
 function Payment() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -144,7 +146,7 @@ function Payment() {
                     }`}
                   >
                     <Radio
-                      isDisabled={true}
+                      // isDisabled={true}
                       value="card"
                       className="flex items-center gap-2"
                     >
@@ -319,14 +321,18 @@ function Payment() {
             >
               Back
             </Button>
-            <Button
-              isLoading={isLoading}
-              onClick={handlePaymentComplete}
-              className="w-full sm:w-auto px-4 md:px-6 py-2 md:py-3 bg-navy-600 text-white rounded-lg hover:bg-navy-700"
-              isDisabled={!acceptTerms}
-            >
-              Submit
-            </Button>
+            {paymentMethod === "bank" ? (
+              <Button
+                isLoading={isLoading}
+                onClick={handlePaymentComplete}
+                className="w-full sm:w-auto px-4 md:px-6 py-2 md:py-3 bg-navy-600 text-white rounded-lg hover:bg-navy-700"
+                isDisabled={!acceptTerms}
+              >
+                Submit
+              </Button>
+            ) : (
+              <PayCraditDebit isDisabled={!acceptTerms} />
+            )}
           </div>
         </div>
       </MainLayout>

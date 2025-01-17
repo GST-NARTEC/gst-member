@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import MainLayout from "../../layout/PortalLayouts/MainLayout";
 import {
   FaBoxes,
@@ -20,6 +20,7 @@ import ProductBarChart from "../../components/dashboard/ProductBarChart";
 import BarcodePieChart from "../../components/dashboard/BarcodePieChart";
 import { useGetDashboardStatsQuery } from "../../store/apis/endpoints/dashboardStats";
 import DashboardLoader from "../../components/Loader/DashboardLoader";
+import OverlayLoader from "../../components/common/OverlayLoader";
 
 function StatCard({
   title,
@@ -126,6 +127,8 @@ function Dashboard() {
     refetch,
     isFetching,
   } = useGetDashboardStatsQuery();
+
+  const [overlayLoader, setOverlayLoader] = useState(true);
 
   const dashboardStats = useMemo(() => {
     if (!apiData?.data) return null;

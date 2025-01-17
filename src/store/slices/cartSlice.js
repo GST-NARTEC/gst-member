@@ -90,10 +90,11 @@ const cartSlice = createSlice({
         state.items = [];
       }
 
-      const { subtotal, vat, total } = action.payload;
-      state.subtotal = subtotal || 0;
-      state.vat = vat || 0;
-      state.total = total || 0;
+      const payload = action.payload || {};
+      const { subtotal = 0, vat = 0, total = 0 } = payload;
+      state.subtotal = subtotal;
+      state.vat = vat;
+      state.total = total;
     },
     setVatDetails: (state, action) => {
       state.vatDetails = action.payload || {};

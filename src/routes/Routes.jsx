@@ -21,6 +21,7 @@ import MyOrders from "../pages/myOrders/MyOrders";
 import GLNLocation from "../pages/glnLocation/GLNLocation";
 import AddGLNLocation from "../pages/glnLocation/AddGLNLocation";
 import EditGLNLocation from "../pages/glnLocation/EditGLNLocation";
+import PaymentResponse from "../pages/myBarcodes/BuyBarcodes/PayOnline/PaymentResponse";
 
 export default function AppRoutes() {
   return (
@@ -82,6 +83,12 @@ export default function AppRoutes() {
           element={<HelpAndSupport />}
         />
         <Route path="/member-portal/my-orders" element={<MyOrders />} />
+
+        {/* payment response */}
+        <Route
+          path="/member-portal/payment/success"
+          element={<PaymentResponse />}
+        />
       </Route>
     </Routes>
   );

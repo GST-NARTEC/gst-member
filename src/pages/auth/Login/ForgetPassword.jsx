@@ -16,7 +16,7 @@ function ForgetPassword() {
     e.preventDefault();
     try {
       const response = await initiatePasswordReset({ email });
-      if (response.data?.token) {
+      if (response?.data?.token) {
         navigate("/member-portal/verify-otp", {
           state: { token: response.data.token, email },
         });

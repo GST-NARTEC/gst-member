@@ -1,15 +1,16 @@
 import React from "react";
-import { useAmazonPayMutation } from "../../../store/apis/endpoints/amazonPay";
+import { useAmazonPayMutation } from "../../../../store/apis/endpoints/amazonPay";
 import { useSelector } from "react-redux";
-import { selectCartTotals } from "../../../store/slices/cartSlice";
-import { selectPersonalInfo } from "../../../store/slices/personalInfoSlice";
+import { selectCartTotals } from "../../../../store/slices/cartSlice";
+import { selectCurrentUser } from "../../../../store/slices/memberSlice";
 import { Button } from "@nextui-org/react";
 
-const AmazonPay = () => {
+const PayCraditDebit = ({ isDisabled }) => {
   const [amazonPay, { isLoading }] = useAmazonPayMutation();
 
+  const user = useSelector(selectCurrentUser);
+
   const cartTotals = useSelector(selectCartTotals);
-  const personalInfo = useSelector(selectPersonalInfo);
 
   const handlePayment = async (e) => {
     e.preventDefault();
@@ -17,10 +18,10 @@ const AmazonPay = () => {
     try {
       const paymentDetails = {
         amount: cartTotals.total, // Use actual total from cart
-        pageType: "registration",
+        pageType: "memberPortal",
         currency: "SAR",
-        customerEmail: personalInfo.email,
-        customerName: personalInfo.companyNameEn, // Using company name as customer name
+        customerEmail: user.email,
+        customerName: user.companyNameEn, // Using company name as customer name
       };
 
       const response = await amazonPay(paymentDetails);
@@ -48,8 +49,8 @@ const AmazonPay = () => {
   return (
     <div className="payment-form">
       <form onSubmit={handlePayment}>
-        {/* Add your payment form fields here */}
         <Button
+          isDisabled={isDisabled}
           type="submit"
           isLoading={isLoading}
           className="w-full sm:w-auto px-4 md:px-6 py-2 md:py-3 bg-navy-600 text-white rounded-lg hover:bg-navy-700"
@@ -61,4 +62,4 @@ const AmazonPay = () => {
   );
 };
 
-export default AmazonPay;
+export default PayCraditDebit;
