@@ -22,7 +22,11 @@ import { useGetActiveProductsQuery } from "../../../store/apis/endpoints/product
 import { useGetTaxQuery } from "../../../store/apis/endpoints/tax";
 
 // Redux
-import { addToCart, setVatDetails, setCartTotals } from "../../../store/slices/cartSlice";
+import {
+  addToCart,
+  setVatDetails,
+  setCartTotals,
+} from "../../../store/slices/cartSlice";
 
 import Cart from "./Cart";
 
