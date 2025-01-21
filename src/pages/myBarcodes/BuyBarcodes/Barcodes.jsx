@@ -127,40 +127,44 @@ function Barcodes() {
                   {productsData?.data?.products.map((product) => (
                     <Card
                       key={product.id}
-                      className="p-4 shadow-md hover:shadow-md transition-shadow"
+                      className="p-2 shadow-md hover:shadow-md transition-shadow h-full"
                     >
-                      <div className="flex flex-col items-center text-center">
-                        <Popover showArrow placement="bottom">
-                          <PopoverTrigger>
-                            <Image
-                              src={product.image || defaultImage}
-                              alt={product.title}
-                              className="w-32 h-24 object-contain mb-3 cursor-pointer hover:opacity-80"
-                            />
-                          </PopoverTrigger>
-                          <PopoverContent className="p-2">
-                            <Image
-                              src={product.image || defaultImage}
-                              alt={product.title}
-                              className="w-80 h-60 object-contain"
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <h3 className="text-sm mb-1">{product.title}</h3>
-                        <p className="text-gray-500 text-xs mb-2 h-8 line-clamp-2">
-                          {product.description}
+                      <div className="flex flex-col items-center text-center h-full">
+                        <div className="w-full aspect-[4/3] relative mb-3">
+                          <Popover showArrow placement="bottom">
+                            <PopoverTrigger>
+                              <Image
+                                src={product.image || defaultImage}
+                                alt={product.title}
+                                className="w-full h-full object-contain cursor-pointer hover:opacity-80"
+                              />
+                            </PopoverTrigger>
+                            <PopoverContent className="p-2">
+                              <Image
+                                src={product.image || defaultImage}
+                                alt={product.title}
+                                className="w-80 h-60 object-contain"
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                        <h3 className="text-base font-bold mb-2 min-h-[2.5rem] line-clamp-2">
+                          {product.title}
+                        </h3>
+
+                        <p className="text-gray-500 text-[15px]">
+                          Usage: {product.description}
                         </p>
-                        <p className="text-sm font-bold text-navy-600 mb-3">
-                          {currencySymbol} {product.price.toFixed(2)}
-                        </p>
-                        <Button
-                          className="w-full bg-navy-600 hover:bg-navy-700 text-white"
-                          size="sm"
-                          onClick={() => addItemToCart(product)}
-                          isLoading={isProductsLoading}
-                        >
-                          Add to Cart
-                        </Button>
+
+                        <div className="w-full mt-auto pt-4">
+                          <Button
+                            className="w-full bg-navy-600 hover:bg-navy-700 text-white rounded-md py-2 px-4 font-medium"
+                            onClick={() => addItemToCart(product)}
+                            isLoading={isProductsLoading}
+                          >
+                            Add to Cart
+                          </Button>
+                        </div>
                       </div>
                     </Card>
                   ))}

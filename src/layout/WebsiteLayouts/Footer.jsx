@@ -1,6 +1,7 @@
 // Footer.jsx
 import { motion } from "framer-motion";
 import { Images } from "../../assets/Index";
+import { MdLocationOn } from "react-icons/md";
 
 export const Footer = () => {
   const footerSections = [
@@ -69,7 +70,8 @@ export const Footer = () => {
 
         <div className="mt-12 pt-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-4">
+            <div className="flex items-start gap-4 flex-col ">
+              <div className="flex items-center gap-4  ">
               <img
                 src={Images.Logo}
                 alt="GST Logo"
@@ -92,6 +94,21 @@ export const Footer = () => {
                   Toll Free: +966 92 005 1091
                 </a>
               </div>
+              </div>
+
+                <div className="flex items-center gap-3 text-sm  ">
+                  <MdLocationOn className="text-2xl" />
+                  <div className="flex flex-col">
+                    شركة المعيار العالمي للتقنيات 
+                    <br />
+                    Short Address: RFKA4234,
+                    <br />
+                    Building No: 4234, Al Mateea, 7650 Al Khaleej District,
+                    <br />
+                    13224, Riyadh, Kingdom of Saudi Arabia
+                  </div>
+                </div>
+                
             </div>
             <div className="flex gap-6">
               <a

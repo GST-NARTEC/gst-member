@@ -132,7 +132,7 @@ function Barcodes() {
                         {product.title}
                       </h3>
 
-                      <p className="text-gray-500 text-[15px] line-clamp-2">
+                      <p className="text-gray-500 text-[15px] ">
                         Usage: {product.description}
                       </p>
 
