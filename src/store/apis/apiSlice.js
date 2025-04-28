@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { updateAccessToken, logout } from "../slices/memberSlice";
+import { logout, updateAccessToken } from "../slices/memberSlice";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: "https://api.gstsa1.org/api",
@@ -10,7 +10,6 @@ const baseQuery = fetchBaseQuery({
       headers.set("authorization", `Bearer ${token}`);
     }
     return headers;
-    s;
   },
 });
 
