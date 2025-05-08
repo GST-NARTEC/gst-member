@@ -7,11 +7,20 @@ export const fetchBarcodeData = createAsyncThunk(
     try {
       const gstResponse = await fetch(
         `https://api.gstsa1.org/api/v1/user-products/search?gtin=${barcode}`
+        // `http://localhost:3000/api/v1/user-products/search?gtin=${barcode}`
       );
       const gstData = await gstResponse.json();
 
-      if (gstData.success && gstData.data?.product) {
-        return { source: "gst", data: gstData.data.product };
+      if (gstData.success) {
+        if (gstData.data?.product) {
+          return { source: "gst", data: gstData.data.product, type: "product" };
+        } else if (gstData.data?.gtinInfo) {
+          return {
+            source: "gst",
+            data: gstData.data.gtinInfo,
+            type: "gtinInfo",
+          };
+        }
       }
     } catch (error) {
       console.log("GST API Error:", error);
@@ -31,9 +40,13 @@ export const fetchBarcodeData = createAsyncThunk(
         gs1Data.message !== "No company info found"
       ) {
         if (gs1Data.ProductDataAvailable) {
-          return { source: "gs1", data: gs1Data.data };
+          return { source: "gs1", data: gs1Data.data, type: "product" };
         } else if (gs1Data.companyInfo) {
-          return { source: "gs1Company", data: gs1Data.companyInfo };
+          return {
+            source: "gs1Company",
+            data: gs1Data.companyInfo,
+            type: "companyInfo",
+          };
         }
       }
     } catch (error) {
@@ -50,7 +63,11 @@ export const fetchBarcodeData = createAsyncThunk(
       const barcodeLookupData = await barcodeLookupResponse.json();
 
       if (barcodeLookupData.products && barcodeLookupData.products.length > 0) {
-        return { source: "barcodeLookup", data: barcodeLookupData.products[0] };
+        return {
+          source: "barcodeLookup",
+          data: barcodeLookupData.products[0],
+          type: "product",
+        };
       }
     } catch (error) {
       console.log("Barcode Lookup API Error:", error);
@@ -66,7 +83,11 @@ export const fetchBarcodeData = createAsyncThunk(
       const barcodeReportData = await barcodeReportResponse.json();
 
       if (barcodeReportData.barcode) {
-        return { source: "barcodeReport", data: barcodeReportData };
+        return {
+          source: "barcodeReport",
+          data: barcodeReportData,
+          type: "product",
+        };
       }
     } catch (error) {
       console.log("Barcode Report API Error:", error);
@@ -82,6 +103,7 @@ const externalDataSlice = createSlice({
   initialState: {
     data: null,
     source: null,
+    type: null,
     loading: false,
     error: null,
   },
@@ -89,6 +111,7 @@ const externalDataSlice = createSlice({
     resetExternalData: (state) => {
       state.data = null;
       state.source = null;
+      state.type = null;
       state.error = null;
     },
   },
@@ -99,11 +122,13 @@ const externalDataSlice = createSlice({
         state.error = null;
         state.data = null;
         state.source = null;
+        state.type = null;
       })
       .addCase(fetchBarcodeData.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload.data;
         state.source = action.payload.source;
+        state.type = action.payload.type;
       })
       .addCase(fetchBarcodeData.rejected, (state, action) => {
         state.loading = false;

@@ -23,7 +23,7 @@ import GstResult from "./GstResult";
 function BarcodeResult() {
   const { barcode } = useParams();
   const dispatch = useDispatch();
-  const { data, source, loading, error } = useSelector(
+  const { data, source, type, loading, error } = useSelector(
     (state) => state.externalData
   );
 
@@ -305,7 +305,9 @@ function BarcodeResult() {
 
             {data && (
               <div className="mt-8">
-                {source === "gst" && <GstResult data={data} />}
+                {source === "gst" && (
+                  <GstResult data={data} type={type} gtin={barcode} />
+                )}
                 {source === "gs1" && renderGS1Data(data)}
                 {source === "gs1Company" && renderGS1CompanyData(data)}
                 {source === "barcodeLookup" && <BarcodeLookup data={data} />}

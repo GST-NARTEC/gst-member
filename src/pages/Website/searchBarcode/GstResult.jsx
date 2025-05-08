@@ -9,9 +9,9 @@ import {
   Image as ImageIcon,
 } from "lucide-react";
 
-function GstResult({ data }) {
+function GstResult({ data, type, gtin }) {
   if (!data) return null;
-  console.log(data);
+  console.log(data, type);
 
   const [activeTab, setActiveTab] = useState("product");
 
@@ -45,7 +45,9 @@ function GstResult({ data }) {
           <div className="text-gray-700">
             This number is registered to{" "}
             <span className="font-bold">
-              {data.user?.companyNameEn || "N/A"}
+              {type === "product"
+                ? data.user?.companyNameEn || "N/A"
+                : data.assignedTo?.companyNameEn || "N/A"}
             </span>
           </div>
         </div>
@@ -81,13 +83,15 @@ function GstResult({ data }) {
       {activeTab === "product" && (
         <div className="bg-white p-6 rounded-lg shadow-sm">
           <h1 className="text-xl font-bold text-primary mb-4">
-            {data.title || data.description || "Product Information"}
+            {type === "product"
+              ? data.title || data.description || "Product Information"
+              : "Product Information"}
           </h1>
           <div className="flex flex-col md:flex-row">
             {/* Product Image */}
             <div className="mb-4 md:mb-0 md:mr-8 flex-shrink-0">
               <div className="w-full md:w-48 h-48 flex items-center justify-center overflow-hidden rounded-lg">
-                {data.images && data.images.length > 0 ? (
+                {type === "product" && data.images && data.images.length > 0 ? (
                   <img
                     src={data.images[0].url}
                     alt={data.title || "Product"}
@@ -108,61 +112,100 @@ function GstResult({ data }) {
                   <tr className="border-b">
                     <td className="py-3 text-gray-600 w-1/3">GTIN</td>
                     <td className="py-3 text-primary text-lg">
-                      {data.gtin || "N/A"}
+                      {data.gtin || gtin || "N/A"}
                     </td>
                   </tr>
-                  <tr className="border-b">
-                    <td className="py-3 text-gray-600">Brand Name</td>
-                    <td className="py-3 text-primary text-lg">
-                      {data.brandName || "(en) test brand"}
-                    </td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="py-3 text-gray-600">Product Description</td>
-                    <td className="py-3 text-primary text-lg">
-                      {data.description ||
-                        "(en) knives - 33 - KilometrePerSecond - test brand"}
-                    </td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="py-3 text-gray-600">Product Image Url</td>
-                    <td className="py-3 text-primary text-lg">
-                      {data.images && data.images.length > 0
-                        ? data.images[0].url
-                        : "(en) \\uploads\\products\\memberProductsImages\\front_image-1731945788533-960639178.jpg"}
-                    </td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="py-3 text-gray-600">
-                      Global product category
-                    </td>
-                    <td className="py-3 text-primary text-lg">
-                      {data.category || "10007271"}
-                    </td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="py-3 text-gray-600">Net Content</td>
-                    <td className="py-3 text-primary text-lg">
-                      {data.unitOfMeasure
-                        ? `${data.unitOfMeasure} ${data.packagingType || ""}`
-                        : "33 M62"}
-                    </td>
-                  </tr>
-                  <tr className="border-b">
-                    <td className="py-3 text-gray-600">Country</td>
-                    <td className="py-3 text-primary text-lg">
-                      {data.countryOfOrigin || "ZWE"}
-                    </td>
-                  </tr>
+                  {type === "product" ? (
+                    <>
+                      <tr className="border-b">
+                        <td className="py-3 text-gray-600">Brand Name</td>
+                        <td className="py-3 text-primary text-lg">
+                          {data.brandName || "N/A"}
+                        </td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-3 text-gray-600">
+                          Product Description
+                        </td>
+                        <td className="py-3 text-primary text-lg">
+                          {data.description || "N/A"}
+                        </td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-3 text-gray-600">
+                          Product Image Url
+                        </td>
+                        <td className="py-3 text-primary text-lg">
+                          {data.images && data.images.length > 0
+                            ? data.images[0].url
+                            : "N/A"}
+                        </td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-3 text-gray-600">
+                          Global product category
+                        </td>
+                        <td className="py-3 text-primary text-lg">
+                          {data.gpc || data.category || "N/A"}
+                        </td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-3 text-gray-600">Net Content</td>
+                        <td className="py-3 text-primary text-lg">
+                          {data.unitOfMeasure
+                            ? `${data.unitOfMeasure} ${
+                                data.packagingType || ""
+                              }`
+                            : "N/A"}
+                        </td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-3 text-gray-600">Country</td>
+                        <td className="py-3 text-primary text-lg">
+                          {data.countryOfOrigin || "N/A"}
+                        </td>
+                      </tr>
+                    </>
+                  ) : (
+                    <>
+                      <tr className="border-b">
+                        <td className="py-3 text-gray-600">Status</td>
+                        <td className="py-3 text-primary text-lg">
+                          {data.status || "N/A"}
+                        </td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-3 text-gray-600">Purchase Date</td>
+                        <td className="py-3 text-primary text-lg">
+                          {data.assignedTo?.purchaseDate
+                            ? formatDate(data.assignedTo.purchaseDate)
+                            : "N/A"}
+                        </td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-3 text-gray-600">Order Number</td>
+                        <td className="py-3 text-primary text-lg">
+                          {data.assignedTo?.orderNumber || "N/A"}
+                        </td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-3 text-gray-600">Barcode Type</td>
+                        <td className="py-3 text-primary text-lg">
+                          {data.assignedTo?.barcodeType || "N/A"}
+                        </td>
+                      </tr>
+                      <tr className="border-b">
+                        <td className="py-3 text-gray-600" colSpan={2}>
+                          <p className="text-blue-500 italic">
+                            Product information will be available once added by
+                            the owner.
+                          </p>
+                        </td>
+                      </tr>
+                    </>
+                  )}
                 </tbody>
               </table>
-
-              {/* Data Quality Rating - No stars */}
-              {/* <div className="mt-6 bg-blue-50 p-4 rounded-lg">
-                <div className="text-gray-700">
-                  Rate the quality of this data
-                </div>
-              </div> */}
             </div>
           </div>
         </div>
@@ -179,23 +222,27 @@ function GstResult({ data }) {
               <tr className="border-b">
                 <td className="py-3 text-gray-600 w-1/3">Company Name</td>
                 <td className="py-3 text-primary text-lg">
-                  {data.user?.companyNameEn || "N/A"}
+                  {type === "product"
+                    ? data.user?.companyNameEn || "N/A"
+                    : data.assignedTo?.companyNameEn || "N/A"}
                 </td>
               </tr>
               <tr className="border-b">
                 <td className="py-3 text-gray-600">Company Name (Arabic)</td>
                 <td className="py-3 text-primary text-lg">
-                  {data.user?.companyNameAr || "N/A"}
+                  {type === "product"
+                    ? data.user?.companyNameAr || "N/A"
+                    : data.assignedTo?.companyNameAr || "N/A"}
                 </td>
               </tr>
               <tr className="border-b">
                 <td className="py-3 text-gray-600">Website</td>
-                <td className="py-3 text-primary text-lg">Unknown</td>
+                <td className="py-3 text-primary text-lg">N/A</td>
               </tr>
               <tr className="border-b">
                 <td className="py-3 text-gray-600">Licence Key</td>
                 <td className="py-3 text-primary text-lg">
-                  {data.gtin?.substring(0, 8) || "N/A"}
+                  {data.gtin?.substring(0, 8) || gtin?.substring(0, 8) || "N/A"}
                 </td>
               </tr>
               <tr className="border-b">
@@ -207,7 +254,7 @@ function GstResult({ data }) {
                   Global Location Number (GLN)
                 </td>
                 <td className="py-3 text-primary text-lg">
-                  {data.gtin?.substring(0, 8) || "N/A"}
+                  {data.gtin?.substring(0, 8) || gtin?.substring(0, 8) || "N/A"}
                 </td>
               </tr>
               <tr className="border-b">
@@ -219,33 +266,49 @@ function GstResult({ data }) {
               <tr className="border-b">
                 <td className="py-3 text-gray-600">Date of Registration</td>
                 <td className="py-3 text-primary text-lg">
-                  {formatDate(data.createdAt)}
+                  {type === "product"
+                    ? formatDate(data.createdAt)
+                    : data.assignedTo?.purchaseDate
+                    ? formatDate(data.assignedTo.purchaseDate)
+                    : "N/A"}
                 </td>
               </tr>
-              <tr className="border-b">
-                <td className="py-3 text-gray-600">Country of Origin</td>
-                <td className="py-3 text-primary text-lg">
-                  {data.countryOfOrigin || "N/A"}
-                </td>
-              </tr>
-              <tr className="border-b">
-                <td className="py-3 text-gray-600">Country of Sale</td>
-                <td className="py-3 text-primary text-lg">
-                  {data.countryOfSale || "N/A"}
-                </td>
-              </tr>
-              <tr className="border-b">
-                <td className="py-3 text-gray-600">Product Type</td>
-                <td className="py-3 text-primary text-lg">
-                  {data.productType || "N/A"}
-                </td>
-              </tr>
-              <tr className="border-b">
-                <td className="py-3 text-gray-600">Last Updated</td>
-                <td className="py-3 text-primary text-lg">
-                  {formatDate(data.updatedAt)}
-                </td>
-              </tr>
+              {type === "product" && (
+                <>
+                  <tr className="border-b">
+                    <td className="py-3 text-gray-600">Country of Origin</td>
+                    <td className="py-3 text-primary text-lg">
+                      {data.countryOfOrigin || "N/A"}
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="py-3 text-gray-600">Country of Sale</td>
+                    <td className="py-3 text-primary text-lg">
+                      {data.countryOfSale || "N/A"}
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="py-3 text-gray-600">Product Type</td>
+                    <td className="py-3 text-primary text-lg">
+                      {data.productType || "N/A"}
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="py-3 text-gray-600">Last Updated</td>
+                    <td className="py-3 text-primary text-lg">
+                      {formatDate(data.updatedAt)}
+                    </td>
+                  </tr>
+                </>
+              )}
+              {type === "gtinInfo" && (
+                <tr className="border-b">
+                  <td className="py-3 text-gray-600">Barcode Type</td>
+                  <td className="py-3 text-primary text-lg">
+                    {data.assignedTo?.barcodeType || "N/A"}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
