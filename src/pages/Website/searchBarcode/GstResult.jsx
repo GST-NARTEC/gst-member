@@ -252,7 +252,7 @@ function GstResult({ data }) {
       )}
 
       {/* Enterprise capabilities banner */}
-      <div className="bg-primary text-white p-6 rounded-lg mt-8">
+      <div className="bg-navy-700 text-white p-6 rounded-lg mt-8">
         <div className="flex items-start">
           <div className="mr-4 bg-yellow-400 p-3 rounded-lg">
             <svg
@@ -278,7 +278,7 @@ function GstResult({ data }) {
               GST office
             </p>
             <button
-              className="bg-orange-500 hover:bg-orange-600 text-white font-medium px-4 py-2 rounded transition"
+              className="bg-white hover:bg-gray-200 text-navy-700 font-medium px-4 py-2 rounded transition"
               onClick={() => {
                 window.open(
                   "https://gstsa1.org/template3/contact-us",
