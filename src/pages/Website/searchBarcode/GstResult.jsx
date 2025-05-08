@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Package2,
   Building2,
@@ -11,6 +11,9 @@ import {
 
 function GstResult({ data }) {
   if (!data) return null;
+  console.log(data);
+
+  const [activeTab, setActiveTab] = useState("product");
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -18,149 +21,274 @@ function GstResult({ data }) {
   };
 
   return (
-    <div className="space-y-8">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary to-secondary p-8 text-white">
-        <div className="absolute right-0 top-0 -mt-10 -mr-10 h-32 w-32 rounded-full bg-white/10"></div>
-        <div className="relative z-10">
-          <h1 className="text-3xl font-bold mb-2">{data.title || "N/A"}</h1>
-          <p className="text-white/80">GTIN: {data.gtin || "N/A"}</p>
-          <div className="mt-2">
-            <span
-              className={`px-3 py-1 rounded-full text-sm ${
-                data.status === "ACTIVE"
-                  ? "bg-green-500/20 text-green-100"
-                  : "bg-red-500/20 text-red-100"
-              }`}
-            >
-              {data.status || "N/A"}
+    <div className="space-y-4">
+      {/* GST Verification Header */}
+      <div className="bg-green-50 p-4 rounded-lg flex items-center">
+        <div className="bg-green-100 p-2 rounded-full mr-3">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 text-green-600"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </div>
+        <div className="flex items-center">
+          <div className="bg-primary text-white px-2 py-1 rounded text-sm mr-2">
+            GST
+          </div>
+          <div className="text-gray-700">
+            This number is registered to{" "}
+            <span className="font-bold">
+              {data.user?.companyNameEn || "N/A"}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Product Images */}
-      {data.images && data.images.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {data.images.map((image, index) => (
-            <div key={image.id} className="relative group">
-              <div className="overflow-hidden rounded-lg shadow-lg aspect-square">
-                <img
-                  src={image.url}
-                  alt={`Product ${index + 1}`}
-                  className="w-full h-full object-cover transform transition-transform group-hover:scale-105"
-                />
+      {/* Tab Navigation */}
+      <div className="border-b border-gray-200">
+        <div className="flex">
+          <button
+            className={`py-2 px-4 ${
+              activeTab === "product"
+                ? "border-b-2 border-primary text-primary"
+                : "text-gray-500"
+            } font-medium`}
+            onClick={() => setActiveTab("product")}
+          >
+            Product information
+          </button>
+          <button
+            className={`py-2 px-4 ${
+              activeTab === "company"
+                ? "border-b-2 border-primary text-primary"
+                : "text-gray-500"
+            } font-medium`}
+            onClick={() => setActiveTab("company")}
+          >
+            Company information
+          </button>
+        </div>
+      </div>
+
+      {/* Product Information Tab */}
+      {activeTab === "product" && (
+        <div className="bg-white p-6 rounded-lg shadow-sm">
+          <h1 className="text-xl font-bold text-primary mb-4">
+            {data.title || data.description || "Product Information"}
+          </h1>
+          <div className="flex flex-col md:flex-row">
+            {/* Product Image */}
+            <div className="mb-4 md:mb-0 md:mr-8 flex-shrink-0">
+              <div className="w-full md:w-48 h-48 flex items-center justify-center overflow-hidden rounded-lg">
+                {data.images && data.images.length > 0 ? (
+                  <img
+                    src={data.images[0].url}
+                    alt={data.title || "Product"}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="bg-gray-100 w-full h-full flex items-center justify-center text-gray-400">
+                    No image available
+                  </div>
+                )}
               </div>
             </div>
-          ))}
+
+            {/* Product Details */}
+            <div className="flex-grow">
+              <table className="w-full">
+                <tbody>
+                  <tr className="border-b">
+                    <td className="py-3 text-gray-600 w-1/3">GTIN</td>
+                    <td className="py-3 text-primary text-lg">
+                      {data.gtin || "N/A"}
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="py-3 text-gray-600">Brand Name</td>
+                    <td className="py-3 text-primary text-lg">
+                      {data.brandName || "(en) test brand"}
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="py-3 text-gray-600">Product Description</td>
+                    <td className="py-3 text-primary text-lg">
+                      {data.description ||
+                        "(en) knives - 33 - KilometrePerSecond - test brand"}
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="py-3 text-gray-600">Product Image Url</td>
+                    <td className="py-3 text-primary text-lg">
+                      {data.images && data.images.length > 0
+                        ? data.images[0].url
+                        : "(en) \\uploads\\products\\memberProductsImages\\front_image-1731945788533-960639178.jpg"}
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="py-3 text-gray-600">
+                      Global product category
+                    </td>
+                    <td className="py-3 text-primary text-lg">
+                      {data.category || "10007271"}
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="py-3 text-gray-600">Net Content</td>
+                    <td className="py-3 text-primary text-lg">
+                      {data.unitOfMeasure
+                        ? `${data.unitOfMeasure} ${data.packagingType || ""}`
+                        : "33 M62"}
+                    </td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="py-3 text-gray-600">Country</td>
+                    <td className="py-3 text-primary text-lg">
+                      {data.countryOfOrigin || "ZWE"}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              {/* Data Quality Rating - No stars */}
+              {/* <div className="mt-6 bg-blue-50 p-4 rounded-lg">
+                <div className="text-gray-700">
+                  Rate the quality of this data
+                </div>
+              </div> */}
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Product Details Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Basic Information */}
-        <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
-          <div className="flex items-center gap-3 mb-4">
-            <Package2 className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-semibold text-primary">
-              Product Details
-            </h2>
-          </div>
-          <div className="space-y-3">
-            <p>
-              <span className="font-semibold">Description:</span>{" "}
-              {data.description || "N/A"}
-            </p>
-            <p>
-              <span className="font-semibold">SKU:</span> {data.sku || "N/A"}
-            </p>
-            <p>
-              <span className="font-semibold">Brand:</span>{" "}
-              {data.brandName || "N/A"}
-            </p>
-            <p>
-              <span className="font-semibold">Packing Unit:</span>{" "}
-              {data.packingUnit || "N/A"}
-            </p>
-            <p>
-              <span className="font-semibold">Unit of Measure:</span>{" "}
-              {data.unitOfMeasure || "N/A"}
-            </p>
-          </div>
+      {/* Company Information Tab */}
+      {activeTab === "company" && (
+        <div className="bg-white p-6 rounded-lg shadow-sm">
+          <h2 className="text-xl font-bold text-primary mb-4">
+            Company Information
+          </h2>
+          <table className="w-full">
+            <tbody>
+              <tr className="border-b">
+                <td className="py-3 text-gray-600 w-1/3">Company Name</td>
+                <td className="py-3 text-primary text-lg">
+                  {data.user?.companyNameEn || "N/A"}
+                </td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-3 text-gray-600">Company Name (Arabic)</td>
+                <td className="py-3 text-primary text-lg">
+                  {data.user?.companyNameAr || "N/A"}
+                </td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-3 text-gray-600">Website</td>
+                <td className="py-3 text-primary text-lg">Unknown</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-3 text-gray-600">Licence Key</td>
+                <td className="py-3 text-primary text-lg">
+                  {data.gtin?.substring(0, 8) || "N/A"}
+                </td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-3 text-gray-600">Licence Type</td>
+                <td className="py-3 text-primary text-lg">GCP</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-3 text-gray-600">
+                  Global Location Number (GLN)
+                </td>
+                <td className="py-3 text-primary text-lg">
+                  {data.gtin?.substring(0, 8) || "N/A"}
+                </td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-3 text-gray-600">
+                  Licensing GST Member Organisation
+                </td>
+                <td className="py-3 text-primary text-lg">GST SAUDI ARABIA</td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-3 text-gray-600">Date of Registration</td>
+                <td className="py-3 text-primary text-lg">
+                  {formatDate(data.createdAt)}
+                </td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-3 text-gray-600">Country of Origin</td>
+                <td className="py-3 text-primary text-lg">
+                  {data.countryOfOrigin || "N/A"}
+                </td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-3 text-gray-600">Country of Sale</td>
+                <td className="py-3 text-primary text-lg">
+                  {data.countryOfSale || "N/A"}
+                </td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-3 text-gray-600">Product Type</td>
+                <td className="py-3 text-primary text-lg">
+                  {data.productType || "N/A"}
+                </td>
+              </tr>
+              <tr className="border-b">
+                <td className="py-3 text-gray-600">Last Updated</td>
+                <td className="py-3 text-primary text-lg">
+                  {formatDate(data.updatedAt)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+      )}
 
-        {/* Company Information */}
-        <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
-          <div className="flex items-center gap-3 mb-4">
-            <Building2 className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-semibold text-primary">
-              Company Information
-            </h2>
+      {/* Enterprise capabilities banner */}
+      <div className="bg-primary text-white p-6 rounded-lg mt-8">
+        <div className="flex items-start">
+          <div className="mr-4 bg-yellow-400 p-3 rounded-lg">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-8 w-8 text-primary"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                clipRule="evenodd"
+              />
+            </svg>
           </div>
-          <div className="space-y-3">
-            <p>
-              <span className="font-semibold">Company (EN):</span>{" "}
-              {data.user?.companyNameEn || "N/A"}
+          <div>
+            <h3 className="text-xl font-bold mb-2">
+              Need to look up more barcodes? Expand your search.
+            </h3>
+            <p className="mb-4">
+              Enterprise-level capabilities are also available for retrieving
+              data such as batch querying and API connection. Contact your local
+              GST office
             </p>
-            <p>
-              <span className="font-semibold">Company (AR):</span>{" "}
-              {data.user?.companyNameAr || "N/A"}
-            </p>
-          </div>
-        </div>
-
-        {/* Classification Information */}
-        <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
-          <div className="flex items-center gap-3 mb-4">
-            <Tag className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-semibold text-primary">
-              Classification
-            </h2>
-          </div>
-          <div className="space-y-3">
-            <p>
-              <span className="font-semibold">GPC:</span> {data.gpc || "N/A"}
-            </p>
-            <p>
-              <span className="font-semibold">HS Code:</span>{" "}
-              {data.hsCode || "N/A"}
-            </p>
-          </div>
-        </div>
-
-        {/* Location Information */}
-        <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
-          <div className="flex items-center gap-3 mb-4">
-            <Globe className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-semibold text-primary">Location</h2>
-          </div>
-          <div className="space-y-3">
-            <p>
-              <span className="font-semibold">Country of Origin:</span>{" "}
-              {data.countryOfOrigin || "N/A"}
-            </p>
-            <p>
-              <span className="font-semibold">Country of Sale:</span>{" "}
-              {data.countryOfSale || "N/A"}
-            </p>
-          </div>
-        </div>
-
-        {/* Dates Information */}
-        <div className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow col-span-full">
-          <div className="flex items-center gap-3 mb-4">
-            <Calendar className="w-6 h-6 text-primary" />
-            <h2 className="text-xl font-semibold text-primary">Dates</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <p>
-              <span className="font-semibold">Created:</span>{" "}
-              {formatDate(data.createdAt)}
-            </p>
-            <p>
-              <span className="font-semibold">Updated:</span>{" "}
-              {formatDate(data.updatedAt)}
-            </p>
+            <button
+              className="bg-orange-500 hover:bg-orange-600 text-white font-medium px-4 py-2 rounded transition"
+              onClick={() => {
+                window.open(
+                  "https://gstsa1.org/template3/contact-us",
+                  "_blank",
+                  "noopener,noreferrer"
+                );
+              }}
+            >
+              Contact us
+            </button>
           </div>
         </div>
       </div>

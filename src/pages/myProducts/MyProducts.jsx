@@ -63,7 +63,7 @@ function MyProducts() {
   });
 
   const [deleteProduct] = useDeleteUserProductMutation();
-  const [exportExcel, { isFetching: isExporting }] =
+  const [exportExcel, { isFetching: isExporting, }] =
     useLazyGetExportExcelQuery();
   const [exportPdf, { isFetching: isPdfExporting }] =
     useLazyGetExportPdfQuery();
