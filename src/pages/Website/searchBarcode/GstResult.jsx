@@ -23,7 +23,7 @@ function GstResult({ data, type, gtin }) {
   return (
     <div className="space-y-4">
       {/* GST Verification Header */}
-      <div className="bg-green-50 p-4 rounded-lg flex items-center">
+      <div className="bg-gray-100 p-4 rounded-lg flex items-center">
         <div className="bg-green-100 p-2 rounded-full mr-3">
           <svg
             xmlns="http://www.w3.org/2000/svg"
