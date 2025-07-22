@@ -53,7 +53,7 @@ export default function HomePage() {
               </div>
 
               <img
-                src={Images.BarcodeSearch}
+                src={Images.BarcodeSearch1}
                 alt="Barcode Search"
                 className="w-full max-w-xl mx-auto h-auto mt-8 object-contain"
               />

@@ -47,6 +47,7 @@ import BatchNumber from "./images/batchNumberLogo.png";
 import ExpiryDate from "./images/expiryDateLogo.png";
 import REF from "./images/RefLogo.png";
 import SN from "./images/serialNumberLogo.png";
+import BarcodeSearch1 from "./images/barcodesSearch1.jpg";
 
 export const Images = {
   Logo,
@@ -98,4 +99,5 @@ export const Images = {
   ExpiryDate,
   REF,
   SN,
+  BarcodeSearch1,
 };
