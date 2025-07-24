@@ -88,7 +88,7 @@ function Barcodes() {
         {/* Products Grid */}
         <div className="flex-1">
           {isProductsLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
               {[...Array(6)].map((_, index) => (
                 <Card key={index} className="p-4 shadow-md">
                   <div className="flex flex-col items-center text-center">
@@ -103,7 +103,7 @@ function Barcodes() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 h-['50%']">
                 {productsData?.data?.products.map((product) => (
                   <Card
                     key={product.id}

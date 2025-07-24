@@ -108,16 +108,31 @@ function Cart({ currencySymbol, vatDetails, defaultImage }) {
                     alt={item.title}
                     className="w-24 h-20 object-contain mb-1"
                   />
-                  <div className="flex items-center bg-gray-50 rounded-md border border-gray-200">
+                  <div className="flex items-center bg-gray-50 rounded-md border border-gray-200 min-w-[110px] max-w-[140px]">
                     <button
                       onClick={() => updateItemQuantity(item.id, -1)}
                       className="px-2 py-0.5 text-gray-500 hover:text-gray-700"
                     >
                       −
                     </button>
-                    <span className="px-2 py-0.5 text-sm">
-                      {item.quantity || 1}
-                    </span>
+                    <input
+                      // type="number"
+                      min={1}
+                      value={item.quantity || 1}
+                      onChange={(e) => {
+                        let value = parseInt(e.target.value, 10);
+                        if (isNaN(value) || value < 1) value = 1;
+                        dispatch(
+                          updateQuantity({
+                            productId: item.id,
+                            change: value - (item.quantity || 1),
+                            absolute: true,
+                          })
+                        );
+                      }}
+                      className="flex-1 w-10 px-2 py-0.5 text-sm text-center border-none bg-transparent focus:outline-none"
+                    />
+
                     <button
                       onClick={() => updateItemQuantity(item.id, 1)}
                       className="px-2 py-0.5 text-gray-500 hover:text-gray-700"
