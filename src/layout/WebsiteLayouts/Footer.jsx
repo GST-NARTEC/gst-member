@@ -81,12 +81,7 @@ export const Footer = () => {
                 <span className="font-semibold text-white">
                   Global Standard for Technology
                 </span>
-                <a
-                  href="tel:+966115030591"
-                  className="hover:text-white text-sm"
-                >
-                  Landline: +966 11 503 0591
-                </a>
+             
                 <a
                   href="tel:+966920051091"
                   className="hover:text-white text-sm"

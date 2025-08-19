@@ -72,7 +72,7 @@ export const Header = () => {
             {/* mobile number */}
             <button className="flex items-center gap-1">
               <Phone className="w-4 h-4" />
-              +966 11 503 0591
+              +966920051091
             </button>
             <Link
               to="/member-portal/login"
