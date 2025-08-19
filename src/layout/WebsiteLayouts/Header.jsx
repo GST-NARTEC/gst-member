@@ -11,6 +11,11 @@ export const Header = () => {
 
   const navItems = [
     {
+      name: "Home",
+      href: "/",
+    },
+
+    {
       name: "Products",
       href: "#",
       submenu: [
@@ -99,12 +104,7 @@ export const Header = () => {
               className="h-16 cursor-pointer"
               onClick={() => navigate("/")}
             />
-            <span
-              onClick={() => navigate("/")}
-              className="font-bold text-xl text-gray-900 cursor-pointer"
-            >
-              GST
-            </span>
+           
             {/* <img src={Images.Upcs} alt="Upcs Logo" className="h-10 ml-4" /> */}
           </motion.div>
 

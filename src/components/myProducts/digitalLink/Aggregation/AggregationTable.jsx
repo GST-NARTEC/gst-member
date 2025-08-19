@@ -115,7 +115,7 @@ function AggregationTable({ gtin }) {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-primary">
-          Controlled Serials
+            Controlled Serials
           </h1>
         </div>
         <div className="flex gap-3 items-center">
@@ -140,10 +140,12 @@ function AggregationTable({ gtin }) {
           <Button
             color="primary"
             className="px-8"
+            // disable if any row selected
+            isDisabled={selectedKeys === "all" || selectedKeys.size > 0}
             startContent={<span>+</span>}
             onClick={() => setIsAddModalOpen(true)}
           >
-          Generate Serial
+            Generate Serial
           </Button>
         </div>
       </div>

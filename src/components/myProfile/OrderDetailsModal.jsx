@@ -82,13 +82,11 @@ function OrderDetailsModal({ isOpen, onOpenChange, order }) {
                       key={item.id}
                       className="border rounded-lg p-4 bg-gray-50"
                     >
-                      <div className="flex justify-between items-center mb-3">
+                      <div className="flex justify-start items-center mb-3">
                         <h4 className="text-lg font-semibold">
                           Order Item #{index + 1}
                         </h4>
-                        <span className="text-sm text-gray-500">
-                          Total: {currencySymbol} {calculateItemTotal(item)}
-                        </span>
+                       
                       </div>
 
                       {/* Main Product */}

@@ -199,6 +199,16 @@ function DigitalLink() {
     ) {
       return;
     }
+
+    // Only allow Aggregation/Serialization and Saudi Electricity Company
+    if (
+      digitalLinks[index].title !== "Aggregation/Serialization" &&
+      digitalLinks[index].title !== "Saudi Electricity Company"
+    ) {
+      toast.error("This feature is currently disabled");
+      return;
+    }
+
     setSelectedCard(index);
   };
 
@@ -427,12 +437,16 @@ function DigitalLink() {
             <Card
               key={index}
               isPressable={
-                !(link.title === "Saudi Electricity Company" && !hasSecAccess)
+                link.title === "Aggregation/Serialization" ||
+                (link.title === "Saudi Electricity Company" && hasSecAccess)
               }
               className={`transition-transform ${
                 selectedCard === index ? "border-2 border-primary" : ""
               } ${
                 link.title === "Saudi Electricity Company" && !hasSecAccess
+                  ? "opacity-50 cursor-not-allowed"
+                  : link.title !== "Aggregation/Serialization" &&
+                    link.title !== "Saudi Electricity Company"
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:scale-105"
               }`}
@@ -444,6 +458,13 @@ function DigitalLink() {
                   toast.error(
                     "This feature is only available for SEC products"
                   );
+                  return;
+                }
+                if (
+                  link.title !== "Aggregation/Serialization" &&
+                  link.title !== "Saudi Electricity Company"
+                ) {
+                  toast.error("This feature is currently disabled");
                   return;
                 }
                 handleCardClick(index);
@@ -462,6 +483,12 @@ function DigitalLink() {
                     !hasSecAccess && (
                       <span className="text-xs text-danger mt-1 block">
                         Only available for SEC products
+                      </span>
+                    )}
+                  {link.title !== "Aggregation/Serialization" &&
+                    link.title !== "Saudi Electricity Company" && (
+                      <span className="text-xs text-danger mt-1 block">
+                        Currently disabled
                       </span>
                     )}
                 </div>

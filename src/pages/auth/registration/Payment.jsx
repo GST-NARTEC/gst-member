@@ -167,7 +167,7 @@ function Payment() {
                   }`}
                 >
                   <Radio
-                    // isDisabled={true}
+                    isDisabled={true}
                     value="card"
                     className="flex items-center gap-2"
                   >
