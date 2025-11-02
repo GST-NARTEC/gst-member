@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Input,
   Textarea,
@@ -470,6 +470,7 @@ function EditMyProduct() {
                 <Input
                   label="GTIN"
                   placeholder="Enter GTIN"
+                  readOnly
                   value={formData.gtin}
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, gtin: e.target.value }))

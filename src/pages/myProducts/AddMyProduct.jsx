@@ -10,7 +10,7 @@ import {
   Autocomplete,
   AutocompleteItem,
   Chip,
-  Tooltip,
+  // Tooltip,
 } from "@heroui/react";
 import { FaArrowLeft, FaUpload, FaTrash, FaMagic } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -352,7 +352,7 @@ function AddMyProduct() {
             <CardBody className="p-6">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-semibold">Product Images</h2>
-                <Tooltip content="Generate images with AI">
+                {/* <Tooltip content="Generate images with AI">
                   <Button
                     color="secondary"
                     variant="flat"
@@ -361,7 +361,7 @@ function AddMyProduct() {
                   >
                     AI Generate
                   </Button>
-                </Tooltip>
+                </Tooltip> */}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {formData.images.map((image, index) => (
