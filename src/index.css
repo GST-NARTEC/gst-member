@@ -1,20 +1,18 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-@layer utilities {
-    .scrollbar-custom {
-        @apply scrollbar-thin scrollbar-track-gray-700 scrollbar-thumb-gray-500 hover:scrollbar-thumb-gray-300;
-    }
 
-    .scrollbar-hidden {
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-    }
 
-    .scrollbar-hidden::-webkit-scrollbar {
-        display: none;
-    }
+@utility scrollbar-custom {
+  @apply scrollbar-thin scrollbar-track-gray-700 scrollbar-thumb-gray-500 hover:scrollbar-thumb-gray-300;
+}
+
+@utility scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 
