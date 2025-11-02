@@ -120,6 +120,15 @@ const userProducts = apiSlice.injectEndpoints({
       }),
       providesTags: ["ExportPdf"],
     }),
+
+    createBulkProducts: builder.mutation({
+      query: (data) => ({
+        url: "/v1/user-products/bulk-import",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["UserProducts", "GtinsCount"],
+    }),
   }),
 });
 
@@ -138,4 +147,5 @@ export const {
   useLazyGetExportExcelQuery,
   useGetExportPdfQuery,
   useLazyGetExportPdfQuery,
+  useCreateBulkProductsMutation,
 } = userProducts;

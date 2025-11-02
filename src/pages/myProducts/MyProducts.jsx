@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
   Table,
   TableHeader,
@@ -12,19 +12,14 @@ import {
   Chip,
   Image,
   Spinner,
-  Select,
-  SelectItem,
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-  Tooltip,
 } from "@heroui/react";
 import {
   useGetUserProductsQuery,
-  useDeleteUserProductMutation,
   useLazyGetExportExcelQuery,
-  useGetExportPdfQuery,
   useLazyGetExportPdfQuery,
 } from "../../store/apis/endpoints/userProducts";
 import { useDebounce } from "../../hooks/useDebounce";
@@ -32,38 +27,28 @@ import MainLayout from "../../layout/PortalLayouts/MainLayout";
 import { FaTrash, FaEdit, FaEllipsisV, FaLink } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import DeleteMyProduct from "./DeleteMyProduct";
-import { useGetUserTotalSECQuantityQuery } from "../../store/apis/endpoints/user";
-import { FileSpreadsheet, FileDown } from "lucide-react";
-
-const INITIAL_VISIBLE_COLUMNS = [
-  "title",
-  "sku",
-  "gtin",
-  "brandName",
-  "status",
-  "barcodeType",
-  "images",
-  "actions",
-];
+import BulkImportModal from "./BulkImportModal";
+// import { useGetUserTotalSECQuantityQuery } from "../../store/apis/endpoints/user";
+import { FileSpreadsheet, FileDown, Upload } from "lucide-react";
 
 function MyProducts() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  // const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 500);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
-  const { data: totalSECQuantity } = useGetUserTotalSECQuantityQuery();
+  const [bulkImportModalOpen, setBulkImportModalOpen] = useState(false);
+  // const { data: totalSECQuantity } = useGetUserTotalSECQuantityQuery();
 
-  const { data, isLoading, isFetching } = useGetUserProductsQuery({
+  const { data, isLoading, isFetching, refetch } = useGetUserProductsQuery({
     page,
-    limit: rowsPerPage,
+    limit: 10,
     search: debouncedSearch,
   });
 
-  const [deleteProduct] = useDeleteUserProductMutation();
-  const [exportExcel, { isFetching: isExporting, }] =
+  const [exportExcel, { isFetching: isExporting }] =
     useLazyGetExportExcelQuery();
   const [exportPdf, { isFetching: isPdfExporting }] =
     useLazyGetExportPdfQuery();
@@ -264,6 +249,15 @@ function MyProducts() {
           </Button>
           <Button
             size="sm"
+            variant="flat"
+            color="secondary"
+            startContent={<Upload size={20} />}
+            onClick={() => setBulkImportModalOpen(true)}
+          >
+            Bulk Import
+          </Button>
+          <Button
+            size="sm"
             onClick={() => navigate("/member-portal/my-products/add")}
             color="primary"
           >
@@ -339,6 +333,13 @@ function MyProducts() {
           isOpen={deleteModalOpen}
           onClose={handleCloseDeleteModal}
           product={productToDelete}
+        />
+        <BulkImportModal
+          isOpen={bulkImportModalOpen}
+          onClose={() => {
+            setBulkImportModalOpen(false);
+            refetch(); // Refresh products list after import
+          }}
         />
       </div>
     </MainLayout>
