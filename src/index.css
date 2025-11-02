@@ -3,7 +3,29 @@
 
 
 @utility scrollbar-custom {
-  @apply scrollbar-thin scrollbar-track-gray-700 scrollbar-thumb-gray-500 hover:scrollbar-thumb-gray-300;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(107 114 128) rgb(55 65 81);
+  
+  &:hover {
+    scrollbar-color: rgb(209 213 219) rgb(55 65 81);
+  }
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: rgb(55 65 81);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgb(107 114 128);
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgb(209 213 219);
+  }
 }
 
 @utility scrollbar-hidden {
