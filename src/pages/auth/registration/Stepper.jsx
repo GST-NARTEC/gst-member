@@ -1,4 +1,4 @@
-import { Card } from "@nextui-org/react";
+import { Card } from "@heroui/react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Images } from "../../../assets/Index";
 import { useGetCurrencyQuery } from "../../../store/apis/endpoints/currency";

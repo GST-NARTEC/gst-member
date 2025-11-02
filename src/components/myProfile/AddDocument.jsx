@@ -9,7 +9,7 @@ import {
   Input,
   Autocomplete,
   AutocompleteItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useCreateUserDocMutation, useGetDocsTypesQuery } from "../../store/apis/endpoints/userDocs";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";

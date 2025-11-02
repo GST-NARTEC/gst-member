@@ -6,7 +6,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useDeleteBrandMutation } from "../../store/apis/endpoints/brands";
 
 function DeleteBrand({ isOpen, onClose, brand }) {

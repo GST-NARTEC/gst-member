@@ -3,7 +3,7 @@ import { useAmazonPayMutation } from "../../../store/apis/endpoints/amazonPay";
 import { useSelector } from "react-redux";
 import { selectCartTotals } from "../../../store/slices/cartSlice";
 import { selectPersonalInfo } from "../../../store/slices/personalInfoSlice";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 
 const AmazonPay = () => {
   const [amazonPay, { isLoading }] = useAmazonPayMutation();

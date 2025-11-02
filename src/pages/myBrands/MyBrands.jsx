@@ -15,7 +15,7 @@ import {
   DropdownItem,
   useDisclosure,
   Pagination,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {
   FaSearch,
   FaEye,

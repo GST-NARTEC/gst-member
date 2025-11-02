@@ -3,7 +3,7 @@ import { useAmazonPayMutation } from "../../../../store/apis/endpoints/amazonPay
 import { useSelector } from "react-redux";
 import { selectCartTotals } from "../../../../store/slices/cartSlice";
 import { selectCurrentUser } from "../../../../store/slices/memberSlice";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 
 const PayCraditDebit = ({ isDisabled }) => {
   const [amazonPay, { isLoading }] = useAmazonPayMutation();

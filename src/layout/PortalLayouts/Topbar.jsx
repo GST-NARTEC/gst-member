@@ -5,7 +5,7 @@ import {
   DropdownMenu,
   DropdownItem,
   Avatar,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useNavigate } from "react-router-dom";
 import { selectCurrentUser } from "../../store/slices/memberSlice";
 import { useSelector } from "react-redux";

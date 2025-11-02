@@ -10,7 +10,7 @@ import {
   Pagination,
   Input,
   Spinner,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FaSearch, FaEdit, FaTrash, FaPrint } from "react-icons/fa";
 import { useGetAggregationsQuery } from "../../../../store/apis/endpoints/aggregation";
 import DeleteAggregation from "./DeleteAggregation";

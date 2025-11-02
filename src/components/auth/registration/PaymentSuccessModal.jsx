@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, ModalContent, ModalBody, Button } from "@nextui-org/react";
+import { Modal, ModalContent, ModalBody, Button } from "@heroui/react";
 import { FaCheckCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 

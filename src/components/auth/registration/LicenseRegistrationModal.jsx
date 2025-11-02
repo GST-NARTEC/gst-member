@@ -7,7 +7,7 @@ import {
   ModalFooter,
   Button,
   Input,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FiUploadCloud } from "react-icons/fi";
 import { MdOutlineFilePresent, MdClose } from "react-icons/md";
 import { useRegisterLicenseMutation } from "../../../store/apis/endpoints/license";

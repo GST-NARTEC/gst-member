@@ -7,7 +7,7 @@ import {
   ModalFooter,
   Button,
   Input,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import toast from "react-hot-toast";
 import { useUpdateAggregationMutation } from "../../../../store/apis/endpoints/aggregation";
 

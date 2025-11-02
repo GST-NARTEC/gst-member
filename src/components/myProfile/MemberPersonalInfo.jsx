@@ -9,7 +9,7 @@ import {
   useGetUserByIdQuery,
   useUpdateUserMutation,
 } from "../../store/apis/endpoints/user";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import { toast } from "react-hot-toast";
 
 import { useSelector } from "react-redux";

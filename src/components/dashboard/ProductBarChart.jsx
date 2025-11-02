@@ -10,7 +10,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import { Skeleton } from "@nextui-org/react";
+import { Skeleton } from "@heroui/react";
 
 function ProductBarChartSkeleton() {
   return (

@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Spinner } from "@nextui-org/react";
+import { Spinner } from "@heroui/react";
 
 function OverlayLoader() {
   return (

@@ -19,7 +19,7 @@ import {
   Input,
   Select,
   SelectItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FaEye, FaPlus, FaSearch } from "react-icons/fa";
 import { format } from "date-fns";
 import MainLayout from "../../layout/PortalLayouts/MainLayout";

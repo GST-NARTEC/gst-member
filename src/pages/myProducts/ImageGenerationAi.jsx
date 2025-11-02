@@ -11,7 +11,7 @@ import {
   CardBody,
   Image,
   Tooltip,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FaMagic } from "react-icons/fa";
 import { FiDownload } from "react-icons/fi";
 import { useGenerateImageMutation } from "../../store/apis/endpoints/imageGenerateAi";

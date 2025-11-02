@@ -9,7 +9,7 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { MdSearch } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";

@@ -12,7 +12,7 @@ import {
   Tooltip,
   Button,
   Card,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {
   FaSearch,
   FaFileInvoice,

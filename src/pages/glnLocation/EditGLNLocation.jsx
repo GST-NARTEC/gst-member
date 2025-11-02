@@ -8,7 +8,7 @@ import {
   Input,
   Button,
   Image,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   GoogleMap,

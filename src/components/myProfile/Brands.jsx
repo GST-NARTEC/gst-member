@@ -6,7 +6,7 @@ import {
   TableBody,
   TableRow,
   TableCell,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FaFileAlt } from "react-icons/fa";
 import { useGetBrandsQuery } from "../../store/apis/endpoints/brands";
 

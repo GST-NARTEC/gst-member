@@ -9,7 +9,7 @@ import {
   Input,
   Autocomplete,
   AutocompleteItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { 
   useUpdateUserDocMutation,
   useGetDocsTypesQuery 

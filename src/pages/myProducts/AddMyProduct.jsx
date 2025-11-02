@@ -11,7 +11,7 @@ import {
   AutocompleteItem,
   Chip,
   Tooltip,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FaArrowLeft, FaUpload, FaTrash, FaMagic } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import MainLayout from "../../layout/PortalLayouts/MainLayout";

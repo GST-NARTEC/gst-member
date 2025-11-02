@@ -9,7 +9,7 @@ import {
   ModalFooter,
   Button,
   Checkbox,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FaMinus, FaPlus } from "react-icons/fa";
 
 function Addons({

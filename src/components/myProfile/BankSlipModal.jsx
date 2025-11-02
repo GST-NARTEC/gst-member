@@ -7,7 +7,7 @@ import {
   ModalFooter,
   Button,
   Image,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FaTrash, FaUpload, FaEye, FaReceipt, FaFilePdf } from "react-icons/fa";
 import {
   useUploadBankSlipMutation,

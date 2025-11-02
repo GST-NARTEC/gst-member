@@ -6,7 +6,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import toast from "react-hot-toast";
 import { useDeleteAggregationMutation } from "../../../../store/apis/endpoints/aggregation";
 

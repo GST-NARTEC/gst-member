@@ -2,7 +2,7 @@ import React from "react";
 import MainLayout from "../../layout/PortalLayouts/MainLayout";
 import { useNavigate } from "react-router-dom";
 import { MdArrowBackIosNew } from "react-icons/md";
-import { Button, Card } from "@nextui-org/react";
+import { Button, Card } from "@heroui/react";
 import MemberPersonalInfo from "../../components/myProfile/MemberPersonalInfo";
 import OrdersTable from "../../components/myProfile/OrdersTable";
 import MemberDocuments from "../../components/myProfile/MemberDocuments";

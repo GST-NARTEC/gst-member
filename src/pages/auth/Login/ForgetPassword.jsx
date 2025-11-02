@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Images } from "../../../assets/Index";
 import { IoMail } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import toast from "react-hot-toast";
 import { useInitiatePasswordResetMutation } from "../../../store/apis/endpoints/user";
 

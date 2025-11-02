@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Button, Image } from "@nextui-org/react";
+import { Card, Button, Image } from "@heroui/react";
 import { MdClose } from "react-icons/md";
 import { FaPlus } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";

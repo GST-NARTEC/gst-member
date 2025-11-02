@@ -7,7 +7,7 @@ import {
   ModalFooter,
   Button,
   Input,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useUpdateBrandMutation } from "../../store/apis/endpoints/brands";
 import { FaFilePdf } from "react-icons/fa";
 

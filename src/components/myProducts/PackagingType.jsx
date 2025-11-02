@@ -1,5 +1,5 @@
 import React from "react";
-import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem } from "@heroui/react";
 import { useGetPackagingTypesQuery } from "../../store/apis/endpoints/userProducts";
 
 function PackagingType({ value, onChange }) {

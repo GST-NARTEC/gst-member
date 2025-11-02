@@ -4,7 +4,7 @@ import { IoMail } from "react-icons/io5";
 import { FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../../../store/apis/endpoints/member";
-import { Button, Spinner } from "@nextui-org/react";
+import { Button, Spinner } from "@heroui/react";
 import toast from "react-hot-toast";
 import { decrypt } from "../../../utils/encryption";
 import { useDispatch } from "react-redux";

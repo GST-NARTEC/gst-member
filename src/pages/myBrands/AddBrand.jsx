@@ -7,7 +7,7 @@ import {
   ModalFooter,
   Button,
   Input,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useCreateBrandMutation } from "../../store/apis/endpoints/brands";
 
 function AddBrand({ isOpen, onClose }) {

@@ -7,7 +7,7 @@ import {
   ModalFooter,
   Button,
   Input,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useForm } from "react-hook-form";
 import { useCreateUdiMutation } from "../../../../store/apis/endpoints/udi";
 import toast from "react-hot-toast";

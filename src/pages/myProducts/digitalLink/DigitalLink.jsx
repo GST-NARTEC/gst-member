@@ -14,7 +14,7 @@ import {
   useDisclosure,
   Input,
   Spinner,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import MainLayout from "../../../layout/PortalLayouts/MainLayout";
 import { Images } from "../../../assets/Index";
 import AddDigitalLink from "./AddDigitalLink";

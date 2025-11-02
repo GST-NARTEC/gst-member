@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useDisclosure, Chip, Button } from "@nextui-org/react";
+import { useDisclosure, Chip, Button } from "@heroui/react";
 import {
   MdEmail,
   MdPhone,
@@ -236,354 +236,350 @@ const MembershipForm = () => {
     setShowLicenseRegModal(false);
   };
 
-  return (
-    <>
-      <div className="mx-auto max-w-screen-xl px-2 md:px-4 lg:px-8">
-        <div className="mx-auto  overflow-hidden  rounded-lg">
-          <div className="border-b border-gray-100 bg-white px-2 md:px-4 lg:px-8">
-            <h2 className="text-lg py-4 sm:py-6 md:text-2xl font-semibold text-gray-800">
-              International Barcode Number Registration Form
-            </h2>
-            <p className="text-sm text-gray-500 mt-1 pb-4">
-              Please fill in your International Barcode Number information
-            </p>
-          </div>
+  return (<>
+    <div className="mx-auto max-w-screen-xl px-2 md:px-4 lg:px-8">
+      <div className="mx-auto  overflow-hidden  rounded-lg">
+        <div className="border-b border-gray-100 bg-white px-2 md:px-4 lg:px-8">
+          <h2 className="text-lg py-4 sm:py-6 md:text-2xl font-semibold text-gray-800">
+            International Barcode Number Registration Form
+          </h2>
+          <p className="text-sm text-gray-500 mt-1 pb-4">
+            Please fill in your International Barcode Number information
+          </p>
+        </div>
 
-          <div className="p-2 md:p-4 lg:p-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4 sm:gap-x-6 lg:gap-x-8">
-              {/* Email and License Number Row */}
+        <div className="p-2 md:p-4 lg:p-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-4 sm:gap-x-6 lg:gap-x-8">
+            {/* Email and License Number Row */}
+            <div className="relative">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                <div className="flex items-center">
+                  <MdEmail className="w-4 h-4 mr-2 text-navy-700" />
+                  Email Address
+                  <span className="text-red-500 ml-1">*</span>
+                </div>
+                {hasAttemptedEmailVerification && (
+                  <Chip
+                    startContent={
+                      isVerified ? (
+                        <BsCheckCircleFill className="text-green-500" />
+                      ) : (
+                        <BsXCircleFill className="text-red-500" />
+                      )
+                    }
+                    variant="flat"
+                    color={isVerified ? "success" : "danger"}
+                    size="sm"
+                  >
+                    {isVerified ? "Verified" : "Unverified"}
+                  </Chip>
+                )}
+              </label>
               <div className="relative">
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-                  <div className="flex items-center">
-                    <MdEmail className="w-4 h-4 mr-2 text-navy-700" />
-                    Email Address
-                    <span className="text-red-500 ml-1">*</span>
-                  </div>
-                  {hasAttemptedEmailVerification && (
-                    <Chip
-                      startContent={
-                        isVerified ? (
-                          <BsCheckCircleFill className="text-green-500" />
-                        ) : (
-                          <BsXCircleFill className="text-red-500" />
-                        )
-                      }
-                      variant="flat"
-                      color={isVerified ? "success" : "danger"}
-                      size="sm"
-                    >
-                      {isVerified ? "Verified" : "Unverified"}
-                    </Chip>
-                  )}
-                </label>
-                <div className="relative">
-                  <input
-                    type="email"
-                    {...register("email", {
-                      required: "Email is required",
-                      pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: "Please enter a valid email",
-                      },
-                    })}
-                    className={`w-full px-4 py-2.5 border ${
-                      errors.email ? "border-red-500" : "border-gray-400"
-                    } rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent outline-none transition-all bg-gray-50 focus:bg-white`}
-                    placeholder="Enter email address"
-                  />
-                  {showVerifyButton && !isVerified && (
+                <input
+                  type="email"
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: "Please enter a valid email",
+                    },
+                  })}
+                  className={`w-full px-4 py-2.5 border ${
+                    errors.email ? "border-red-500" : "border-gray-400"
+                  } rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent outline-none transition-all bg-gray-50 focus:bg-white`}
+                  placeholder="Enter email address"
+                />
+                {showVerifyButton && !isVerified && (
+                  <button
+                    onClick={handleVerifyClick}
+                    disabled={isSendingOtp}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 bg-navy-600 text-white rounded-md text-sm hover:bg-navy-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSendingOtp ? "Sending..." : "Verify"}
+                  </button>
+                )}
+              </div>
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            <div className="relative">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                <div className="flex items-center">
+                  <MdBusiness className="w-4 h-4 mr-2 text-navy-700" />
+                  Company License No
+                  <span className="text-red-500 ml-1">*</span>
+                </div>
+                {hasAttemptedLicenseVerification && (
+                  <Chip
+                    startContent={
+                      isLicenseVerified ? (
+                        <BsCheckCircleFill className="text-green-500" />
+                      ) : (
+                        <BsXCircleFill className="text-red-500" />
+                      )
+                    }
+                    variant="flat"
+                    color={isLicenseVerified ? "success" : "danger"}
+                    size="sm"
+                  >
+                    {isLicenseVerified ? "Verified" : "Unverified"}
+                  </Chip>
+                )}
+              </label>
+              <div className="relative">
+                <input
+                  disabled={!isVerified}
+                  type="text"
+                  value={watch("companyLicenseNo")}
+                  onChange={handleLicenseInputChange}
+                  className={`w-full px-4 py-2.5 border ${
+                    isLicenseInvalid ? "border-red-500" : "border-gray-400"
+                  } rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent outline-none bg-gray-50 focus:bg-white disabled:opacity-50 disabled:cursor-not-allowed`}
+                  placeholder="Enter license number"
+                />
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-2">
+                  {showLicenseVerifyButton &&
+                    !isLicenseVerified &&
+                    !isLicenseInvalid && (
+                      <button
+                        onClick={handleLicenseVerify}
+                        disabled={isVerifyingLicense}
+                        className="px-3 py-1 bg-navy-600 text-white rounded-md text-sm hover:bg-navy-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isVerifyingLicense ? "Verifying..." : "Verify"}
+                      </button>
+                    )}
+                  {isLicenseInvalid && (
                     <button
-                      onClick={handleVerifyClick}
-                      disabled={isSendingOtp}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 bg-navy-600 text-white rounded-md text-sm hover:bg-navy-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      onClick={() => setShowLicenseRegModal(true)}
+                      className="px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors"
                     >
-                      {isSendingOtp ? "Sending..." : "Verify"}
+                      Register License
                     </button>
                   )}
                 </div>
-                {errors.email && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.email.message}
-                  </p>
-                )}
               </div>
+              {errors.companyLicenseNo && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.companyLicenseNo.message}
+                </p>
+              )}
+              {isLicenseInvalid && (
+                <p className="text-red-500 text-sm mt-1">
+                  Invalid license number. You can register a new license.
+                </p>
+              )}
+            </div>
 
-              <div className="relative">
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-                  <div className="flex items-center">
-                    <MdBusiness className="w-4 h-4 mr-2 text-navy-700" />
-                    Company License No
-                    <span className="text-red-500 ml-1">*</span>
-                  </div>
-                  {hasAttemptedLicenseVerification && (
-                    <Chip
-                      startContent={
-                        isLicenseVerified ? (
-                          <BsCheckCircleFill className="text-green-500" />
-                        ) : (
-                          <BsXCircleFill className="text-red-500" />
-                        )
-                      }
-                      variant="flat"
-                      color={isLicenseVerified ? "success" : "danger"}
-                      size="sm"
-                    >
-                      {isLicenseVerified ? "Verified" : "Unverified"}
-                    </Chip>
-                  )}
-                </label>
-                <div className="relative">
-                  <input
-                    disabled={!isVerified}
-                    type="text"
-                    value={watch("companyLicenseNo")}
-                    onChange={handleLicenseInputChange}
-                    className={`w-full px-4 py-2.5 border ${
-                      isLicenseInvalid ? "border-red-500" : "border-gray-400"
-                    } rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent outline-none bg-gray-50 focus:bg-white disabled:opacity-50 disabled:cursor-not-allowed`}
-                    placeholder="Enter license number"
-                  />
-                  <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-2">
-                    {showLicenseVerifyButton &&
-                      !isLicenseVerified &&
-                      !isLicenseInvalid && (
-                        <button
-                          onClick={handleLicenseVerify}
-                          disabled={isVerifyingLicense}
-                          className="px-3 py-1 bg-navy-600 text-white rounded-md text-sm hover:bg-navy-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {isVerifyingLicense ? "Verifying..." : "Verify"}
-                        </button>
-                      )}
-                    {isLicenseInvalid && (
-                      <button
-                        onClick={() => setShowLicenseRegModal(true)}
-                        className="px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 transition-colors"
-                      >
-                        Register License
-                      </button>
-                    )}
-                  </div>
-                </div>
-                {errors.companyLicenseNo && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.companyLicenseNo.message}
-                  </p>
-                )}
-                {isLicenseInvalid && (
-                  <p className="text-red-500 text-sm mt-1">
-                    Invalid license number. You can register a new license.
-                  </p>
-                )}
-              </div>
-
-              {/* Company Names Row */}
-              <div>
-                <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                  <MdBusiness className="w-4 h-4 mr-2 text-navy-700" />
-                  Company Name (English)
-                  <span className="text-red-500 ml-1">*</span>
-                </label>
-                <input
-                  type="text"
-                  disabled={!isVerified || !isLicenseVerified}
-                  {...register("companyNameEn", {
-                    required: "Company name is required",
-                  })}
-                  className="w-full px-4 py-2.5 border border-gray-400 rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent outline-none bg-gray-50 focus:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
-                  placeholder="Enter company name"
-                />
-                {errors.companyNameEn && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.companyNameEn.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                  <MdBusiness className="w-4 h-4 mr-2 text-navy-700" />
-                  Company Name (Arabic)
-                  <span className="text-red-500 ml-1">*</span>
-                </label>
-                <input
-                  type="text"
-                  disabled={!isVerified || !isLicenseVerified}
-                  {...register("companyNameAr", {
-                    required: "Company name is required",
-                  })}
-                  className="w-full px-4 py-2.5 border border-gray-400 rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent outline-none bg-gray-50 focus:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
-                  placeholder="اسم الشركة"
-                  dir="rtl"
-                />
-                {errors.companyNameAr && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.companyNameAr.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Phone Numbers Row */}
-              <div>
-                <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                  <MdPhone className="w-4 h-4 mr-2 text-navy-700" />
-                  Landline
-                  <span className="text-red-500 ml-1">*</span>
-                </label>
-                <Controller
-                  name="landline"
-                  control={control}
-                  rules={{ required: "Landline number is required" }}
-                  render={({ field: { onChange, value } }) => (
-                    <PhoneInput
-                      country={"sa"}
-                      value={value}
-                      onChange={onChange}
-                      disabled={!isVerified || !isLicenseVerified}
-                      inputClass="!w-full !h-[45px] !text-base !border-gray-400 !rounded-lg focus:!ring-navy-600 !bg-gray-50 focus:!bg-white disabled:!opacity-50 disabled:!cursor-not-allowed"
-                      containerClass="!w-full"
-                      buttonClass={`!border-gray-400 !border !rounded-l-lg !h-[45px] !bg-gray-50`}
-                      dropdownClass="!bg-white !z-10"
-                    />
-                  )}
-                />
-                {errors.landline && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.landline.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                  <MdPhone className="w-4 h-4 mr-2 text-navy-700" />
-                  Mobile Number
-                  <span className="text-red-500 ml-1">*</span>
-                </label>
-                <Controller
-                  name="mobileNumber"
-                  control={control}
-                  rules={{ required: "Mobile number is required" }}
-                  render={({ field: { onChange, value } }) => (
-                    <PhoneInput
-                      country={"sa"}
-                      value={value}
-                      onChange={onChange}
-                      disabled={!isVerified || !isLicenseVerified}
-                      inputClass="!w-full !h-[45px] !text-base !border-gray-400 !rounded-lg focus:!ring-navy-600 !bg-gray-50 focus:!bg-white disabled:!opacity-50 disabled:!cursor-not-allowed"
-                      containerClass="!w-full"
-                      buttonClass={`!border-gray-400 !border !rounded-l-lg !h-[45px] !bg-gray-50`}
-                      dropdownClass="!bg-white !z-10"
-                    />
-                  )}
-                />
-                {errors.mobileNumber && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.mobileNumber.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Location Row 1 */}
-              <LocationSelects
-                control={control}
-                isDisabled={!isVerified || !isLicenseVerified}
-                errors={errors}
+            {/* Company Names Row */}
+            <div>
+              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                <MdBusiness className="w-4 h-4 mr-2 text-navy-700" />
+                Company Name (English)
+                <span className="text-red-500 ml-1">*</span>
+              </label>
+              <input
+                type="text"
+                disabled={!isVerified || !isLicenseVerified}
+                {...register("companyNameEn", {
+                  required: "Company name is required",
+                })}
+                className="w-full px-4 py-2.5 border border-gray-400 rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent outline-none bg-gray-50 focus:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                placeholder="Enter company name"
               />
+              {errors.companyNameEn && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.companyNameEn.message}
+                </p>
+              )}
+            </div>
 
-              <div>
-                <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                  <MdLocationOn className="w-4 h-4 mr-2 text-navy-700" />
-                  Zip Code
-                  <span className="text-red-500 ml-1">*</span>
-                </label>
-                <input
-                  type="text"
-                  disabled={!isVerified || !isLicenseVerified}
-                  {...register("zipCode", {
-                    required: "Zip code is required",
-                  })}
-                  className="w-full px-4 py-2.5 border border-gray-400 rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent outline-none bg-gray-50 focus:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
-                  placeholder="Enter zip code"
-                />
-                {errors.zipCode && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.zipCode.message}
-                  </p>
-                )}
-              </div>
+            <div>
+              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                <MdBusiness className="w-4 h-4 mr-2 text-navy-700" />
+                Company Name (Arabic)
+                <span className="text-red-500 ml-1">*</span>
+              </label>
+              <input
+                type="text"
+                disabled={!isVerified || !isLicenseVerified}
+                {...register("companyNameAr", {
+                  required: "Company name is required",
+                })}
+                className="w-full px-4 py-2.5 border border-gray-400 rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent outline-none bg-gray-50 focus:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                placeholder="اسم الشركة"
+                dir="rtl"
+              />
+              {errors.companyNameAr && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.companyNameAr.message}
+                </p>
+              )}
+            </div>
 
-              {/* Street Address - Full Width */}
-              <div className="sm:col-span-2">
-                <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                  <MdLocationOn className="w-4 h-4 mr-2 text-navy-700" />
-                  Location & Address
-                  <span className="text-red-500 ml-1">*</span>
-                </label>
-                <LoadScript
-                  googleMapsApiKey={googleMapsApiKey}
-                  libraries={["places"]}
-                  loadingElement={
-                    <div className="flex items-center justify-center mx-auto animate-spin rounded-full h-12 w-12 border-b-2 border-navy-600" />
-                  }
-                >
-                  <LocationPicker
-                    onLocationChange={handleLocationChange}
-                    isDisabled={!isVerified || !isLicenseVerified}
-                    error={errors.streetAddress?.message}
-                    defaultLocation={
-                      watch("latitude") && watch("longitude")
-                        ? {
-                            latitude: watch("latitude"),
-                            longitude: watch("longitude"),
-                            address: watch("streetAddress"),
-                          }
-                        : null
-                    }
+            {/* Phone Numbers Row */}
+            <div>
+              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                <MdPhone className="w-4 h-4 mr-2 text-navy-700" />
+                Landline
+                <span className="text-red-500 ml-1">*</span>
+              </label>
+              <Controller
+                name="landline"
+                control={control}
+                rules={{ required: "Landline number is required" }}
+                render={({ field: { onChange, value } }) => (
+                  <PhoneInput
+                    country={"sa"}
+                    value={value}
+                    onChange={onChange}
+                    disabled={!isVerified || !isLicenseVerified}
+                    inputClass="!w-full !h-[45px] !text-base !border-gray-400 !rounded-lg focus:!ring-navy-600 !bg-gray-50 focus:!bg-white disabled:!opacity-50 disabled:!cursor-not-allowed"
+                    containerClass="!w-full"
+                    buttonClass={`!border-gray-400 !border !rounded-l-lg !h-[45px] !bg-gray-50`}
+                    dropdownClass="!bg-white !z-10"
                   />
-                </LoadScript>
-              </div>
+                )}
+              />
+              {errors.landline && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.landline.message}
+                </p>
+              )}
             </div>
 
-            {/* Submit Button - Navy Blue */}
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-between">
-              <Button
-                onClick={() => navigate("/register/barcodes")}
-                className="w-full sm:w-auto mb-4 sm:mb-0 inline-flex items-center justify-center gap-2 px-6 py-3 text-navy-600 hover:text-navy-700"
-                startContent={<MdArrowBack size={20} />}
-                color="default"
-              >
-                <span>Back to Barcodes</span>
-              </Button>
-
-              <button
-                type="button"
-                onClick={handleSubmit}
-                className="w-full sm:w-auto px-6 py-3 bg-navy-600 text-white rounded-lg hover:bg-navy-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={!isVerified || !isLicenseVerified || !isValid}
-              >
-                Save & Next
-              </button>
+            <div>
+              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                <MdPhone className="w-4 h-4 mr-2 text-navy-700" />
+                Mobile Number
+                <span className="text-red-500 ml-1">*</span>
+              </label>
+              <Controller
+                name="mobileNumber"
+                control={control}
+                rules={{ required: "Mobile number is required" }}
+                render={({ field: { onChange, value } }) => (
+                  <PhoneInput
+                    country={"sa"}
+                    value={value}
+                    onChange={onChange}
+                    disabled={!isVerified || !isLicenseVerified}
+                    inputClass="!w-full !h-[45px] !text-base !border-gray-400 !rounded-lg focus:!ring-navy-600 !bg-gray-50 focus:!bg-white disabled:!opacity-50 disabled:!cursor-not-allowed"
+                    containerClass="!w-full"
+                    buttonClass={`!border-gray-400 !border !rounded-l-lg !h-[45px] !bg-gray-50`}
+                    dropdownClass="!bg-white !z-10"
+                  />
+                )}
+              />
+              {errors.mobileNumber && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.mobileNumber.message}
+                </p>
+              )}
             </div>
+
+            {/* Location Row 1 */}
+            <LocationSelects
+              control={control}
+              isDisabled={!isVerified || !isLicenseVerified}
+              errors={errors}
+            />
+
+            <div>
+              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                <MdLocationOn className="w-4 h-4 mr-2 text-navy-700" />
+                Zip Code
+                <span className="text-red-500 ml-1">*</span>
+              </label>
+              <input
+                type="text"
+                disabled={!isVerified || !isLicenseVerified}
+                {...register("zipCode", {
+                  required: "Zip code is required",
+                })}
+                className="w-full px-4 py-2.5 border border-gray-400 rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent outline-none bg-gray-50 focus:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                placeholder="Enter zip code"
+              />
+              {errors.zipCode && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.zipCode.message}
+                </p>
+              )}
+            </div>
+
+            {/* Street Address - Full Width */}
+            <div className="sm:col-span-2">
+              <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                <MdLocationOn className="w-4 h-4 mr-2 text-navy-700" />
+                Location & Address
+                <span className="text-red-500 ml-1">*</span>
+              </label>
+              <LoadScript
+                googleMapsApiKey={googleMapsApiKey}
+                libraries={["places"]}
+                loadingElement={
+                  <div className="flex items-center justify-center mx-auto animate-spin rounded-full h-12 w-12 border-b-2 border-navy-600" />
+                }
+              >
+                <LocationPicker
+                  onLocationChange={handleLocationChange}
+                  isDisabled={!isVerified || !isLicenseVerified}
+                  error={errors.streetAddress?.message}
+                  defaultLocation={
+                    watch("latitude") && watch("longitude")
+                      ? {
+                          latitude: watch("latitude"),
+                          longitude: watch("longitude"),
+                          address: watch("streetAddress"),
+                        }
+                      : null
+                  }
+                />
+              </LoadScript>
+            </div>
+          </div>
+
+          {/* Submit Button - Navy Blue */}
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-between">
+            <Button
+              onClick={() => navigate("/register/barcodes")}
+              className="w-full sm:w-auto mb-4 sm:mb-0 inline-flex items-center justify-center gap-2 px-6 py-3 text-navy-600 hover:text-navy-700"
+              startContent={<MdArrowBack size={20} />}
+              color="default"
+            >
+              <span>Back to Barcodes</span>
+            </Button>
+
+            <button
+              type="button"
+              onClick={handleSubmit}
+              className="w-full sm:w-auto px-6 py-3 bg-navy-600 text-white rounded-lg hover:bg-navy-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!isVerified || !isLicenseVerified || !isValid}
+            >
+              Save & Next
+            </button>
           </div>
         </div>
       </div>
-
-      <OtpVerificationModal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        onVerify={handleOtpVerify}
-        email={email}
-        emailData={emailData}
-      />
-
-      <LicenseRegistrationModal
-        isOpen={showLicenseRegModal}
-        onClose={() => setShowLicenseRegModal(false)}
-        onLicenseSuccess={handleLicenseRegistrationSuccess}
-      />
-    </>
-  );
+    </div>
+    <OtpVerificationModal
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      onVerify={handleOtpVerify}
+      email={email}
+      emailData={emailData}
+    />
+    <LicenseRegistrationModal
+      isOpen={showLicenseRegModal}
+      onClose={() => setShowLicenseRegModal(false)}
+      onLicenseSuccess={handleLicenseRegistrationSuccess}
+    />
+  </>);
 };
 
 export default MembershipForm;

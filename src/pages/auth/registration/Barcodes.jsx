@@ -11,7 +11,7 @@ import {
   PopoverContent,
   Accordion,
   AccordionItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { MdSearch } from "react-icons/md";
 
 import { useSelector, useDispatch } from "react-redux";

@@ -1,5 +1,5 @@
 import React from "react";
-import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem } from "@heroui/react";
 import { useGetActiveBrandsQuery } from "../../store/apis/endpoints/brands";
 
 function MyBrands({ value, onChange }) {

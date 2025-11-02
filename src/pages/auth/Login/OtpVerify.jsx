@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Images } from "../../../assets/Index";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Button, InputOtp } from "@nextui-org/react";
+import { Button, InputOtp } from "@heroui/react";
 import toast from "react-hot-toast";
 import { useVerifyResetPasswordOtpMutation } from "../../../store/apis/endpoints/user";
 

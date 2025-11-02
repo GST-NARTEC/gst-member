@@ -6,7 +6,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { useDeleteGLNLocationMutation } from "../../store/apis/endpoints/gln";
 

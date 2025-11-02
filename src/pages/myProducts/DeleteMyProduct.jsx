@@ -6,7 +6,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useDeleteUserProductMutation } from "../../store/apis/endpoints/userProducts";
 
 function DeleteMyProduct({ isOpen, onClose, product }) {

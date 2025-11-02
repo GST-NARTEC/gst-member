@@ -6,7 +6,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useDeleteDigitalLinkMutation } from "../../../store/apis/endpoints/digitalLink";
 import toast from "react-hot-toast";
 

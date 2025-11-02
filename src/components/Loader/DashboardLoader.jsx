@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Skeleton } from "@nextui-org/react";
+import { Button, Skeleton } from "@heroui/react";
 import { FaSync } from "react-icons/fa";
 
 // StatCard loading skeleton

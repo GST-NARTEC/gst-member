@@ -15,7 +15,7 @@ import {
   Chip,
   Button,
   Tooltip,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import ProductBarChart from "../../components/dashboard/ProductBarChart";
 import BarcodePieChart from "../../components/dashboard/BarcodePieChart";
 import { useGetDashboardStatsQuery } from "../../store/apis/endpoints/dashboardStats";

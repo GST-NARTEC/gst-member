@@ -6,7 +6,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useSelector } from "react-redux";
 import { selectCurrencySymbol } from "../../store/slices/currencySymbolSlice";
 

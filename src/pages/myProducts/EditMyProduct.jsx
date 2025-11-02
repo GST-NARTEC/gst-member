@@ -8,7 +8,7 @@ import {
   Image,
   Switch,
   Spinner,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {
   FaArrowLeft,
   FaUpload,

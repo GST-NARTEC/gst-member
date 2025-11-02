@@ -7,7 +7,7 @@ import {
   ModalFooter,
   Button,
   Input,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useUpdateDigitalLinkMutation } from "../../../store/apis/endpoints/digitalLink";
 import toast from "react-hot-toast";
 

@@ -19,7 +19,7 @@ import {
   DropdownMenu,
   DropdownItem,
   Tooltip,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import {
   useGetUserProductsQuery,
   useDeleteUserProductMutation,

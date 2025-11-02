@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { RadioGroup, Radio, Input, Checkbox, Button } from "@nextui-org/react";
+import { RadioGroup, Radio, Input, Checkbox, Button } from "@heroui/react";
 import { BsBank2, BsCreditCard2Front } from "react-icons/bs";
 import { FaCcVisa, FaCcMastercard, FaApple } from "react-icons/fa";
 import PaymentSuccessModal from "../../../components/auth/registration/PaymentSuccessModal";

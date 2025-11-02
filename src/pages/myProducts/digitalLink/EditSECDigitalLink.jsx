@@ -8,7 +8,7 @@ import {
   Button,
   Input,
   Textarea,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import toast from "react-hot-toast";
 import { useUpdateDigitalLinkSECMutation } from "../../../store/apis/endpoints/digitalLink";
 

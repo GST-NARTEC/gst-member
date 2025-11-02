@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { Skeleton } from "@nextui-org/react";
+import { Skeleton } from "@heroui/react";
 
 function BarcodePieChartSkeleton() {
   return (

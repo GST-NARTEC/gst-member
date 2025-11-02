@@ -18,7 +18,7 @@ import {
   ModalFooter,
   Select,
   SelectItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { FaSearch, FaEdit, FaTrash, FaPrint } from "react-icons/fa";
 import { useGetUdisQuery } from "../../../../store/apis/endpoints/udi";
 import DeleteUDI from "./DeleteUDI";

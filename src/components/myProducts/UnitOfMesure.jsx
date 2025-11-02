@@ -1,4 +1,4 @@
-import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem } from "@heroui/react";
 import { useGetUnitOfMesurmentQuery } from "../../store/apis/endpoints/unitOfMesurment";
 
 function UnitOfMeasure({ value, onChange }) {

@@ -10,7 +10,7 @@ import {
   Textarea,
   Select,
   SelectItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import toast from "react-hot-toast";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import {

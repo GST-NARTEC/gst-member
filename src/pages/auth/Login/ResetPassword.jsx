@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Images } from "../../../assets/Index";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import { FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
