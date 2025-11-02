@@ -124,7 +124,7 @@ function Cart({ currencySymbol, vatDetails, defaultImage }) {
                   </div>
                 </div>
 
-                <div className="flex-grow flex flex-col justify-between">
+                <div className="grow flex flex-col justify-between">
                   <div className="flex justify-between items-start">
                     <div>
                       <span className="text-gray-500 text-sm">{item.title}</span>

@@ -30,7 +30,7 @@ function BarcodeLookup({ data }) {
   return (
     <div className="space-y-8">
       {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary to-secondary p-8 text-white">
+      <div className="relative overflow-hidden rounded-xl bg-linear-to-r from-primary to-secondary p-8 text-white">
         <div className="absolute right-0 top-0 -mt-10 -mr-10 h-32 w-32 rounded-full bg-white/10"></div>
         <div className="relative z-10">
           <h1 className="text-3xl font-bold mb-2">{product.title}</h1>

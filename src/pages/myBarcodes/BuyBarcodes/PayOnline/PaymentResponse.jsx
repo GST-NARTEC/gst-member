@@ -110,14 +110,14 @@ function PaymentResponse() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-50 to-gray-100">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="text-center p-10 rounded-2xl shadow-2xl bg-white max-w-md w-full mx-4 border border-gray-100"
         >
           <ImSpinner8 className="animate-spin text-blue-500 text-5xl mx-auto mb-6" />
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent mb-3">
+          <h2 className="text-2xl font-bold bg-linear-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent mb-3">
             Processing Payment
           </h2>
           <p className="text-gray-600">
@@ -129,7 +129,7 @@ function PaymentResponse() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-50 to-gray-100 p-4">
       {isLoading && <OverlayLoader />}
       {status === "success" && (
         <motion.div
@@ -141,7 +141,7 @@ function PaymentResponse() {
           <div className="flex justify-center items-center h-20 pb-3">
             <FaCheckCircle className="text-green-500 text-6xl" />
           </div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-navy-600 to-navy-400 bg-clip-text text-transparent mb-6">
+          <h2 className="text-3xl font-bold bg-linear-to-r from-navy-600 to-navy-400 bg-clip-text text-transparent mb-6">
             Purchase Complete! 🎉
           </h2>
           <div className="space-y-4 mb-8">
@@ -166,7 +166,7 @@ function PaymentResponse() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate("/member-portal/dashboard")}
-              className="bg-gradient-to-r from-navy-700 to-navy-600 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform w-full flex items-center justify-center gap-2"
+              className="bg-linear-to-r from-navy-700 to-navy-600 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform w-full flex items-center justify-center gap-2"
             >
               <FaChartLine className="text-lg" />
               Go to Dashboard
@@ -175,7 +175,7 @@ function PaymentResponse() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate("/member-portal/my-barcodes")}
-              className="bg-gradient-to-r from-green-500 to-green-400 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform flex items-center justify-center gap-2"
+              className="bg-linear-to-r from-green-500 to-green-400 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform flex items-center justify-center gap-2"
             >
               <FaBarcode className="text-lg" />
               View My Barcodes
@@ -194,7 +194,7 @@ function PaymentResponse() {
           <motion.div variants={iconVariants}>
             <BiTime className="text-yellow-500 text-7xl mx-auto mb-6" />
           </motion.div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-400 bg-clip-text text-transparent mb-6">
+          <h2 className="text-3xl font-bold bg-linear-to-r from-yellow-600 to-yellow-400 bg-clip-text text-transparent mb-6">
             Payment Pending
           </h2>
           <p className="text-gray-600 text-lg mb-8">
@@ -204,7 +204,7 @@ function PaymentResponse() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleReturn}
-            className="bg-gradient-to-r from-yellow-500 to-yellow-400 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform"
+            className="bg-linear-to-r from-yellow-500 to-yellow-400 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform"
           >
             Return to Home
           </motion.button>
@@ -221,7 +221,7 @@ function PaymentResponse() {
           <motion.div variants={iconVariants}>
             <FaTimesCircle className="text-red-500 text-7xl mx-auto mb-6" />
           </motion.div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent mb-6">
+          <h2 className="text-3xl font-bold bg-linear-to-r from-red-600 to-red-400 bg-clip-text text-transparent mb-6">
             Payment Failed
           </h2>
           <div className="space-y-3 mb-8">
@@ -237,7 +237,7 @@ function PaymentResponse() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate("/member-portal/my-barcodes/buy/payment")}
-              className="bg-gradient-to-r from-red-500 to-red-400 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform"
+              className="bg-linear-to-r from-red-500 to-red-400 text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform"
             >
               Try Again
             </motion.button>

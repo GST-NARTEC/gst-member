@@ -237,7 +237,7 @@ const MembershipForm = () => {
   };
 
   return (<>
-    <div className="mx-auto max-w-screen-xl px-2 md:px-4 lg:px-8">
+    <div className="mx-auto max-w-(--breakpoint-xl) px-2 md:px-4 lg:px-8">
       <div className="mx-auto  overflow-hidden  rounded-lg">
         <div className="border-b border-gray-100 bg-white px-2 md:px-4 lg:px-8">
           <h2 className="text-lg py-4 sm:py-6 md:text-2xl font-semibold text-gray-800">
@@ -439,10 +439,10 @@ const MembershipForm = () => {
                     value={value}
                     onChange={onChange}
                     disabled={!isVerified || !isLicenseVerified}
-                    inputClass="!w-full !h-[45px] !text-base !border-gray-400 !rounded-lg focus:!ring-navy-600 !bg-gray-50 focus:!bg-white disabled:!opacity-50 disabled:!cursor-not-allowed"
-                    containerClass="!w-full"
-                    buttonClass={`!border-gray-400 !border !rounded-l-lg !h-[45px] !bg-gray-50`}
-                    dropdownClass="!bg-white !z-10"
+                    inputClass="w-full! h-[45px]! text-base! border-gray-400! rounded-lg! focus:!ring-navy-600 bg-gray-50! focus:bg-white! disabled:opacity-50! disabled:cursor-not-allowed!"
+                    containerClass="w-full!"
+                    buttonClass={`border-gray-400! border! rounded-l-lg! h-[45px]! bg-gray-50!`}
+                    dropdownClass="bg-white! z-10!"
                   />
                 )}
               />
@@ -469,10 +469,10 @@ const MembershipForm = () => {
                     value={value}
                     onChange={onChange}
                     disabled={!isVerified || !isLicenseVerified}
-                    inputClass="!w-full !h-[45px] !text-base !border-gray-400 !rounded-lg focus:!ring-navy-600 !bg-gray-50 focus:!bg-white disabled:!opacity-50 disabled:!cursor-not-allowed"
-                    containerClass="!w-full"
-                    buttonClass={`!border-gray-400 !border !rounded-l-lg !h-[45px] !bg-gray-50`}
-                    dropdownClass="!bg-white !z-10"
+                    inputClass="w-full! h-[45px]! text-base! border-gray-400! rounded-lg! focus:!ring-navy-600 bg-gray-50! focus:bg-white! disabled:opacity-50! disabled:cursor-not-allowed!"
+                    containerClass="w-full!"
+                    buttonClass={`border-gray-400! border! rounded-l-lg! h-[45px]! bg-gray-50!`}
+                    dropdownClass="bg-white! z-10!"
                   />
                 )}
               />

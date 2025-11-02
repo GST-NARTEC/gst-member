@@ -162,9 +162,9 @@ function MemberPersonalInfo() {
                   country={"sa"}
                   value={value}
                   onChange={onChange}
-                  inputClass="!w-full !h-[42px] !text-base !border-gray-400 !bg-gray-50 !rounded-lg"
-                  containerClass="!w-full"
-                  buttonClass="!border-gray-400 !border !rounded-l-lg !h-[42px]"
+                  inputClass="w-full! h-[42px]! text-base! border-gray-400! bg-gray-50! rounded-lg!"
+                  containerClass="w-full!"
+                  buttonClass="border-gray-400! border! rounded-l-lg! h-[42px]!"
                   // inputStyle={""}
                 />
               )}
@@ -217,9 +217,9 @@ function MemberPersonalInfo() {
                   country={"sa"}
                   value={value}
                   onChange={onChange}
-                  inputClass="!w-full !h-[40px] !text-base !border-gray-400 !bg-gray-50 !rounded-lg"
-                  containerClass="!w-full"
-                  buttonClass="!border-gray-400 !border !rounded-l-lg !h-[40px]"
+                  inputClass="w-full! h-[40px]! text-base! border-gray-400! bg-gray-50! rounded-lg!"
+                  containerClass="w-full!"
+                  buttonClass="border-gray-400! border! rounded-l-lg! h-[40px]!"
                 />
               )}
             />

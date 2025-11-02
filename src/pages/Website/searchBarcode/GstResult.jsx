@@ -89,7 +89,7 @@ function GstResult({ data, type, gtin }) {
           </h1>
           <div className="flex flex-col md:flex-row">
             {/* Product Image */}
-            <div className="mb-4 md:mb-0 md:mr-8 flex-shrink-0">
+            <div className="mb-4 md:mb-0 md:mr-8 shrink-0">
               <div className="w-full md:w-48 h-48 flex items-center justify-center overflow-hidden rounded-lg">
                 {type === "product" && data.images && data.images.length > 0 ? (
                   <img
@@ -106,7 +106,7 @@ function GstResult({ data, type, gtin }) {
             </div>
 
             {/* Product Details */}
-            <div className="flex-grow">
+            <div className="grow">
               <table className="w-full">
                 <tbody>
                   <tr className="border-b">

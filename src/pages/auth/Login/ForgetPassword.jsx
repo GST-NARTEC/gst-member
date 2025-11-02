@@ -37,7 +37,7 @@ function ForgetPassword() {
   }, [isError, isSuccess, error]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-navy-600 to-navy-700">
+    <div className="min-h-screen bg-linear-to-br from-blue-900 via-navy-600 to-navy-700">
       {/* Logo */}
       <div
         onClick={() => navigate("/")}

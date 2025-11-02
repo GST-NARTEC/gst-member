@@ -24,7 +24,7 @@ function Stepper() {
     <div className="bg-navy-600 min-h-screen">
       <Card className="px-4 md:pt-8 md:mx-24 rounded-md shadow-lg bg-white ">
         <div className=" hidden md:block">
-          <div className="flex items-start  mx-auto max-w-screen-xl  ">
+          <div className="flex items-start  mx-auto max-w-(--breakpoint-xl)  ">
             <div className="flex items-center w-full mx-10">
               {steps.map((step, index) => (
                 <di
@@ -33,7 +33,7 @@ function Stepper() {
                 >
                   <div className="flex items-center w-full">
                     <div
-                      className={`w-8 h-8 shrink-0 mx-[-1px] p-1.5 flex items-center justify-center rounded-full
+                      className={`w-8 h-8 shrink-0 -mx-px p-1.5 flex items-center justify-center rounded-full
                       ${
                         getCurrentStep() >= step.number
                           ? "bg-navy-600"

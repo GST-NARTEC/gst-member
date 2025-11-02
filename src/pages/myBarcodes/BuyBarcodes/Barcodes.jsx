@@ -130,7 +130,7 @@ function Barcodes() {
                       className="p-2 shadow-md hover:shadow-md transition-shadow h-full"
                     >
                       <div className="flex flex-col items-center text-center h-full">
-                        <div className="w-full aspect-[4/3] relative mb-3">
+                        <div className="w-full aspect-4/3 relative mb-3">
                           <Popover showArrow placement="bottom">
                             <PopoverTrigger>
                               <Image
@@ -148,7 +148,7 @@ function Barcodes() {
                             </PopoverContent>
                           </Popover>
                         </div>
-                        <h3 className="text-base font-bold mb-2 min-h-[2.5rem] line-clamp-2">
+                        <h3 className="text-base font-bold mb-2 min-h-10 line-clamp-2">
                           {product.title}
                         </h3>
 

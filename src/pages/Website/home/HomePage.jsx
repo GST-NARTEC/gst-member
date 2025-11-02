@@ -17,7 +17,7 @@ export default function HomePage() {
   return (
     <Layout>
       {/* Hero Section with Gradient Background */}
-      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-primary flex items-center">
+      <section className="relative bg-linear-to-br from-gray-900 via-gray-800 to-primary flex items-center">
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20"></div>
         <div className="container mx-auto px-4 py-10 relative z-10">
           <div className="flex flex-col md:flex-row items-center gap-">
@@ -38,7 +38,7 @@ export default function HomePage() {
             >
               <h1 className="md:text-3xl lg:text-5xl font-bold mb-6">
                 Global Standard for{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
+                <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-emerald-400">
                   Digital Identity
                 </span>
               </h1>

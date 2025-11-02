@@ -103,7 +103,7 @@ const LoginPage = () => {
   if (isAutoLogging || isLoading) {
     return (
       <div
-        className="min-h-screen bg-gradient-to-br from-blue-900 via-navy-600 to-navy-700 
+        className="min-h-screen bg-linear-to-br from-blue-900 via-navy-600 to-navy-700 
                       flex flex-col items-center justify-center"
       >
         {/* <div className="bg-white/10 backdrop-blur-lg p-4 rounded-2xl shadow-2xl mb-12">
@@ -132,7 +132,7 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-navy-600 to-navy-700">
+    <div className="min-h-screen bg-linear-to-br from-blue-900 via-navy-600 to-navy-700">
       {/* Logo */}
       <div
         onClick={() => navigate("/")}

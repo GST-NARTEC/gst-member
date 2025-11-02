@@ -99,7 +99,7 @@ function ImageGenerationAi({
                 placeholder="Or enter a custom description..."
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                className="flex-grow"
+                className="grow"
                 size="lg"
               />
               <Button

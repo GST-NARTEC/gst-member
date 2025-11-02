@@ -29,7 +29,7 @@ function Services() {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+    <section className="py-20 bg-linear-to-b from-gray-50 to-white">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold text-center mb-4">
           Barcode Solutions Provided
@@ -45,7 +45,7 @@ function Services() {
               key={index}
               className="bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"
             >
-              <div className="aspect-[4/3] relative bg-blue-50">
+              <div className="aspect-4/3 relative bg-blue-50">
                 <img
                   src={service.image}
                   alt={service.title}

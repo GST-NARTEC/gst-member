@@ -52,7 +52,7 @@ export default function RetailersSection() {
               key={retailer.name}
               className="w-full max-w-[160px] transition-transform hover:scale-105"
             >
-              <div className="relative aspect-[3/2]">
+              <div className="relative aspect-3/2">
                 <img
                   src={retailer.logo}
                   alt={`${retailer.name} logo`}

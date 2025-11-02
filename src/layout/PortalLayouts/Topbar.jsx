@@ -35,7 +35,7 @@ function Topbar({ toggleLargeScreenSidebar, isLargeScreenCollapsed }) {
   };
 
   return (
-    <div className="h-16 bg-white border-b flex items-center px-6">
+    <div className="h-16 bg-white border-b-1 border-gray-200 flex items-center px-6">
       <button
         onClick={toggleLargeScreenSidebar}
         className="hidden lg:flex items-center justify-center p-2 hover:bg-gray-100 rounded-lg"

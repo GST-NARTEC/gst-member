@@ -1,28 +1,39 @@
 @import 'tailwindcss';
+@plugin '../hero.js';
+@source '../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@custom-variant dark (&:is(.dark *));
 
-
+@theme {
+  --color-primary: #1B365D;
+  --color-secondary: #335082;
+  --color-tertiary: #254170;
+  --color-navy-400: #335082;
+  --color-navy-500: #254170;
+  --color-navy-600: #1B365D;
+  --color-navy-700: #152A4A;
+}
 
 @utility scrollbar-custom {
   scrollbar-width: thin;
   scrollbar-color: rgb(107 114 128) rgb(55 65 81);
-  
+
   &:hover {
     scrollbar-color: rgb(209 213 219) rgb(55 65 81);
   }
-  
+
   &::-webkit-scrollbar {
     width: 8px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: rgb(55 65 81);
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: rgb(107 114 128);
     border-radius: 4px;
   }
-  
+
   &::-webkit-scrollbar-thumb:hover {
     background: rgb(209 213 219);
   }
@@ -36,5 +47,3 @@
     display: none;
   }
 }
-
-
