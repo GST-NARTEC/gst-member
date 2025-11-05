@@ -104,7 +104,7 @@ export const Header = () => {
               className="h-16 cursor-pointer"
               onClick={() => navigate("/")}
             />
-           
+
             {/* <img src={Images.Upcs} alt="Upcs Logo" className="h-10 ml-4" /> */}
           </motion.div>
 
@@ -180,6 +180,106 @@ export const Header = () => {
             {isMenuOpen ? <X /> : <Menu />}
           </button>
         </div>
+
+        {/* Mobile menu */}
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="lg:hidden border-t border-gray-100 py-4"
+          >
+            <nav className="flex flex-col gap-4">
+              {navItems.map((item) => (
+                <div key={item.name}>
+                  {item.isExternal ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block text-gray-700 hover:text-primary py-2"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {item.name}
+                    </a>
+                  ) : (
+                    <>
+                      <a
+                        href={item.href}
+                        className="block text-gray-700 hover:text-primary py-2 font-medium"
+                        onClick={() => !item.submenu && setIsMenuOpen(false)}
+                      >
+                        {item.name}
+                      </a>
+                      {item.submenu && (
+                        <div className="pl-4 mt-2 space-y-2">
+                          {item.submenu.map((subitem) =>
+                            item.name === "Products" ? (
+                              <a
+                                key={subitem.name}
+                                onClick={() => {
+                                  navigate("/register/barcodes");
+                                  setIsMenuOpen(false);
+                                }}
+                                className="block text-sm text-gray-600 hover:text-primary py-1 cursor-pointer"
+                              >
+                                {subitem.name}
+                              </a>
+                            ) : (
+                              <a
+                                key={subitem.name}
+                                href="https://gstsa1.org/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block text-sm text-gray-600 hover:text-primary py-1"
+                                onClick={() => setIsMenuOpen(false)}
+                              >
+                                {subitem.name}
+                              </a>
+                            )
+                          )}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              ))}
+              <div className="flex flex-col gap-3 pt-4 border-t border-gray-100">
+                <button
+                  onClick={() => {
+                    navigate("/member-portal/login");
+                    setIsMenuOpen(false);
+                  }}
+                  className="px-4 py-2 text-primary border border-primary rounded-lg hover:bg-primary/5 text-center"
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => {
+                    navigate("/register/barcodes");
+                    setIsMenuOpen(false);
+                  }}
+                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 text-center"
+                >
+                  Buy Barcodes
+                </button>
+                <a
+                  href="https://gstsa1.org/template3/contact-us"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-center text-gray-600 hover:text-gray-800 py-2"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Support
+                </a>
+                <div className="flex items-center justify-center gap-1 text-gray-600">
+                  <Phone className="w-4 h-4" />
+                  +966920051091
+                </div>
+              </div>
+            </nav>
+          </motion.div>
+        )}
       </div>
     </header>
   );

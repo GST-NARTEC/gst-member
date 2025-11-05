@@ -55,7 +55,7 @@ function BulkImportModal({ isOpen, onClose }) {
           .map((row) => ({
             title: row.title || row.Title || "",
             description: row.description || row.Description || "",
-            sku: row.sku || row.SKU || "",
+            sku: row.sku?.toString() || row.SKU?.toString() || "",
             gpc: row.gpc?.toString() || row.GPC?.toString() || "",
             hsCode: row.hsCode?.toString() || row.HSCode?.toString() || "",
             unitOfMeasure: row.unitOfMeasure || row.UnitOfMeasure || "",
