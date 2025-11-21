@@ -146,31 +146,23 @@ function Sidebar({ isOpen, toggleSidebar, isLargeScreenCollapsed }) {
         ${isLargeScreenCollapsed ? "lg:w-16" : "lg:w-64"} 
         w-64 z-40`}
       >
-        <div className="p-4 h-16 flex items-center justify-between border-b border-gray-600">
+        <div className="p-2 h-20 flex items-center justify-center border-b border-gray-600">
           {!isLargeScreenCollapsed ? (
-            <div className="flex items-center gap-3">
-              <img
-                src={Images.Logo}
-                alt="Logo"
-                className="w-10 object-contain bg-white rounded-lg p-1"
-              />
-              <div className="flex flex-col">
-                <span className="text-lg font-semibold">GST</span>
-                <span className="text-xs text-gray-300">
-                  Global Standard for Technology
-                </span>
-              </div>
-            </div>
+            <img
+              src={Images.Logo}
+              alt="Logo"
+              className="h-16 max-w-[220px] w-full object-contain bg-white rounded-lg p-1"
+            />
           ) : (
             <img
               src={Images.Logo}
               alt="Logo"
-              className="w-8 object-contain bg-white rounded-lg p-1"
+              className="h-12 w-12 object-contain bg-white rounded-lg p-1"
             />
           )}
         </div>
 
-        <div className="h-[calc(100vh-4rem)] overflow-y-auto scrollbar-custom">
+        <div className="h-[calc(100vh-5rem)] overflow-y-auto scrollbar-custom">
           <nav className="p-4">
             {menuItems.map((item) => (
               <Link
