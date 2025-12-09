@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        ENV_FILE_PATH = "C:\\ProgramData\\Jenkins\\.jenkins\\jenkinsEnv\\GST\\gst-member\\.env"
+        ENV_FILE_PATH = "C:\\Program Files\\Jenkins\\jenkinsEnv\\GST\\gst-member\\.env"
     }
     options {
         buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
