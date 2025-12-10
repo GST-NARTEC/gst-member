@@ -1,81 +1,62 @@
-import React, { useState, useEffect } from "react";
-import { Controller } from "react-hook-form";
+import React, { useState, useEffect, useMemo } from "react";
+import { Controller, useWatch } from "react-hook-form";
 import { MdLocationOn } from "react-icons/md";
 import { FaGlobe } from "react-icons/fa";
+import { Country, State, City } from "country-state-city";
 
-import {
-  useGetCountriesQuery,
-  useGetRegionsQuery,
-  useGetCitiesQuery,
-} from "../../store/apis/endpoints/location";
-
-function LocationSelects({ control, errors, defaultValues }) {
+function LocationSelects({ control, errors, isDisabled = false }) {
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
-  const [initialLoad, setInitialLoad] = useState(true);
 
-  // Fetch data using RTK Query
-  const { data: countriesResponse, isLoading: isLoadingCountries } =
-    useGetCountriesQuery();
-  const { data: regionsResponse, isLoading: isLoadingRegions } =
-    useGetRegionsQuery(selectedCountry, {
-      skip: !selectedCountry 
-    });
-  const { data: citiesResponse, isLoading: isLoadingCities } =
-    useGetCitiesQuery(selectedRegion, {
-      skip:!selectedRegion 
-    });
+  const countries = useMemo(() => Country.getAllCountries(), []);
 
-  const countries = countriesResponse?.data?.countries || [];
-  const regions = regionsResponse?.data?.regions || [];
-  const cities = citiesResponse?.data?.cities || [];
+  const regions = useMemo(() => {
+    return selectedCountry ? State.getStatesOfCountry(selectedCountry) : [];
+  }, [selectedCountry]);
 
-  // Set initial values only once
+  const cities = useMemo(() => {
+    return selectedRegion
+      ? City.getCitiesOfState(selectedCountry, selectedRegion)
+      : [];
+  }, [selectedCountry, selectedRegion]);
+
+  const watchedCountry = useWatch({ control, name: "country" });
+  const watchedRegion = useWatch({ control, name: "region" });
+  const watchedCity = useWatch({ control, name: "city" });
+
+  // Sync state with form values (handling external updates like setValue from parent)
   useEffect(() => {
-    if (defaultValues?.country && countries.length > 0 && initialLoad && control) {
-      const country = countries.find(c => c.nameEn === defaultValues.country);
-      if (country) {
-        setSelectedCountry(country.id);
-        setTimeout(() => {
-          control.setValue("country", country.nameEn, { shouldDirty: false });
-        }, 0);
+    if (watchedCountry) {
+      const country = countries.find((c) => c.name === watchedCountry);
+      if (country && country.isoCode !== selectedCountry) {
+        setSelectedCountry(country.isoCode);
       }
+    } else if (selectedCountry) {
+        setSelectedCountry("");
     }
-  }, [defaultValues?.country, countries, initialLoad, control]);
+  }, [watchedCountry, countries, selectedCountry]);
 
   useEffect(() => {
-    if (defaultValues?.region && regions.length > 0 && initialLoad && control) {
-      const region = regions.find(r => r.nameEn === defaultValues.region);
-      if (region) {
-        setSelectedRegion(region.id);
-        setTimeout(() => {
-          control.setValue("region", region.nameEn, { shouldDirty: false });
-        }, 0);
+    if (watchedRegion && selectedCountry) {
+      const region = regions.find((r) => r.name === watchedRegion);
+      if (region && region.isoCode !== selectedRegion) {
+        setSelectedRegion(region.isoCode);
       }
+    } else if (selectedRegion) {
+        setSelectedRegion("");
     }
-  }, [defaultValues?.region, regions, initialLoad, control]);
+  }, [watchedRegion, selectedCountry, regions, selectedRegion]);
 
   useEffect(() => {
-    if (defaultValues?.city && cities.length > 0 && initialLoad && control) {
-      const city = cities.find(c => c.nameEn === defaultValues.city);
-      if (city) {
-        setSelectedCity(city.id);
-        setTimeout(() => {
-          control.setValue("city", city.nameEn, { shouldDirty: false });
-          setInitialLoad(false);
-        }, 0);
+    if (watchedCity && selectedRegion) {
+      if (watchedCity !== selectedCity) {
+        setSelectedCity(watchedCity);
       }
+    } else if (selectedCity) {
+        setSelectedCity("");
     }
-  }, [defaultValues?.city, cities, initialLoad, control]);
-
-  const resetDependentFields = () => {
-    setInitialLoad(false);
-    setSelectedRegion("");
-    setSelectedCity("");
-    control.setValue("region", "", { shouldDirty: true });
-    control.setValue("city", "", { shouldDirty: true });
-  };
+  }, [watchedCity, selectedRegion, selectedCity]);
 
   return (
     <>
@@ -89,26 +70,31 @@ function LocationSelects({ control, errors, defaultValues }) {
           name="country"
           control={control}
           rules={{ required: "Country is required" }}
-          render={({ field: { onChange, ...field } }) => (
+          render={({ field }) => (
             <select
               {...field}
               value={selectedCountry}
-              disabled={isLoadingCountries}
+              disabled={isDisabled}
               onChange={(e) => {
-                const value = e.target.value;
+                const value = e.target.value; // ISO Code
                 const selectedCountryData = countries.find(
-                  (c) => c.id === value
+                  (c) => c.isoCode === value
                 );
                 setSelectedCountry(value);
-                onChange(selectedCountryData?.nameEn || "");
-                resetDependentFields();
+                field.onChange(selectedCountryData?.name || "");
+
+                // Reset child fields
+                setSelectedRegion("");
+                setSelectedCity("");
+                control.setValue("region", "");
+                control.setValue("city", "");
               }}
               className="w-full px-3 py-2 border border-gray-400 rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent outline-none bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <option value="">Select Country</option>
               {countries.map((country) => (
-                <option key={country.id} value={country.id}>
-                  {country.nameEn} - {country.nameAr}
+                <option key={country.isoCode} value={country.isoCode}>
+                  {country.name}
                 </option>
               ))}
             </select>
@@ -129,25 +115,29 @@ function LocationSelects({ control, errors, defaultValues }) {
           name="region"
           control={control}
           rules={{ required: "Region is required" }}
-          render={({ field: { onChange, ...field } }) => (
+          render={({ field }) => (
             <select
               {...field}
               value={selectedRegion}
-              disabled={isLoadingRegions || !selectedCountry}
+              disabled={isDisabled || !selectedCountry}
               onChange={(e) => {
-                const value = e.target.value;
-                const selectedRegionData = regions.find((r) => r.id === value);
+                const value = e.target.value; // ISO Code
+                const selectedRegionData = regions.find(
+                  (r) => r.isoCode === value
+                );
                 setSelectedRegion(value);
-                onChange(selectedRegionData?.nameEn || "");
+                field.onChange(selectedRegionData?.name || "");
+
+                // Reset child field
                 setSelectedCity("");
-                control.setValue("city", "", { shouldDirty: true });
+                control.setValue("city", "");
               }}
               className="w-full px-3 py-2 border border-gray-400 rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent outline-none bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <option value="">Select Region</option>
               {regions.map((region) => (
-                <option key={region.id} value={region.id}>
-                  {region.nameEn} - {region.nameAr}
+                <option key={region.isoCode} value={region.isoCode}>
+                  {region.name}
                 </option>
               ))}
             </select>
@@ -168,23 +158,22 @@ function LocationSelects({ control, errors, defaultValues }) {
           name="city"
           control={control}
           rules={{ required: "City is required" }}
-          render={({ field: { onChange, ...field } }) => (
+          render={({ field }) => (
             <select
               {...field}
-              value={selectedCity}
-              disabled={isLoadingCities || !selectedRegion}
+              value={selectedCity} // Store name for city as we don't need ISO for next step
+              disabled={isDisabled || !selectedRegion}
               onChange={(e) => {
-                const value = e.target.value;
-                const selectedCityData = cities.find((c) => c.id === value);
+                const value = e.target.value; // Name
                 setSelectedCity(value);
-                onChange(selectedCityData?.nameEn || "");
+                field.onChange(value);
               }}
               className="w-full px-3 py-2 border border-gray-400 rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent outline-none bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <option value="">Select City</option>
               {cities.map((city) => (
-                <option key={city.id} value={city.id}>
-                  {city.nameEn} - {city.nameAr} ({city.telCode})
+                <option key={city.name} value={city.name}>
+                  {city.name}
                 </option>
               ))}
             </select>

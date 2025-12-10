@@ -1,66 +1,60 @@
-import React, { useEffect, useState } from "react";
-import { Controller } from "react-hook-form";
+import React, { useEffect, useState, useMemo } from "react";
+import { Controller, useWatch } from "react-hook-form";
 import { MdLocationOn } from "react-icons/md";
 import { FaGlobe } from "react-icons/fa";
-import {
-  useGetCountriesQuery,
-  useGetRegionsQuery,
-  useGetCitiesQuery,
-} from "../../../store/apis/endpoints/location";
+import { Country, State, City } from "country-state-city";
 
-const LocationSelects = ({ control, isDisabled, errors }) => {
-  
+const LocationSelects = ({ control, isDisabled=false, errors }) => {
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
 
+  const countries = useMemo(() => Country.getAllCountries(), []);
+  
+  const regions = useMemo(() => {
+    return selectedCountry ? State.getStatesOfCountry(selectedCountry) : [];
+  }, [selectedCountry]);
 
-  const { data: countriesResponse, isLoading: isLoadingCountries } =
-    useGetCountriesQuery();
+  const cities = useMemo(() => {
+    return selectedRegion ? City.getCitiesOfState(selectedCountry, selectedRegion) : [];
+  }, [selectedCountry, selectedRegion]);
 
-  const { data: regionsResponse, isLoading: isLoadingRegions } =
-    useGetRegionsQuery(selectedCountry, {
-      skip: !selectedCountry,
-    });
-  const { data: citiesResponse, isLoading: isLoadingCities } =
-    useGetCitiesQuery(selectedRegion, {
-      skip: !selectedRegion,
-    });
+  const watchedCountry = useWatch({ control, name: "country" });
+  const watchedRegion = useWatch({ control, name: "region" });
+  const watchedCity = useWatch({ control, name: "city" });
 
-  const countries = countriesResponse?.data?.countries || [];
-  const regions = regionsResponse?.data?.regions || [];
-  const cities = citiesResponse?.data?.cities || [];
-
-   // Initialize selections based on form values
-   useEffect(() => {
-    const countryValue = control._formValues.country;
-    const regionValue = control._formValues.region;
-    const cityValue = control._formValues.city;
-
-    if (countryValue) {
-      // Find country ID by name
-      const country = countries.find(c => c.nameEn === countryValue);
-      if (country) {
-        setSelectedCountry(country.id);
+  // Sync state with form values (handling external updates like setValue from parent)
+  useEffect(() => {
+    if (watchedCountry) {
+      const country = countries.find((c) => c.name === watchedCountry);
+      if (country && country.isoCode !== selectedCountry) {
+        setSelectedCountry(country.isoCode);
       }
+    } else if (selectedCountry) {
+      setSelectedCountry("");
     }
+  }, [watchedCountry, countries, selectedCountry]);
 
-    if (regionValue) {
-      // Find region ID by name
-      const region = regions.find(r => r.nameEn === regionValue);
-      if (region) {
-        setSelectedRegion(region.id);
+  useEffect(() => {
+    if (watchedRegion && selectedCountry) {
+      const region = regions.find((r) => r.name === watchedRegion);
+      if (region && region.isoCode !== selectedRegion) {
+        setSelectedRegion(region.isoCode);
       }
+    } else if (selectedRegion) {
+      setSelectedRegion("");
     }
+  }, [watchedRegion, selectedCountry, regions, selectedRegion]);
 
-    if (cityValue) {
-      // Find city ID by name
-      const city = cities.find(c => c.nameEn === cityValue);
-      if (city) {
-        setSelectedCity(city.id);
-      }
+  useEffect(() => {
+    if (watchedCity && selectedRegion) {
+        if (watchedCity !== selectedCity) {
+            setSelectedCity(watchedCity);
+        }
+    } else if (selectedCity) {
+        setSelectedCity("");
     }
-  }, [countries, regions, cities, control._formValues]);
+  }, [watchedCity, selectedRegion, selectedCity]);
 
   return (
     <>
@@ -78,14 +72,16 @@ const LocationSelects = ({ control, isDisabled, errors }) => {
             <select
               {...field}
               value={selectedCountry}
-              disabled={isDisabled || isLoadingCountries}
+              disabled={isDisabled}
               onChange={(e) => {
-                const value = e.target.value;
+                const value = e.target.value; // ISO Code
                 const selectedCountryData = countries.find(
-                  (c) => c.id === value
+                  (c) => c.isoCode === value
                 );
                 setSelectedCountry(value);
-                field.onChange(selectedCountryData?.nameEn || "");
+                field.onChange(selectedCountryData?.name || "");
+                
+                // Reset child fields
                 setSelectedRegion("");
                 setSelectedCity("");
                 control.setValue("region", "");
@@ -95,8 +91,8 @@ const LocationSelects = ({ control, isDisabled, errors }) => {
             >
               <option value="">Select a country</option>
               {countries.map((country) => (
-                <option key={country.id} value={country.id}>
-                  {country.nameEn} - {country.nameAr}
+                <option key={country.isoCode} value={country.isoCode}>
+                  {country.name}
                 </option>
               ))}
             </select>
@@ -121,12 +117,14 @@ const LocationSelects = ({ control, isDisabled, errors }) => {
             <select
               {...field}
               value={selectedRegion}
-              disabled={isDisabled || isLoadingRegions || !selectedCountry}
+              disabled={isDisabled || !selectedCountry}
               onChange={(e) => {
-                const value = e.target.value;
-                const selectedRegionData = regions.find((r) => r.id === value);
+                const value = e.target.value; // ISO Code
+                const selectedRegionData = regions.find((r) => r.isoCode === value);
                 setSelectedRegion(value);
-                field.onChange(selectedRegionData?.nameEn || "");
+                field.onChange(selectedRegionData?.name || "");
+                
+                // Reset child field
                 setSelectedCity("");
                 control.setValue("city", "");
               }}
@@ -134,8 +132,8 @@ const LocationSelects = ({ control, isDisabled, errors }) => {
             >
               <option value="">Select a region</option>
               {regions.map((region) => (
-                <option key={region.id} value={region.id}>
-                  {region.nameEn} - {region.nameAr}
+                <option key={region.isoCode} value={region.isoCode}>
+                  {region.name}
                 </option>
               ))}
             </select>
@@ -159,20 +157,19 @@ const LocationSelects = ({ control, isDisabled, errors }) => {
           render={({ field }) => (
             <select
               {...field}
-              value={selectedCity}
-              disabled={isDisabled || isLoadingCities || !selectedRegion}
+              value={selectedCity} // Store name for city as we don't need ISO for next step
+              disabled={isDisabled || !selectedRegion}
               onChange={(e) => {
-                const value = e.target.value;
-                const selectedCityData = cities.find((c) => c.id === value);
+                const value = e.target.value; // Name
                 setSelectedCity(value);
-                field.onChange(selectedCityData?.nameEn || "");
+                field.onChange(value);
               }}
               className="w-full px-4 py-2.5 border border-gray-400 rounded-lg focus:ring-2 focus:ring-navy-600 focus:border-transparent outline-none bg-gray-50 focus:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <option value="">Select a city</option>
               {cities.map((city) => (
-                <option key={city.id} value={city.id}>
-                  {city.nameEn} - {city.nameAr} ({city.telCode})
+                <option key={city.name} value={city.name}>
+                  {city.name}
                 </option>
               ))}
             </select>
