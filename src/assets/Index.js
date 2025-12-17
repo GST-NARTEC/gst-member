@@ -47,7 +47,7 @@ import BatchNumber from "./images/batchNumberLogo.png";
 import ExpiryDate from "./images/expiryDateLogo.png";
 import REF from "./images/RefLogo.png";
 import SN from "./images/serialNumberLogo.png";
-import BarcodeSearch1 from "./images/barcodesSearch1.jpg";
+import BarcodeSearch1 from "./images/barcodesSearch2.png";
 
 export const Images = {
   Logo,
