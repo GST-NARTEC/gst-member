@@ -72,38 +72,37 @@ export const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-start gap-4 flex-col ">
               <div className="flex items-center gap-4  ">
-              <img
-                src={Images.Logo}
-                alt="GST Logo"
-                className="h-16 bg-white rounded-md"
-              />
-              <div className="flex flex-col">
-                <span className="font-semibold text-white">
-                  Global Standard for Technology
-                </span>
-             
-                <a
-                  href="tel:+966920051091"
-                  className="hover:text-white text-sm"
-                >
-                  Toll Free: +966 92 005 1091
-                </a>
-              </div>
+                <img
+                  src={Images.Logo}
+                  alt="GST Logo"
+                  className="h-16 bg-white rounded-md"
+                />
+                <div className="flex flex-col">
+                  <span className="font-semibold text-white">
+                    Global Standard for Technology
+                  </span>
+
+                  <a
+                    href="tel:+966920051091"
+                    className="hover:text-white text-sm"
+                  >
+                    Toll Free: +966 92 005 1091
+                  </a>
+                </div>
               </div>
 
-                <div className="flex items-center gap-3 text-sm  ">
-                  <MdLocationOn className="text-2xl" />
-                  <div className="flex flex-col">
-                    شركة المعيار العالمي للتقنيات 
-                    <br />
-                    Short Address: RFKA4234,
-                    <br />
-                    Building No: 4234, Al Mateea, 7650 Al Khaleej District,
-                    <br />
-                    13224, Riyadh, Kingdom of Saudi Arabia
-                  </div>
+              <div className="flex items-center gap-3 text-sm  ">
+                <MdLocationOn className="text-2xl" />
+                <div className="flex flex-col">
+                  شركة المعيار العالمي للتقنيات
+                  <br />
+                  Short Address: RFKA4234,
+                  <br />
+                  Building No: 4234, Al Mateea, 7650 Al Khaleej District,
+                  <br />
+                  13224, Riyadh, Kingdom of Saudi Arabia
                 </div>
-                
+              </div>
             </div>
             <div className="flex gap-6">
               <a
@@ -124,7 +123,11 @@ export const Footer = () => {
               </a>
             </div>
           </div>
-          <p className="text-center mt-8 text-sm">
+          <p className="text-center mt-4 text-sm text-gray-400">
+            Empowering Smart Manufacturing: Partner & Service Provider, Future
+            Factories Program | Ministry of Industry
+          </p>
+          <p className="text-center mt-4 text-sm">
             © {new Date().getFullYear()} Global Standard for Technology. All
             rights reserved.
           </p>

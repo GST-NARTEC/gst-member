@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
+import WhatsAppWidget from "../../components/WhatsAppWidget";
 
 function MainLayout({ children }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,6 +29,7 @@ function MainLayout({ children }) {
           isLargeScreenCollapsed={isLargeScreenCollapsed}
         />
         <main className="p-3">{children}</main>
+        <WhatsAppWidget />
       </div>
 
       {/* Overlay for mobile */}

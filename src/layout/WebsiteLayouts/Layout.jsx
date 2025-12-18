@@ -1,6 +1,7 @@
 import React from "react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+import WhatsAppWidget from "../../components/WhatsAppWidget";
 
 function Layout({ children }) {
   return (
@@ -8,6 +9,7 @@ function Layout({ children }) {
       <Header />
       {children}
       <Footer />
+      <WhatsAppWidget />
     </>
   );
 }
