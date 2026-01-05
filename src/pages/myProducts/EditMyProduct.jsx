@@ -13,8 +13,6 @@ import {
   FaArrowLeft,
   FaUpload,
   FaTrash,
-  FaDownload,
-  FaInfoCircle,
 } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../../layout/PortalLayouts/MainLayout";
@@ -29,7 +27,7 @@ import {
   useUpdateUserProductMutation,
   useDeleteUserProductImageMutation,
 } from "../../store/apis/endpoints/userProducts";
-import bwipjs from "bwip-js";
+import ProductBarcodes from "../../components/myProducts/ProductBarcodes";
 
 function EditMyProduct() {
   const navigate = useNavigate();
@@ -85,68 +83,6 @@ function EditMyProduct() {
       });
     }
   }, [productData]);
-
-  useEffect(() => {
-    if (!formData.gtin) return;
-
-    // Generate EAN-13 barcode
-    try {
-      bwipjs.toCanvas("ean13-canvas", {
-        bcid: "ean13",
-        text: formData.gtin,
-        scale: 3,
-        height: 10,
-        includetext: true,
-        textxalign: "center",
-      });
-    } catch (err) {
-      console.error("Error generating EAN-13:", err);
-    }
-
-    // Generate DataMatrix with combined product information
-    try {
-      // Format: GTIN | Title | Brand | SKU
-      const dataMatrixText = [
-        formData.gtin,
-        formData.title,
-        formData.brandName,
-        formData.sku,
-      ]
-        .filter(Boolean)
-        .join(" | ");
-
-      bwipjs.toCanvas("datamatrix-canvas", {
-        bcid: "datamatrix",
-        text: dataMatrixText,
-        scale: 3,
-        includetext: false,
-        textxalign: "center",
-      });
-    } catch (err) {
-      console.error("Error generating DataMatrix:", err);
-    }
-
-    // Generate QR Code
-    try {
-      const qrText = [
-        formData.gtin,
-        formData.title,
-        formData.brandName,
-        formData.sku,
-      ]
-        .filter(Boolean)
-        .join(" | ");
-
-      bwipjs.toCanvas("qrcode-canvas", {
-        bcid: "qrcode",
-        text: qrText,
-        scale: 3,
-        includetext: false,
-      });
-    } catch (err) {
-      console.error("Error generating QR Code:", err);
-    }
-  }, [formData.gtin, formData.sku, formData.title, formData.brandName]);
 
   const handleImageChange = (e, index) => {
     const file = e.target.files[0];
@@ -223,37 +159,6 @@ function EditMyProduct() {
     }
   };
 
-  const downloadCanvas = (canvasId, fileName) => {
-    const canvas = document.getElementById(canvasId);
-    if (!canvas) return;
-
-    // Create a larger canvas for better quality
-    const scaleFactor = 3;
-    const tempCanvas = document.createElement("canvas");
-    const tempCtx = tempCanvas.getContext("2d");
-    tempCanvas.width = canvas.width * scaleFactor;
-    tempCanvas.height = canvas.height * scaleFactor;
-
-    // Fill white background
-    tempCtx.fillStyle = "white";
-    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-
-    // Draw scaled image
-    tempCtx.drawImage(canvas, 0, 0, tempCanvas.width, tempCanvas.height);
-
-    // Convert to blob and download
-    tempCanvas.toBlob((blob) => {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${fileName}-${formData.gtin || "barcode"}.png`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, "image/png");
-  };
-
   if (isLoading) {
     return (
       <MainLayout>
@@ -278,136 +183,8 @@ function EditMyProduct() {
           </Button>
         </div>
 
-        <Card className="mb-6">
-          <CardBody className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Left side - Product Info */}
-              <div className="space-y-4">
-                <div>
-                  <h2 className="text-xl font-semibold mb-4">
-                    Product Identifiers
-                  </h2>
-                  <div className="grid gap-3">
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <span className="font-semibold text-gray-700">
-                        GTIN:{" "}
-                      </span>
-                      <span className="font-mono">{formData.gtin || "-"}</span>
-                    </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <span className="font-semibold text-gray-700">SKU: </span>
-                      <span className="font-mono">{formData.sku || "-"}</span>
-                    </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <span className="font-semibold text-gray-700">
-                        Product:{" "}
-                      </span>
-                      <span className="font-mono">{formData.title || "-"}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <FaInfoCircle className="text-blue-600" />
-                    <h3 className="text-sm font-medium text-blue-900">
-                      About Barcodes
-                    </h3>
-                  </div>
-                  <p className="text-sm text-blue-700">
-                    Your product includes both 1D (EAN-13) and 2D (DataMatrix)
-                    barcodes for maximum compatibility. Download either format
-                    for your packaging and labeling needs.
-                  </p>
-                </div>
-              </div>
-
-              {/* Right side - Barcodes */}
-              <div className="space-y-4">
-                {/* EAN-13 Section */}
-                <div className="bg-white p-3 rounded-lg border border-gray-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <h3 className="text-base font-medium">EAN-13</h3>
-                      <p className="text-xs text-gray-600">1D Linear Barcode</p>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="flat"
-                      onClick={() => downloadCanvas("ean13-canvas", "ean13")}
-                      startContent={<FaDownload />}
-                    >
-                      Download
-                    </Button>
-                  </div>
-                  <div className="flex justify-center bg-white p-2 rounded">
-                    <canvas
-                      id="ean13-canvas"
-                      className="max-w-[200px]"
-                    ></canvas>
-                  </div>
-                </div>
-
-                {/* 2D Barcodes Row */}
-                <div className="grid grid-cols-2 gap-4">
-                  {/* DataMatrix Section */}
-                  <div className="bg-white p-3 rounded-lg border border-gray-200">
-                    <div className="mb-2">
-                      <h3 className="text-base font-medium">Data Matrix</h3>
-                      <p className="text-xs text-gray-600">2D Matrix Barcode</p>
-                    </div>
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="flex justify-center bg-white p-2 rounded">
-                        <canvas
-                          id="datamatrix-canvas"
-                          className="w-[120px] h-[120px]"
-                        ></canvas>
-                      </div>
-                      <Button
-                        size="sm"
-                        variant="flat"
-                        onClick={() =>
-                          downloadCanvas("datamatrix-canvas", "datamatrix")
-                        }
-                        startContent={<FaDownload />}
-                        className="w-full"
-                      >
-                        Download
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* QR Code Section */}
-                  <div className="bg-white p-3 rounded-lg border border-gray-200">
-                    <div className="mb-2">
-                      <h3 className="text-base font-medium">QR Code</h3>
-                      <p className="text-xs text-gray-600">2D QR Code</p>
-                    </div>
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="flex justify-center bg-white p-2 rounded">
-                        <canvas
-                          id="qrcode-canvas"
-                          className="w-[120px] h-[120px]"
-                        ></canvas>
-                      </div>
-                      <Button
-                        size="sm"
-                        variant="flat"
-                        onClick={() =>
-                          downloadCanvas("qrcode-canvas", "qrcode")
-                        }
-                        startContent={<FaDownload />}
-                        className="w-full"
-                      >
-                        Download
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardBody>
-        </Card>
+        {/* Barcode Component */}
+        <ProductBarcodes formData={formData} />
 
         <div className="grid grid-cols-1 gap-6">
           {/* Basic Information Card */}
