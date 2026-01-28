@@ -347,15 +347,24 @@ function MemberDocuments() {
 
       <div className="bg-white p-4 rounded-lg shadow">
         <h2 className="text-lg font-semibold mb-4">Terms & Conditions</h2>
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <a
-            href="https://api.gstsa1.org/assets/docs/terms-and-conditions.pdf"
+            href="https://api.gstsa1.org/assets/docs/terms-and-conditions-buy-barcode.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center space-x-2 text-blue-600 hover:text-blue-800"
+            className="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors"
           >
             <FaFilePdf className="text-red-600 text-xl" />
-            <span>Terms and Conditions Document</span>
+            <span>Terms and Conditions (English)</span>
+          </a>
+          <a
+            href="https://api.gstsa1.org/assets/docs/terms-and-conditions-buy-barcode.en-Arabic.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center space-x-2 text-blue-600 hover:text-blue-800 transition-colors"
+          >
+            <FaFilePdf className="text-red-600 text-xl" />
+            <span>الشروط والأحكام (Arabic)</span>
           </a>
         </div>
       </div>
