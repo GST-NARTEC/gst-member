@@ -12,6 +12,7 @@ import {
   FaQuestionCircle,
   FaFileContract,
   FaFileAlt,
+  FaBook,
   FaHandshake,
   FaSignOutAlt,
   FaBoxes,
@@ -85,6 +86,11 @@ function Sidebar({ isOpen, toggleSidebar, isLargeScreenCollapsed }) {
       path: "/member-portal/gst-terms",
       icon: <FaFileContract />,
       label: "Terms and Conditions",
+    },
+    {
+      path: "/member-portal/user-guides",
+      icon: <FaBook />,
+      label: "User Guides",
     },
     // {
     //   // path: "/member-portal/data-policy",

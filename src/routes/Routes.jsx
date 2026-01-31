@@ -22,6 +22,7 @@ import GLNLocation from "../pages/glnLocation/GLNLocation";
 import AddGLNLocation from "../pages/glnLocation/AddGLNLocation";
 import EditGLNLocation from "../pages/glnLocation/EditGLNLocation";
 import PaymentResponse from "../pages/myBarcodes/BuyBarcodes/PayOnline/PaymentResponse";
+import UserGuides from "../pages/userGuides/UserGuides";
 
 export default function AppRoutes() {
   return (
@@ -72,6 +73,10 @@ export default function AppRoutes() {
         <Route
           path="/member-portal/gst-terms"
           element={<GSTTermsAndCondition />}
+        />
+        <Route
+          path="/member-portal/user-guides"
+          element={<UserGuides />}
         />
         <Route path="/member-portal/billing" element={<Billing />} />
         <Route
