@@ -66,7 +66,7 @@ function UserGuides() {
                 className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100"
               >
                 {/* Card Header Skeleton */}
-                <div className="bg-gradient-to-br from-gray-500 to-gray-700 p-6">
+                <div className="bg-gray-200 p-6">
                   <Skeleton className="w-12 h-12 rounded-lg mb-3" />
                   <Skeleton className="w-24 h-4 rounded" />
                 </div>
@@ -123,7 +123,7 @@ function UserGuides() {
                 className="group bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer overflow-hidden border border-gray-100 hover:border-gray-300 transform hover:-translate-y-1"
               >
                 {/* Card Header with Icon */}
-                <div className="bg-gradient-to-br from-gray-500 to-gray-700 p-6 text-white relative overflow-hidden">
+                <div className="bg-gray-600 p-6 text-white relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16"></div>
                   <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-10 rounded-full -ml-12 -mb-12"></div>
                   <FaFilePdf className="text-5xl mb-3 relative z-10 group-hover:scale-110 transition-transform duration-300" />
@@ -175,7 +175,7 @@ function UserGuides() {
                 </div>
 
                 {/* Card Footer - Hover Effect */}
-                <div className="h-1 bg-gradient-to-r from-gray-500 to-gray-700 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                <div className="h-1 bg-gray-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
               </div>
             ))}
           </div>
