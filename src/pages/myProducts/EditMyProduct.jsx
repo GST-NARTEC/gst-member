@@ -10,9 +10,8 @@ import {
   Spinner,
 } from "@heroui/react";
 import {
-  FaArrowLeft,
-  FaUpload,
   FaTrash,
+  FaSearch,
 } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../../layout/PortalLayouts/MainLayout";
@@ -27,6 +26,10 @@ import {
   useUpdateUserProductMutation,
   useDeleteUserProductImageMutation,
 } from "../../store/apis/endpoints/userProducts";
+import {
+  useLazyGetGpcSearchQuery,
+  useLazyGetHsSearchQuery,
+} from "../../store/apis/externalApis/embeddingsApi";
 import ProductBarcodes from "../../components/myProducts/ProductBarcodes";
 
 function EditMyProduct() {
@@ -124,6 +127,53 @@ function EditMyProduct() {
       }
     }
   };
+
+  const [triggerGpcSearch, { data: gpcSearchResults, isFetching: isGpcSearching }] = useLazyGetGpcSearchQuery();
+  const [triggerHsSearch, { data: hsSearchResults, isFetching: isHsSearching }] = useLazyGetHsSearchQuery();
+
+  const [gpcInput, setGpcInput] = useState("");
+  const [hsInput, setHsInput] = useState("");
+
+  const handleGpcSearch = async () => {
+    if (!gpcInput || gpcInput.length < 2) return;
+    try {
+      await triggerGpcSearch(gpcInput).unwrap();
+    } catch (err) {
+      // console.error("GPC Search Error:", err);
+    }
+  };
+
+  const handleGpcSelect = async (key) => {
+    if (!key) return;
+    const selectedGpc = gpcSearchResults?.results?.find(item => (item.metadata?.code || item.metadata?.brick) === key);
+    if (!selectedGpc) return;
+
+    setFormData(prev => ({ ...prev, gpc: key }));
+    
+    // Trigger HS search based on GPC title
+    const gpcTitle = selectedGpc.metadata?.bricks_title || selectedGpc.content;
+    if (gpcTitle) {
+      try {
+        await triggerHsSearch(gpcTitle).unwrap();
+      } catch (err) {
+        // console.error("HS Search Error:", err);
+      }
+    }
+  };
+
+  const gpcItems = gpcSearchResults?.results?.map(item => ({
+    label: `${item.content} (${item.metadata?.code || item.metadata?.brick || ""})`,
+    value: item.metadata?.code || item.metadata?.brick,
+  })) || [];
+
+  const hsItems = hsSearchResults?.results?.map(item => {
+    const code = item.metadata?.['رمز النظام المنسق \r\n Harmonized Code'] || item.metadata?.['HS Code'] || item.metadata?.['code'] || "";
+    const name = item.content || item.metadata?.['الصنف باللغة الانجليزية \r\n Item English Name'] || item.metadata?.['Item English Name'] || "";
+    return {
+      label: `${name} (${code})`,
+      value: code,
+    };
+  }) || [];
 
   const handleSubmit = async () => {
     try {
@@ -254,22 +304,60 @@ function EditMyProduct() {
                   }
                   isRequired
                 />
-                <Input
+                <Autocomplete
                   label="GPC"
                   placeholder="Enter GPC"
-                  value={formData.gpc}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, gpc: e.target.value }))
+                  items={gpcItems}
+                  isLoading={isGpcSearching}
+                  onInputChange={(value) => setGpcInput(value)}
+                  onSelectionChange={handleGpcSelect}
+                  selectedKey={formData.gpc}
+                  allowsCustomValue={true}
+                  scrollShadowProps={{
+                    isEnabled: false,
+                  }}
+                  endContent={
+                    <Button
+                      isIconOnly
+                      size="sm"
+                      variant="light"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleGpcSearch();
+                      }}
+                    >
+                      <FaSearch className="text-gray-400 hover:text-primary transition-colors" />
+                    </Button>
                   }
-                />
-                <Input
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleGpcSearch();
+                    }
+                  }}
+                >
+                  {(item) => (
+                    <AutocompleteItem key={item.value} textValue={item.label}>
+                      {item.label}
+                    </AutocompleteItem>
+                  )}
+                </Autocomplete>
+
+                <Autocomplete
                   label="HS Code"
                   placeholder="Enter HS Code"
-                  value={formData.hsCode}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, hsCode: e.target.value }))
-                  }
-                />
+                  items={hsItems}
+                  isLoading={isHsSearching}
+                  allowsCustomValue={true}
+                  onInputChange={(value) => setHsInput(value)}
+                  onSelectionChange={(key) => setFormData(prev => ({ ...prev, hsCode: key }))}
+                  selectedKey={formData.hsCode}
+                >
+                  {(item) => (
+                    <AutocompleteItem key={item.value} textValue={item.label}>
+                      {item.label}
+                    </AutocompleteItem>
+                  )}
+                </Autocomplete>
                 <PackagingType
                   value={formData.packagingType}
                   onChange={(value) =>
