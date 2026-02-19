@@ -8,10 +8,14 @@ import {
   Image,
   Switch,
   Spinner,
+  Autocomplete,
+  AutocompleteItem,
 } from "@heroui/react";
 import {
   FaTrash,
   FaSearch,
+  FaArrowLeft,
+  FaUpload
 } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../../layout/PortalLayouts/MainLayout";
