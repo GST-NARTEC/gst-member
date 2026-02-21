@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Input,
   Textarea,
@@ -58,17 +58,15 @@ function AddMyProduct() {
   const [triggerGpcSearch, { data: gpcSearchResults, isFetching: isGpcSearching }] = useLazyGetGpcSearchQuery();
   const [triggerHsSearch, { data: hsSearchResults, isFetching: isHsSearching }] = useLazyGetHsSearchQuery();
 
-  const [gpcInput, setGpcInput] = useState("");
-  const [hsInput, setHsInput] = useState("");
+  const gpcInputRef = useRef("");
 
   const handleGpcSearch = async () => {
-    if (!gpcInput || gpcInput.length < 2) return;
-    try {
-      await triggerGpcSearch(gpcInput).unwrap();
-    } catch (err) {
-      // console.error("GPC Search Error:", err);
-    }
-  };
+  const searchValue = gpcInputRef.current;
+  if (!searchValue || searchValue.length < 2) return;
+  try {
+    await triggerGpcSearch(searchValue).unwrap();
+  } catch (err) {}
+};
 
   const handleGpcSelect = async (key) => {
     if (!key) return;
@@ -326,7 +324,9 @@ function AddMyProduct() {
                   placeholder="Enter GPC"
                   items={gpcItems}
                   isLoading={isGpcSearching}
-                  onInputChange={(value) => setGpcInput(value)}
+                  onInputChange={(value) => {
+                    gpcInputRef.current = value;
+                  }}
                   onSelectionChange={handleGpcSelect}
                   selectedKey={formData.gpc}
                   allowsCustomValue={true}
@@ -338,6 +338,7 @@ function AddMyProduct() {
                       isIconOnly
                       size="sm"
                       variant="light"
+                      onMouseDown={(e) => e.preventDefault()}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleGpcSearch();
@@ -365,7 +366,6 @@ function AddMyProduct() {
                   items={hsItems}
                   isLoading={isHsSearching}
                   allowsCustomValue={true}
-                  onInputChange={(value) => setHsInput(value)}
                   onSelectionChange={(key) => setFormData(prev => ({ ...prev, hsCode: key }))}
                   selectedKey={formData.hsCode}
                 >

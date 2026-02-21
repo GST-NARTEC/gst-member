@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { apiSlice } from "./apis/apiSlice";
+import { embeddingsApi } from "./apis/externalApis/embeddingsApi";
 import currencySymbolReducer from "./slices/currencySymbolSlice";
 import cartReducer from "./slices/cartSlice";
 import memberReducer from "./slices/memberSlice";
@@ -45,6 +46,7 @@ const saveState = (state) => {
 export const store = configureStore({
   reducer: {
     [apiSlice.reducerPath]: apiSlice.reducer,
+    [embeddingsApi.reducerPath]: embeddingsApi.reducer,
     currencySymbol: currencySymbolReducer,
     cart: cartReducer,
     member: memberReducer,
@@ -52,7 +54,9 @@ export const store = configureStore({
     externalData: externalDataReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(apiSlice.middleware),
+    getDefaultMiddleware()
+      .concat(apiSlice.middleware)
+      .concat(embeddingsApi.middleware),
   preloadedState: loadState(),
 });
 
